@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html  lang="zh-Hans" >
+<html  lang="zh-CN" >
 <head>
   <meta charset="UTF-8">
   <meta name="viewport"
@@ -7,7 +7,7 @@
   <meta http-equiv="X-UA-Compatible" content="ie=edge">
   <meta name="theme-color" content="#fff" id="theme-color">
   <meta name="description" content="Hexo">
-  <link rel="icon" href="https://gitee.com/java4u/resources/raw/master/2020-12-13/1607868336866-image.png">
+  <link rel="icon" href="/img/logo.jpg">
   <title>建站神器：Hexo+Kaze+Gitee Pages 搭建静态博客网站</title>
   
   
@@ -17,7 +17,7 @@
   <meta property="og:url" content="http://java4u.cn/%E5%AE%9E%E7%94%A8%E5%B7%A5%E5%85%B7/%E6%95%99%E7%A8%8B/hexo_site_course/index.html">
   
   
-  <meta property="og:img" content="https://gitee.com/java4u/resources/raw/master/2020-12-13/1607868336866-image.png">
+  <meta property="og:img" content="/img/logo.jpg">
   
   
   
@@ -102,8 +102,11 @@
   
   
   
+  <link rel="prefetch" href="//cdn.jsdelivr.net/npm/mathjax@3.0.5/es5/tex-svg.js" as="script">
   
-  <link rel="prefetch" href="//unpkg.com/valine/dist/Valine.min.js" as="script">
+  
+  
+  <link rel="prefetch" href="https://cdn.jsdelivr.net/npm/valine@1.4.14/dist/Valine.min.js" as="script">
   
   
   
@@ -126,6 +129,16 @@
   
   
   
+
+  <!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-C22LNC79YC"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-C22LNC79YC');
+</script>
 <meta name="generator" content="Hexo 5.2.0"></head>
 
 
@@ -136,7 +149,7 @@
   <div class="navbar-logo">
     <span class="navbar-logo-main">
       
-      <img class="navbar-logo-img" src="https://gitee.com/java4u/resources/raw/master/2020-12-13/1607868336866-image.png" alt="logo">
+      <img class="navbar-logo-img" src="/img/logo.jpg" alt="logo">
       
       <span class="navbar-logo-dsc">蜗牛 Java 之家</span>
     </span>
@@ -145,37 +158,31 @@
     
     <a href="/" class="navbar-menu-item">
     
-    Home
+    首页
     
     </a>
     
-    <a href="/archives" class="navbar-menu-item">
+    <a href="/resources" class="navbar-menu-item">
     
-    Archive
+    免费资源
     
     </a>
     
-    <a href="/tags" class="navbar-menu-item">
+    <a href="/tools" class="navbar-menu-item">
     
-    Tags
+    免费工具
     
     </a>
     
     <a href="/categories" class="navbar-menu-item">
     
-    Categories
-    
-    </a>
-    
-    <a href="/about" class="navbar-menu-item">
-    
-    About
+    分类
     
     </a>
     
     <a href="/links" class="navbar-menu-item">
     
-    Friends
+    友链
     
     </a>
     
@@ -214,7 +221,7 @@
     
     
     <span class="dot"></span>
-    <span>4.5k words</span>
+    <span>4.5k 字</span>
     
   </div>
   
@@ -917,7 +924,7 @@
   <div class="nav-item-next">
     <a href="/uncategorized/hello-world/" class="nav-link">
       <div>
-        <div class="nav-label">Next</div>
+        <div class="nav-label">下一篇</div>
         
         <div class="nav-title">Hello World </div>
         
@@ -931,32 +938,61 @@
 <div class="card card-content comment-card" style="margin-top: 16px;">
   <div class="comment-card-title">评论</div>
   
+  <div id="vcomments"></div>
+  
+  <script>
+    loadScript("https://cdn.jsdelivr.net/npm/valine@1.4.14/dist/Valine.min.js");
+    var oldLoadVa = window.onload;
+    window.onload = function () {
+      oldLoadVa && oldLoadVa();
+      new Valine({
+        el: '#vcomments',
+        appId: 'Ro9jzghVgwRgtnGQQ99MFbAK-9Nh9j0Va',
+        appKey: 'rbA6uGwupFqEcTUAugUoXn2B',
+        placeholder: 'Just go go',
+        path: window.location.pathname,
+        avatar: 'mp',
+        meta: ["nick","mail","link"],
+        pageSize: '10',
+        lang: '',
+        visitor: 'true',
+        highlight: true,
+        recordIP: false,
+        
+        
+        
+        enableQQ: 'false',
+        requiredFields: [],
+      });
+    };
+  </script>
+
 </div>
 
 <div class="card card-content toc-card" id="mobiletoc">
-  <div class="toc-header"><i class="iconfont icon-menu" style="padding-right: 2px;"></i>TOC</div>
+  <div class="toc-header"><i class="iconfont icon-menu" style="padding-right: 2px;"></i>目录</div>
 <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link"><span class="toc-text">前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link"><span class="toc-text">Hexo 简介</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link"><span class="toc-text">Hexo 是什么？</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link"><span class="toc-text">Hexo 安装</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link"><span class="toc-text">前置要求</span></a></li><li class="toc-item toc-level-3"><a class="toc-link"><span class="toc-text">安装 Git</span></a></li><li class="toc-item toc-level-3"><a class="toc-link"><span class="toc-text">安装 Node.js</span></a></li><li class="toc-item toc-level-3"><a class="toc-link"><span class="toc-text">安装 Hexo</span></a></li><li class="toc-item toc-level-3"><a class="toc-link"><span class="toc-text">运行 hexo</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link"><span class="toc-text">Hexo 建站</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link"><span class="toc-text">初始化操作</span></a></li><li class="toc-item toc-level-3"><a class="toc-link"><span class="toc-text">目录结构</span></a></li><li class="toc-item toc-level-3"><a class="toc-link"><span class="toc-text">本地启动</span></a></li><li class="toc-item toc-level-3"><a class="toc-link"><span class="toc-text">核心配置</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link"><span class="toc-text">package.json</span></a></li><li class="toc-item toc-level-4"><a class="toc-link"><span class="toc-text">_config.yml</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link"><span class="toc-text">网站</span></a></li><li class="toc-item toc-level-5"><a class="toc-link"><span class="toc-text">URL</span></a></li><li class="toc-item toc-level-5"><a class="toc-link"><span class="toc-text">目录</span></a></li><li class="toc-item toc-level-5"><a class="toc-link"><span class="toc-text">文章</span></a></li><li class="toc-item toc-level-5"><a class="toc-link"><span class="toc-text">分类 &amp; 标签</span></a></li><li class="toc-item toc-level-5"><a class="toc-link"><span class="toc-text">日期&#x2F;时间格式</span></a></li><li class="toc-item toc-level-5"><a class="toc-link"><span class="toc-text">分页</span></a></li><li class="toc-item toc-level-5"><a class="toc-link"><span class="toc-text">扩展</span></a></li></ol></li><li class="toc-item toc-level-4"><a class="toc-link"><span class="toc-text"></span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link"><span class="toc-text">常用指令</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link"><span class="toc-text">创建文章</span></a></li><li class="toc-item toc-level-4"><a class="toc-link"><span class="toc-text">运行服务器</span></a></li><li class="toc-item toc-level-4"><a class="toc-link"><span class="toc-text">生成静态文件</span></a></li><li class="toc-item toc-level-4"><a class="toc-link"><span class="toc-text">部署</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link"><span class="toc-text">Hexo 主题</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link"><span class="toc-text">为什么选择 Kaze</span></a></li><li class="toc-item toc-level-3"><a class="toc-link"><span class="toc-text">安装 Kaze</span></a></li><li class="toc-item toc-level-3"><a class="toc-link"><span class="toc-text">主题配置</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link"><span class="toc-text">主题颜色</span></a></li><li class="toc-item toc-level-4"><a class="toc-link"><span class="toc-text">字号与字体</span></a></li><li class="toc-item toc-level-4"><a class="toc-link"><span class="toc-text">站点访问量统计</span></a></li><li class="toc-item toc-level-4"><a class="toc-link"><span class="toc-text">数据分析</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link"><span class="toc-text"></span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link"><span class="toc-text">首页</span></a></li><li class="toc-item toc-level-4"><a class="toc-link"><span class="toc-text"></span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link"><span class="toc-text">文章头图</span></a></li></ol></li><li class="toc-item toc-level-4"><a class="toc-link"><span class="toc-text"></span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link"><span class="toc-text">小组件</span></a></li></ol></li><li class="toc-item toc-level-4"><a class="toc-link"><span class="toc-text">关于</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link"><span class="toc-text">社交链接</span></a></li></ol></li><li class="toc-item toc-level-4"><a class="toc-link"><span class="toc-text">友链</span></a></li><li class="toc-item toc-level-4"><a class="toc-link"><span class="toc-text">文章页</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link"><span class="toc-text">搜索功能</span></a></li><li class="toc-item toc-level-5"><a class="toc-link"><span class="toc-text">目录</span></a></li><li class="toc-item toc-level-5"><a class="toc-link"><span class="toc-text">代码高亮</span></a></li><li class="toc-item toc-level-5"><a class="toc-link"><span class="toc-text">数学公式</span></a></li></ol></li><li class="toc-item toc-level-4"><a class="toc-link"><span class="toc-text">copyright</span></a></li><li class="toc-item toc-level-4"><a class="toc-link"><span class="toc-text">Front-matter</span></a></li><li class="toc-item toc-level-4"><a class="toc-link"><span class="toc-text"></span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link"><span class="toc-text">banner_img</span></a></li><li class="toc-item toc-level-5"><a class="toc-link"><span class="toc-text">banner_img_set</span></a></li><li class="toc-item toc-level-5"><a class="toc-link"><span class="toc-text">excerpt</span></a></li></ol></li><li class="toc-item toc-level-4"><a class="toc-link"><span class="toc-text">评论</span></a></li><li class="toc-item toc-level-4"><a class="toc-link"><span class="toc-text">字数统计</span></a></li><li class="toc-item toc-level-4"><a class="toc-link"><span class="toc-text">图片画廊</span></a></li><li class="toc-item toc-level-4"><a class="toc-link"><span class="toc-text"></span></a></li><li class="toc-item toc-level-4"><a class="toc-link"><span class="toc-text">标签插件</span></a></li><li class="toc-item toc-level-4"><a class="toc-link"><span class="toc-text">note</span></a></li><li class="toc-item toc-level-4"><a class="toc-link"><span class="toc-text">备案信息</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link"><span class="toc-text">站点托管</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link"><span class="toc-text">为什么选择 Gitee Pages</span></a></li><li class="toc-item toc-level-3"><a class="toc-link"><span class="toc-text">建立仓库</span></a></li><li class="toc-item toc-level-3"><a class="toc-link"><span class="toc-text">连接仓库</span></a></li><li class="toc-item toc-level-3"><a class="toc-link"><span class="toc-text">上传仓库</span></a></li><li class="toc-item toc-level-3"><a class="toc-link"><span class="toc-text">手动更新</span></a></li></ol></li></ol>
 </div></main>
           <aside class="left-column">
             
             <div class="card card-author">
               
-<img src="https://gitee.com/java4u/resources/raw/master/2020-12-13/1607868336866-image.png" class="author-img">
+<img src="/img/logo.jpg" class="author-img">
 
 <p class="author-name">蜗牛 Java 之家</p>
 <p class="author-description">Java 程序员的成长进阶社区</br>(Java for You)。</p>
 <div class="author-message">
   <a class="author-posts-count" href="/archives">
     <span>2</span>
-    <span>Posts</span>
+    <span>文章</span>
   </a>
   <a class="author-categories-count" href="/categories">
     <span>2</span>
-    <span>Categories</span>
+    <span>分类</span>
   </a>
   <a class="author-tags-count" href="/tags">
     <span>2</span>
-    <span>Tags</span>
+    <span>标签</span>
   </a>
 </div>
 
@@ -989,7 +1025,7 @@
   
   <article class="display-when-two-columns spacer">
     <div class="card card-content toc-card">
-      <div class="toc-header"><i class="iconfont icon-menu" style="padding-right: 2px;"></i>TOC</div>
+      <div class="toc-header"><i class="iconfont icon-menu" style="padding-right: 2px;"></i>目录</div>
 <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link"><span class="toc-text">前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link"><span class="toc-text">Hexo 简介</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link"><span class="toc-text">Hexo 是什么？</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link"><span class="toc-text">Hexo 安装</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link"><span class="toc-text">前置要求</span></a></li><li class="toc-item toc-level-3"><a class="toc-link"><span class="toc-text">安装 Git</span></a></li><li class="toc-item toc-level-3"><a class="toc-link"><span class="toc-text">安装 Node.js</span></a></li><li class="toc-item toc-level-3"><a class="toc-link"><span class="toc-text">安装 Hexo</span></a></li><li class="toc-item toc-level-3"><a class="toc-link"><span class="toc-text">运行 hexo</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link"><span class="toc-text">Hexo 建站</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link"><span class="toc-text">初始化操作</span></a></li><li class="toc-item toc-level-3"><a class="toc-link"><span class="toc-text">目录结构</span></a></li><li class="toc-item toc-level-3"><a class="toc-link"><span class="toc-text">本地启动</span></a></li><li class="toc-item toc-level-3"><a class="toc-link"><span class="toc-text">核心配置</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link"><span class="toc-text">package.json</span></a></li><li class="toc-item toc-level-4"><a class="toc-link"><span class="toc-text">_config.yml</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link"><span class="toc-text">网站</span></a></li><li class="toc-item toc-level-5"><a class="toc-link"><span class="toc-text">URL</span></a></li><li class="toc-item toc-level-5"><a class="toc-link"><span class="toc-text">目录</span></a></li><li class="toc-item toc-level-5"><a class="toc-link"><span class="toc-text">文章</span></a></li><li class="toc-item toc-level-5"><a class="toc-link"><span class="toc-text">分类 &amp; 标签</span></a></li><li class="toc-item toc-level-5"><a class="toc-link"><span class="toc-text">日期&#x2F;时间格式</span></a></li><li class="toc-item toc-level-5"><a class="toc-link"><span class="toc-text">分页</span></a></li><li class="toc-item toc-level-5"><a class="toc-link"><span class="toc-text">扩展</span></a></li></ol></li><li class="toc-item toc-level-4"><a class="toc-link"><span class="toc-text"></span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link"><span class="toc-text">常用指令</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link"><span class="toc-text">创建文章</span></a></li><li class="toc-item toc-level-4"><a class="toc-link"><span class="toc-text">运行服务器</span></a></li><li class="toc-item toc-level-4"><a class="toc-link"><span class="toc-text">生成静态文件</span></a></li><li class="toc-item toc-level-4"><a class="toc-link"><span class="toc-text">部署</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link"><span class="toc-text">Hexo 主题</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link"><span class="toc-text">为什么选择 Kaze</span></a></li><li class="toc-item toc-level-3"><a class="toc-link"><span class="toc-text">安装 Kaze</span></a></li><li class="toc-item toc-level-3"><a class="toc-link"><span class="toc-text">主题配置</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link"><span class="toc-text">主题颜色</span></a></li><li class="toc-item toc-level-4"><a class="toc-link"><span class="toc-text">字号与字体</span></a></li><li class="toc-item toc-level-4"><a class="toc-link"><span class="toc-text">站点访问量统计</span></a></li><li class="toc-item toc-level-4"><a class="toc-link"><span class="toc-text">数据分析</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link"><span class="toc-text"></span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link"><span class="toc-text">首页</span></a></li><li class="toc-item toc-level-4"><a class="toc-link"><span class="toc-text"></span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link"><span class="toc-text">文章头图</span></a></li></ol></li><li class="toc-item toc-level-4"><a class="toc-link"><span class="toc-text"></span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link"><span class="toc-text">小组件</span></a></li></ol></li><li class="toc-item toc-level-4"><a class="toc-link"><span class="toc-text">关于</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link"><span class="toc-text">社交链接</span></a></li></ol></li><li class="toc-item toc-level-4"><a class="toc-link"><span class="toc-text">友链</span></a></li><li class="toc-item toc-level-4"><a class="toc-link"><span class="toc-text">文章页</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link"><span class="toc-text">搜索功能</span></a></li><li class="toc-item toc-level-5"><a class="toc-link"><span class="toc-text">目录</span></a></li><li class="toc-item toc-level-5"><a class="toc-link"><span class="toc-text">代码高亮</span></a></li><li class="toc-item toc-level-5"><a class="toc-link"><span class="toc-text">数学公式</span></a></li></ol></li><li class="toc-item toc-level-4"><a class="toc-link"><span class="toc-text">copyright</span></a></li><li class="toc-item toc-level-4"><a class="toc-link"><span class="toc-text">Front-matter</span></a></li><li class="toc-item toc-level-4"><a class="toc-link"><span class="toc-text"></span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link"><span class="toc-text">banner_img</span></a></li><li class="toc-item toc-level-5"><a class="toc-link"><span class="toc-text">banner_img_set</span></a></li><li class="toc-item toc-level-5"><a class="toc-link"><span class="toc-text">excerpt</span></a></li></ol></li><li class="toc-item toc-level-4"><a class="toc-link"><span class="toc-text">评论</span></a></li><li class="toc-item toc-level-4"><a class="toc-link"><span class="toc-text">字数统计</span></a></li><li class="toc-item toc-level-4"><a class="toc-link"><span class="toc-text">图片画廊</span></a></li><li class="toc-item toc-level-4"><a class="toc-link"><span class="toc-text"></span></a></li><li class="toc-item toc-level-4"><a class="toc-link"><span class="toc-text">标签插件</span></a></li><li class="toc-item toc-level-4"><a class="toc-link"><span class="toc-text">note</span></a></li><li class="toc-item toc-level-4"><a class="toc-link"><span class="toc-text">备案信息</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link"><span class="toc-text">站点托管</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link"><span class="toc-text">为什么选择 Gitee Pages</span></a></li><li class="toc-item toc-level-3"><a class="toc-link"><span class="toc-text">建立仓库</span></a></li><li class="toc-item toc-level-3"><a class="toc-link"><span class="toc-text">连接仓库</span></a></li><li class="toc-item toc-level-3"><a class="toc-link"><span class="toc-text">上传仓库</span></a></li><li class="toc-item toc-level-3"><a class="toc-link"><span class="toc-text">手动更新</span></a></li></ol></li></ol>
     </div>
   </article>
@@ -997,7 +1033,7 @@
   
   <article class="card card-content categories-widget">
     <div class="categories-card">
-  <div class="categories-header"><i class="iconfont icon-fenlei" style="padding-right: 2px;"></i>Categories</div>
+  <div class="categories-header"><i class="iconfont icon-fenlei" style="padding-right: 2px;"></i>分类</div>
   <div class="categories-list">
     
       <a href="/categories/实用工具">
@@ -1020,7 +1056,7 @@
   
   <article class="card card-content tags-widget">
     <div class="tags-card">
-  <div class="tags-header"><i class="iconfont icon-biaoqian" style="padding-right: 2px;"></i>hot tags</div>
+  <div class="tags-header"><i class="iconfont icon-biaoqian" style="padding-right: 2px;"></i>热门标签</div>
   <div class="tags-list">
     
     <a href="\tags\教程" title="教程"><div class="tags-list-item">教程</div></a>
@@ -1039,14 +1075,14 @@
   
   
   <article class="card card-content toc-card">
-    <div class="toc-header"><i class="iconfont icon-menu" style="padding-right: 2px;"></i>TOC</div>
+    <div class="toc-header"><i class="iconfont icon-menu" style="padding-right: 2px;"></i>目录</div>
 <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link"><span class="toc-text">前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link"><span class="toc-text">Hexo 简介</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link"><span class="toc-text">Hexo 是什么？</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link"><span class="toc-text">Hexo 安装</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link"><span class="toc-text">前置要求</span></a></li><li class="toc-item toc-level-3"><a class="toc-link"><span class="toc-text">安装 Git</span></a></li><li class="toc-item toc-level-3"><a class="toc-link"><span class="toc-text">安装 Node.js</span></a></li><li class="toc-item toc-level-3"><a class="toc-link"><span class="toc-text">安装 Hexo</span></a></li><li class="toc-item toc-level-3"><a class="toc-link"><span class="toc-text">运行 hexo</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link"><span class="toc-text">Hexo 建站</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link"><span class="toc-text">初始化操作</span></a></li><li class="toc-item toc-level-3"><a class="toc-link"><span class="toc-text">目录结构</span></a></li><li class="toc-item toc-level-3"><a class="toc-link"><span class="toc-text">本地启动</span></a></li><li class="toc-item toc-level-3"><a class="toc-link"><span class="toc-text">核心配置</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link"><span class="toc-text">package.json</span></a></li><li class="toc-item toc-level-4"><a class="toc-link"><span class="toc-text">_config.yml</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link"><span class="toc-text">网站</span></a></li><li class="toc-item toc-level-5"><a class="toc-link"><span class="toc-text">URL</span></a></li><li class="toc-item toc-level-5"><a class="toc-link"><span class="toc-text">目录</span></a></li><li class="toc-item toc-level-5"><a class="toc-link"><span class="toc-text">文章</span></a></li><li class="toc-item toc-level-5"><a class="toc-link"><span class="toc-text">分类 &amp; 标签</span></a></li><li class="toc-item toc-level-5"><a class="toc-link"><span class="toc-text">日期&#x2F;时间格式</span></a></li><li class="toc-item toc-level-5"><a class="toc-link"><span class="toc-text">分页</span></a></li><li class="toc-item toc-level-5"><a class="toc-link"><span class="toc-text">扩展</span></a></li></ol></li><li class="toc-item toc-level-4"><a class="toc-link"><span class="toc-text"></span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link"><span class="toc-text">常用指令</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link"><span class="toc-text">创建文章</span></a></li><li class="toc-item toc-level-4"><a class="toc-link"><span class="toc-text">运行服务器</span></a></li><li class="toc-item toc-level-4"><a class="toc-link"><span class="toc-text">生成静态文件</span></a></li><li class="toc-item toc-level-4"><a class="toc-link"><span class="toc-text">部署</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link"><span class="toc-text">Hexo 主题</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link"><span class="toc-text">为什么选择 Kaze</span></a></li><li class="toc-item toc-level-3"><a class="toc-link"><span class="toc-text">安装 Kaze</span></a></li><li class="toc-item toc-level-3"><a class="toc-link"><span class="toc-text">主题配置</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link"><span class="toc-text">主题颜色</span></a></li><li class="toc-item toc-level-4"><a class="toc-link"><span class="toc-text">字号与字体</span></a></li><li class="toc-item toc-level-4"><a class="toc-link"><span class="toc-text">站点访问量统计</span></a></li><li class="toc-item toc-level-4"><a class="toc-link"><span class="toc-text">数据分析</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link"><span class="toc-text"></span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link"><span class="toc-text">首页</span></a></li><li class="toc-item toc-level-4"><a class="toc-link"><span class="toc-text"></span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link"><span class="toc-text">文章头图</span></a></li></ol></li><li class="toc-item toc-level-4"><a class="toc-link"><span class="toc-text"></span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link"><span class="toc-text">小组件</span></a></li></ol></li><li class="toc-item toc-level-4"><a class="toc-link"><span class="toc-text">关于</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link"><span class="toc-text">社交链接</span></a></li></ol></li><li class="toc-item toc-level-4"><a class="toc-link"><span class="toc-text">友链</span></a></li><li class="toc-item toc-level-4"><a class="toc-link"><span class="toc-text">文章页</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link"><span class="toc-text">搜索功能</span></a></li><li class="toc-item toc-level-5"><a class="toc-link"><span class="toc-text">目录</span></a></li><li class="toc-item toc-level-5"><a class="toc-link"><span class="toc-text">代码高亮</span></a></li><li class="toc-item toc-level-5"><a class="toc-link"><span class="toc-text">数学公式</span></a></li></ol></li><li class="toc-item toc-level-4"><a class="toc-link"><span class="toc-text">copyright</span></a></li><li class="toc-item toc-level-4"><a class="toc-link"><span class="toc-text">Front-matter</span></a></li><li class="toc-item toc-level-4"><a class="toc-link"><span class="toc-text"></span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link"><span class="toc-text">banner_img</span></a></li><li class="toc-item toc-level-5"><a class="toc-link"><span class="toc-text">banner_img_set</span></a></li><li class="toc-item toc-level-5"><a class="toc-link"><span class="toc-text">excerpt</span></a></li></ol></li><li class="toc-item toc-level-4"><a class="toc-link"><span class="toc-text">评论</span></a></li><li class="toc-item toc-level-4"><a class="toc-link"><span class="toc-text">字数统计</span></a></li><li class="toc-item toc-level-4"><a class="toc-link"><span class="toc-text">图片画廊</span></a></li><li class="toc-item toc-level-4"><a class="toc-link"><span class="toc-text"></span></a></li><li class="toc-item toc-level-4"><a class="toc-link"><span class="toc-text">标签插件</span></a></li><li class="toc-item toc-level-4"><a class="toc-link"><span class="toc-text">note</span></a></li><li class="toc-item toc-level-4"><a class="toc-link"><span class="toc-text">备案信息</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link"><span class="toc-text">站点托管</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link"><span class="toc-text">为什么选择 Gitee Pages</span></a></li><li class="toc-item toc-level-3"><a class="toc-link"><span class="toc-text">建立仓库</span></a></li><li class="toc-item toc-level-3"><a class="toc-link"><span class="toc-text">连接仓库</span></a></li><li class="toc-item toc-level-3"><a class="toc-link"><span class="toc-text">上传仓库</span></a></li><li class="toc-item toc-level-3"><a class="toc-link"><span class="toc-text">手动更新</span></a></li></ol></li></ol>
   </article>
   
   
   <article class="card card-content">
     <div class="recent-posts-card">
-  <div class="recent-posts-header"><i class="iconfont icon-wenzhang_huaban" style="padding-right: 2px;"></i>Recent Posts</div>
+  <div class="recent-posts-header"><i class="iconfont icon-wenzhang_huaban" style="padding-right: 2px;"></i>最近文章</div>
   <div class="recent-posts-list">
     
       <div class="recent-posts-item">
@@ -1121,6 +1157,9 @@
 </a>
 
   
+  
+  
+
   
   
   <script>
