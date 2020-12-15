@@ -25,7 +25,7 @@
 
   <url>
     <loc>https://java4u.cn/</loc>
-    <lastmod>2020-12-14</lastmod>
+    <lastmod>2020-12-15</lastmod>
     <changefreq>daily</changefreq>
     <priority>1.0</priority>
   </url>
@@ -33,21 +33,21 @@
   
   <url>
     <loc>https://java4u.cn/tags/tools/</loc>
-    <lastmod>2020-12-14</lastmod>
+    <lastmod>2020-12-15</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
   
   <url>
     <loc>https://java4u.cn/tags/course/</loc>
-    <lastmod>2020-12-14</lastmod>
+    <lastmod>2020-12-15</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
   
   <url>
     <loc>https://java4u.cn/tags/build-site/</loc>
-    <lastmod>2020-12-14</lastmod>
+    <lastmod>2020-12-15</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
@@ -56,7 +56,7 @@
   
   <url>
     <loc>https://java4u.cn/categories/course/</loc>
-    <lastmod>2020-12-14</lastmod>
+    <lastmod>2020-12-15</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
