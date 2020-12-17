@@ -2,6 +2,13 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   
   <url>
+    <loc>https://java4u.cn/resources/index.html</loc>
+    
+    <lastmod>2020-12-17</lastmod>
+    
+  </url>
+  
+  <url>
     <loc>https://java4u.cn/course/hexo_site_course/</loc>
     
     <lastmod>2020-12-15</lastmod>
@@ -29,17 +36,10 @@
     
   </url>
   
-  <url>
-    <loc>https://java4u.cn/resources/index.html</loc>
-    
-    <lastmod>2020-12-14</lastmod>
-    
-  </url>
-  
 
   <url>
     <loc>https://java4u.cn/</loc>
-    <lastmod>2020-12-16</lastmod>
+    <lastmod>2020-12-17</lastmod>
     <changefreq>daily</changefreq>
     <priority>1.0</priority>
   </url>
@@ -47,35 +47,35 @@
   
   <url>
     <loc>https://java4u.cn/tags/tools/</loc>
-    <lastmod>2020-12-16</lastmod>
+    <lastmod>2020-12-17</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
   
   <url>
     <loc>https://java4u.cn/tags/course/</loc>
-    <lastmod>2020-12-16</lastmod>
+    <lastmod>2020-12-17</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
   
   <url>
     <loc>https://java4u.cn/tags/build-site/</loc>
-    <lastmod>2020-12-16</lastmod>
+    <lastmod>2020-12-17</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
   
   <url>
     <loc>https://java4u.cn/tags/mindmap/</loc>
-    <lastmod>2020-12-16</lastmod>
+    <lastmod>2020-12-17</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
   
   <url>
     <loc>https://java4u.cn/tags/markdown/</loc>
-    <lastmod>2020-12-16</lastmod>
+    <lastmod>2020-12-17</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
@@ -84,7 +84,7 @@
   
   <url>
     <loc>https://java4u.cn/categories/course/</loc>
-    <lastmod>2020-12-16</lastmod>
+    <lastmod>2020-12-17</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
