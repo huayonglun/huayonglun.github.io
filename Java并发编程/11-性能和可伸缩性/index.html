@@ -1,0 +1,1082 @@
+<!DOCTYPE html>
+<html  lang="zh-CN" >
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport"
+    content="width=device-width, initial-scale=1.0, minimum-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <meta name="theme-color" content="#fff" id="theme-color">
+  <meta name="description" content="蜗牛 Java 之家 (java4u.cn) 是 Java 程序员的成长进阶社区，致力于为广大学习 Java 的程序员们提供计算机专业相关的经验教程、学习资料和书籍，包括Java、数据库、Linux、网络等学习干货、IT程序员常用软件工具分享、计算机专业经典电子书PDF，帮助 Java 程序员更快入门和提高。">
+  <link rel="icon" href="/img/logo.jpg">
+  <title>11.性能和可伸缩性&nbsp; | &nbsp;Java for You</title>
+  
+  
+  <meta property="og:title" content="11.性能和可伸缩性">
+  
+  
+  <meta property="og:url" content="https://java4u.cn/Java%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B/11-%E6%80%A7%E8%83%BD%E5%92%8C%E5%8F%AF%E4%BC%B8%E7%BC%A9%E6%80%A7/index.html">
+  
+  
+  <meta property="og:img" content="/img/logo.jpg">
+  
+  
+  <meta property="og:img" content="蜗牛 Java 之家 (java4u.cn) 是 Java 程序员的成长进阶社区，致力于为广大学习 Java 的程序员们提供计算机专业相关的经验教程、学习资料和书籍，包括Java、数据库、Linux、网络等学习干货、IT程序员常用软件工具分享、计算机专业经典电子书PDF，帮助 Java 程序员更快入门和提高。">
+  
+  
+  <meta property="og:type" content="article">
+  <meta property="og:article:published_time" content="2016-05-05">
+  <meta property="og:article:modified_time" content="2020-12-19">
+  <meta property="og:article:author" content="蜗牛 Java 之家">
+  
+  
+  <meta property="og:article:tag" content="Java">
+  
+  <meta property="og:article:tag" content="Java并发">
+  
+  <meta property="og:article:tag" content="性能和可伸缩性">
+  
+  
+  
+  
+  <script>
+    // control reverse button
+    var reverseDarkList = {
+      dark: 'light',
+      light: 'dark'
+    };
+    var themeColor = {
+      dark: '#1c1c1e',
+      light: '#fff'
+    }
+    // get the data of css prefers-color-scheme
+    var getCssMediaQuery = function() {
+      return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+    };
+    // reverse current darkmode setting function
+    var reverseDarkModeSetting = function() {
+      var setting = localStorage.getItem('user-color-scheme');
+      if(reverseDarkList[setting]) {
+        setting = reverseDarkList[setting];
+      } else if(setting === null) {
+        setting = reverseDarkList[getCssMediaQuery()];
+      } else {
+        return;
+      }
+      localStorage.setItem('user-color-scheme', setting);
+      return setting;
+    };
+    // apply current darkmode setting
+    var setDarkmode = function(mode) {
+      var setting = mode || localStorage.getItem('user-color-scheme');
+      if(setting === getCssMediaQuery()) {
+        document.documentElement.removeAttribute('data-user-color-scheme');
+        localStorage.removeItem('user-color-scheme');
+        document.getElementById('theme-color').content = themeColor[setting];
+      } else if(reverseDarkList[setting]) {
+        document.documentElement.setAttribute('data-user-color-scheme', setting);
+        document.getElementById('theme-color').content = themeColor[setting];
+      } else {
+        document.documentElement.removeAttribute('data-user-color-scheme');
+        localStorage.removeItem('user-color-scheme');
+        document.getElementById('theme-color').content = themeColor[getCssMediaQuery()];
+      }
+    };
+    setDarkmode();
+  </script>
+  <script>
+    function loadScript(url, cb) {
+      var script = document.createElement('script');
+      script.src = url;
+      if (cb) script.onload = cb;
+      script.async = true;
+      document.body.appendChild(script);
+    }
+  </script>
+  
+  <link rel="preload" href="//at.alicdn.com/t/font_1946621_i1kgafibvw.css" as="style" >
+  <link rel="preload" href="//at.alicdn.com/t/font_1952792_89b4ac4k4up.css" as="style" >
+  
+  <link rel="preload" href="/js/lib/lightbox/baguetteBox.min.js" as="script">
+  <link rel="preload" href="/js/lib/lightbox/baguetteBox.min.css" as="style" >
+  
+  
+  <link rel="preload" href="/js/lib/lozad.min.js" as="script">
+  
+  
+  
+  
+  
+  <link rel="prefetch" href="//cdn.jsdelivr.net/npm/mathjax@3.0.5/es5/tex-svg.js" as="script">
+  
+  
+  
+  <link rel="prefetch" href="https://cdn.jsdelivr.net/npm/valine@1.4.14/dist/Valine.min.js" as="script">
+  
+  
+  
+  
+<link rel="stylesheet" href="/css/main.css">
+
+  
+  
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1946621_i1kgafibvw.css">
+
+  
+  
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1952792_89b4ac4k4up.css">
+
+  
+  
+<link rel="stylesheet" href="/js/lib/lightbox/baguetteBox.min.css">
+
+  
+  
+  
+  
+
+
+  <!-- 百度站长工具验证 -->
+  <meta name="baidu-site-verification" content="code-9cIsKsXy75" />
+
+  <!-- 必应站长工具验证-->
+  <meta name="msvalidate.01" content="81AA8F485E800B7335F07A558BE9A636" />
+
+  <!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-C22LNC79YC"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-C22LNC79YC');
+</script>
+<meta name="generator" content="Hexo 5.2.0"></head>
+
+
+<body>
+  <div class="wrapper">
+    
+    <nav class="navbar">
+  <div class="navbar-logo">
+    <span class="navbar-logo-main">
+      
+      <img class="navbar-logo-img" src="/img/logo.jpg" alt="logo">
+      
+      <span class="navbar-logo-dsc">蜗牛 Java 之家</span>
+    </span>
+  </div>
+  <div class="navbar-menu">
+    
+    <a href="/" class="navbar-menu-item">
+    
+    首页
+    
+    </a>
+    
+    <a href="/resources" class="navbar-menu-item">
+    
+    免费资源
+    
+    </a>
+    
+    <a href="/tools" class="navbar-menu-item">
+    
+    免费工具
+    
+    </a>
+    
+    <a href="/categories" class="navbar-menu-item">
+    
+    分类
+    
+    </a>
+    
+    <a href="/links" class="navbar-menu-item">
+    
+    友链
+    
+    </a>
+    
+    <a class="navbar-menu-item darknavbar" id="dark"><i class="iconfont icon-weather"></i></a>
+    <a class="navbar-menu-item searchnavbar" id="search"><i class="iconfont icon-search" style="font-size: 1.2rem; font-weight: 400;"></i></a>
+  </div>
+</nav>
+    
+    <div id="local-search" style="display: none;">
+      <input class="navbar-menu-item" id="search-input" placeholder="请输入搜索内容...">
+      <div id="search-content"></div>
+    </div>
+    
+    <div class="section-wrap">
+      <div class="container">
+        <div class="columns">
+          <main class="main-column">
+<article class="card card-content">
+  <header>
+    <h1 class="post-title">
+      11.性能和可伸缩性
+    </h1>
+  </header>
+  <div class="post-meta post-show-meta">
+    <time datetime="2016-05-05T10:26:31.000Z">
+      <i class="iconfont icon-calendar" style="margin-right: 2px;"></i>
+      <span>2016-05-05</span>
+    </time>
+    
+    <span class="dot"></span>
+    
+    <a href="/categories/Java并发编程/" class="post-meta-link">Java并发编程</a>
+    
+    
+    
+    <span class="dot"></span>
+    <span>5.5k 字</span>
+    
+
+    <span class="dot"></span>
+    <!-- 增加阅读量统计样式代码 -->
+    
+    <!-- id 将作为查询条件 -->
+    <i class="iconfont icon-wodebaobiao" style="margin-right: 2px; font-size: 1.15rem;"></i>
+    <span id="/Java%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B/11-%E6%80%A7%E8%83%BD%E5%92%8C%E5%8F%AF%E4%BC%B8%E7%BC%A9%E6%80%A7/" class="leancloud_visitors" data-flag-title="11.性能和可伸缩性">
+      <em class="post-meta-item-text">阅读量 </em>
+      <i class="leancloud-visitors-count"></i>
+    </span>
+
+  </div>
+  
+  <div class="post-meta post-show-meta" style="margin-top: -10px;">
+    <div style="display: flex; align-items: center;">
+      <i class="iconfont icon-biaoqian" style="margin-right: 2px; font-size: 1.15rem;"></i>
+      
+      
+        <a href="/tags/Java/" class="post-meta-link">Java</a>
+      
+      
+      <span class="dot"></span>
+      
+        <a href="/tags/Java并发/" class="post-meta-link">Java并发</a>
+      
+      
+      <span class="dot"></span>
+      
+        <a href="/tags/性能和可伸缩性/" class="post-meta-link">性能和可伸缩性</a>
+      
+    </div>
+  </div>
+  
+  </header>
+  <div id="section" class="post-content">
+    <ul>
+<li>使用线程最主要的原因是提高性能。使用线程可以使程序更加充分的发挥出闲置的处理能力，从而更好的利用资源；并能够使程序在现有任务正在运行的情况下立刻开始着手处理新的任务，从而提高系统的响应性。</li>
+</ul>
+<h2><span id="111-性能的思考">11.1 性能的思考</span></h2><ul>
+<li>改进性能意味着用更少的资源做更多的事情。</li>
+<li>资源包括CPU周期、内存、网络带宽、I/O带宽、数据库请求、磁盘空间、以及其他一些资源。</li>
+<li>当活动的运行因某个特定资源受阻时，我们称之为受限于该资源：受限于CPU，受限于数据库。</li>
+<li>虽然目标是提高性能，但是使用多线程总会引入一些性能开销：与协调线程相关的开销(加锁、信号、内存同步)，增加的上下文切换，线程的创建和消亡，以及调度的开销。当线程被过度使用后，这些开销会超过吞吐量响应性和计算能力带来的补偿。</li>
+<li>另一方面一个没有经过良好并发设计的应用程序，甚至比相同功能的顺序的程序性能更差。</li>
+<li>为了实现更好的性能，我们需要更有效的利用现有的处理资源，使CPU尽可能处于忙碌状态。</li>
+</ul>
+<h3><span id="1111-性能遭遇可伸缩性">11.1.1 性能“遭遇”可伸缩性</span></h3><ul>
+<li>应用程序可以从很多个角度来衡量：<ul>
+<li>服务时间、等待时间、(衡量有多快)</li>
+<li>吞吐量、生产量、可伸缩性、(衡量有多少)</li>
+<li>效率、</li>
+</ul>
+</li>
+</ul>
+<blockquote>
+<p>可伸缩性指的是：当增加计算资源的时候(比如增加额外的CPU数量、内存、存储器、I/O带宽)，吞吐量和生产量能够得到相应的改进。</p>
+</blockquote>
+<ul>
+<li>传统调优用最小代价完成相同工作，比如通过缓存来重用以前计算的结果。为可伸缩性调优时，需要用更多的资源做更多的事情。</li>
+<li>在Server应用程序中，“有多少”往往比“有多快”受到更多的关注。</li>
+</ul>
+<h3><span id="1112-对性能的权衡进行评估">11.1.2 对性能的权衡进行评估</span></h3><ul>
+<li>大多数性能的决定需要多个变量，并且高度依赖于发生的环境。在决定某个方案比其他方案“更快”之前，先问你自己一些问题：<ul>
+<li>你所谓的更快指的是什么</li>
+<li>在什么样的条件下你的方案能够真正运行的更快？在轻负载还是重负载下？大数据集还是小数据集？是否支持你的测量标准的答案？</li>
+<li>这些条件在你的环境中发生的频率？是否支持你的测量标准的答案？</li>
+<li>这些代码在其他环境的不同条件下被用到的可能性？</li>
+<li>你用什么样隐含的代价，比如增加的开发风险或维护性，换取了性能的提高？这个权衡的决定是否正确？</li>
+</ul>
+</li>
+<li>测评。不要臆测。</li>
+<li>免费的perfbar应用程序可以给你一张相当不错的图表，告诉你CPU究竟是如何忙碌地工作，并且你的目标通常是保持CPU的忙碌，这便是一个很好的方式，使你能够评估你是否需要性能调节，或者你调节的效果如何。</li>
+</ul>
+<h3><span id="112-amdahl定律">11.2 Amdahl定律</span></h3><ul>
+<li>大多数并发程序由一系列并行和串行化的片段组成。Amdahl定律描述了在一个系统中，基于可并行化和串行化的组件各自所占的比重，程序通过获得额外的计算资源，理论上能够加速多少。如果F是必须串行化执行的比重，那么Amdahl定律告诉我们，在一个N处理器的机器中，我们最多可以加速：</li>
+</ul>
+<p>　　　　　　　　<img src="http://i.imgur.com/IGU0OCH.png" alt="Amdahl定律" srcset="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20300%20300'%3E%3C/svg%3E" data-src="http://i.imgur.com/IGU0OCH.png" class="lozad post-image"></p>
+<p>　　　　　　<img src="http://i.imgur.com/3GpNBa1.png" alt="不同串行化的百分比" srcset="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20300%20300'%3E%3C/svg%3E" data-src="http://i.imgur.com/3GpNBa1.png" class="lozad post-image"></p>
+<blockquote>
+<p>所有的并发程序都有一些串行源。</p>
+</blockquote>
+<h3><span id="1121-定性地应用amdahl定律">11.2.1 定性地应用Amdahl定律</span></h3><ul>
+<li>当我们评估一个算法的时候，考虑其在成百甚至上千个处理器的情况下受到的限制，能够帮助我们洞察伸缩性的极限的出现。例如，用来减小锁的粒度：分拆锁(把一个锁分拆成两个)，分离锁(把一个锁分拆成多个锁)。透过Amdahl定律来审视它们，我们发现把一个锁分拆成两个，看上去没能在利用多处理器上帮助我们很多，但是分离锁的效果却很好，因为分离出的数量可随着处理器数量的增加而增长。</li>
+</ul>
+<h2><span id="113-线程引入的开销">11.3 线程引入的开销</span></h2><ul>
+<li>单线程程序即不存在调度问题，也不存在同步的开销，不需要使用锁来保证数据结构的一致性。调度和线程内部的协调都要付出性能的开销；对于性能改进的线程来说，并行带来的性能优势必须超过并发锁引入的开销。</li>
+</ul>
+<h3><span id="1131-切换上下文">11.3.1 切换上下文</span></h3><ul>
+<li>如果主线程是唯一可调度的线程，它绝不会排除在调度之外。从另一方面看，如果可运行的线程数大于CPU的数量，那么OS最终会强行换出正在执行的线程，从而使其他线程能够使用CPU。这会引起上下文切换，它会保存当前运行线程的执行上下文，并重建新调入线程的执行上下文。</li>
+<li>切换上下文是要付出代价的；线程的调度需要操控OS和JVM中共享的数据结构。你的程序与OS、JVM使用相同的CPU；CPU在JVM和OS的代码花费越多时间，意味着用于你的程序的时间就越少。但是JVM和OS活动的花费并不是切换上下文开销的唯一来源。当一个新的线程被换入后，它所需要的数据可能不在当前处理器本地的缓存中，所以切换上下文会引起缓存缺失的小恐慌，因此线程在第一次调度的时候会运行的稍慢一些。即使有很多其他正在等待的线程，调度程序也会为每一个可运行的线程分配一个最小执行时间的定额。就是因为这个原因：它分期偿付切换上下文的开销，获得更多不中断的执行时间，从整体上提高了吞吐量(以损失响应性为代价)。</li>
+<li>当线程因为竞争一个锁而被阻塞时，JVM通常会将这个线程挂起，允许它被换出。如果线程频繁发生阻塞，那线程就不能完整使用它的调度限额了。一个程序发生越多的阻塞(阻塞I/O，等待竞争锁，或者等待条件变量)，与受限于CPU的程序相比，就会造成越多的上下文切换，这增加了调度的开销，并减少了吞吐量。</li>
+<li>切换上下文真正的开销根据不同的平台而变化，但是一条好的经验性原则是：在大多数同用的处理器中，上下文切换的开销相当于5000到10000个时钟周期，或者几微秒。</li>
+<li>Unix系统的vmstat命令和Windows系统的perfmon工具都能报告上下文切换次数和内核占用的时间等信息。高内核占用率(超过10%)通常象征繁重的调度活动，这很可能是由I/O阻塞，或竞争锁引起的。</li>
+</ul>
+<h3><span id="1132-内存同步">11.3.2 内存同步</span></h3><ul>
+<li><p>性能的开销有几个来源。synchronized和volatile提供的可见性保证要求使用一个特殊的、名为存储关卡(memory barrier)的指令，来刷新缓存，使缓存无效，刷新硬件的写缓冲，并延迟执行的传递。存储关卡可能同样会对性能产生影响，因为它们抑制了其他编译器的优化；在存储关卡中，大多数操作是不能被重排序的。</p>
+</li>
+<li><p>现代的JVM能够通过优化，解除经确证不存在竞争的锁，从而减少额外的同步。</p>
+</li>
+<li><p>更加成熟的JVM可以使用<strong>逸出分析</strong>来识别本地对象的引用并没有在堆中暴露，并且因此成为线程本地的。</p>
+</li>
+<li><p>以下代码的getStoogeNames中，对List仅有的引用是本地变量stooges，栈限制的变量自动默认为线程本地的。在本地执行getStoogeNames，至少需要获取/释放Vector的锁4次，每个add一次，toString一次，然而，一个聪明运行时编译器，能够合并这些调用，然后发现stooges和它的内部状态一直没有逸出，因此这4次对锁的请求就可以被消除了。</p>
+<pre><code>  //锁省略的候选程序
+   public final class ThreeStooges &#123;
+      private final Set&lt;String&gt; stooges = new HashSet&lt;String&gt;();
+
+      public ThreeStooges() &#123;
+          stooges.add(&quot;Moe&quot;);
+          stooges.add(&quot;Larry&quot;);
+          stooges.add(&quot;Curly&quot;);
+      &#125;
+
+      public boolean isStooge(String name) &#123;
+          return stooges.contains(name);
+      &#125;
+
+      public String getStoogeNames() &#123;
+          List&lt;String&gt; stooges = new Vector&lt;String&gt;();
+          stooges.add(&quot;Moe&quot;);
+          stooges.add(&quot;Larry&quot;);
+          stooges.add(&quot;Curly&quot;);
+          return stooges.toString();
+      &#125;
+  &#125;</code></pre>
+</li>
+<li><p>即使没有逸出分析，编译器同样可以进行<strong>锁的粗化</strong>，把邻近的synchronized块用相同的锁合并起来。在getStoogeNames中，JVM如果使用锁的粗化，可能会把3个add调用结合起来，并对toString使用单独的锁请求和释放，在synchronized块的内部，利用启发式方法产生同步开销，而不是指令式方法。这不仅仅减少了同步的开销，同时也给予优化者更大的代码块，很可能成就了进一步的优化。</p>
+</li>
+<li><p>一个线程中的同步也可能影响到其他线程的性能。同步造成了共享内存总线上的通信量；这个总线的带宽是有限的，所有进程都共享这条总线。如果线程必须竞争同步带宽，所有使用到同步的线程都会受阻。</p>
+</li>
+</ul>
+<h3><span id="1133-阻塞">11.3.3 阻塞</span></h3><ul>
+<li>非竞争的同步可以由JVM完全掌控，而竞争的同步可能需要OS的活动，这会增大开销。当锁为竞争性的时候，失败的线程必然发生阻塞。JVM既能<strong>自旋等待</strong>，或者在操作系统中挂起这个被阻塞的线程。</li>
+<li>自旋等待适合短期的等待，挂起适合长期的等待。</li>
+<li>阻塞归因于锁的竞争，线程持有这样的锁：当它释放该锁的时候，它必须通知OS，重新开始因该锁而阻塞的线程。</li>
+</ul>
+<h2><span id="114-减少锁的竞争">11.4 减少锁的竞争</span></h2><ul>
+<li>串行化会损害可伸缩性，上下文切换会损害性能。竞争性的锁会同时导致这两种损失，所以减少锁的竞争能够改进性能和可伸缩性。</li>
+<li>访问独占锁守护的资源是串行的——一次只能有一个线程访问它。当然，我们有更好的理由使用锁，比如避免数据过期，但是这样的安全性是用很大的代价换来的。对锁长期的竞争会限制可伸缩性。</li>
+</ul>
+<blockquote>
+<p>并发程序中，对可伸缩性首要的威胁是独占的资源锁</p>
+</blockquote>
+<ul>
+<li>有两个原因影响着锁的竞争性：<ul>
+<li>锁被请求的频率</li>
+<li>每次持有该锁的时间</li>
+</ul>
+</li>
+<li>两者乘积足够小，大多数请求锁的尝试是非竞争的，但是请求量特别大，线程将会阻塞以等待锁；在极端的情况下，处理器将会闲置，即使仍有大量的工作等着完成。</li>
+<li>有3中方式减少锁的竞争：<ul>
+<li>减少持有锁的时间；</li>
+<li>减少请求锁的频率</li>
+<li>或者用协调机制取代独占锁，从而允许更强的并发性。</li>
+</ul>
+</li>
+</ul>
+<h3><span id="1141-缩小锁的范围快进快出">11.4.1 缩小锁的范围(“快进快出”)</span></h3><ul>
+<li><p>减少竞争发生可能性的有效方式是尽可能缩短把持锁的时间。这可以通过把与锁无关的代码移出synchronized块来实现，尤其是那些花费昂贵的操作，以及那些潜在的阻塞操作，比如I/O操作。</p>
+<pre><code>  //持有锁超过必要的时间
+  @ThreadSafe
+  public class AttributeStore &#123;
+      @GuardedBy(&quot;this&quot;) private final Map&lt;String, String&gt;
+              attributes = new HashMap&lt;String, String&gt;();
+
+      public synchronized boolean userLocationMatches(String name,
+                                                      String regexp) &#123;
+          String key = &quot;users.&quot; + name + &quot;.location&quot;;
+          String location = attributes.get(key);
+          if (location == null)
+              return false;
+          else
+              return Pattern.matches(regexp, location);
+      &#125;
+  &#125;</code></pre>
+</li>
+<li><p>以下代码减少锁持续的时间</p>
+<pre><code>  @ThreadSafe
+  public class BetterAttributeStore &#123;
+      @GuardedBy(&quot;this&quot;) private final Map&lt;String, String&gt;
+              attributes = new HashMap&lt;String, String&gt;();
+
+      public boolean userLocationMatches(String name, String regexp) &#123;
+          String key = &quot;users.&quot; + name + &quot;.location&quot;;
+          String location;
+          synchronized (this) &#123;
+              location = attributes.get(key);
+          &#125;
+          if (location == null)
+              return false;
+          else
+              return Pattern.matches(regexp, location);
+      &#125;
+  &#125;</code></pre>
+</li>
+<li><p>缩小userLocationMatches方法中锁守护的范围，大大减少了调用中遇到锁住情况的次数。由Amdahl定律得知，这消除了可伸缩性的一个阻碍，因为串行化的代码少了。</p>
+</li>
+<li><p>因为AttributeStore只有一个状态变量，attributes，我们可用<strong>代理线程安全</strong>的技术。通过使用线程安全的Map来取代。</p>
+</li>
+</ul>
+<h3><span id="1142-减小锁的粒度">11.4.2 减小锁的粒度</span></h3><ul>
+<li><p>减小持有锁的时间比例的另一种方式是让线程减少调用它的频率。</p>
+</li>
+<li><p>这可用通过<strong>分拆锁(lock splitting)**和</strong>分离锁(lock striping)**来实现，也就是采用相互独立的锁，守卫多个独立的状态变量，在改变之前，它们都是由一个锁守护的。这些技术减小了锁发生时的粒度，潜在实现了更好的可伸缩性——但是使用更多的锁同样会增加死锁的风险。</p>
+</li>
+<li><p>应当分拆锁的候选程序</p>
+<pre><code>  @ThreadSafe
+  public class ServerStatusBeforeSplit &#123;
+      @GuardedBy(&quot;this&quot;) public final Set&lt;String&gt; users;
+      @GuardedBy(&quot;this&quot;) public final Set&lt;String&gt; queries;
+
+      public ServerStatusBeforeSplit() &#123;
+          users = new HashSet&lt;String&gt;();
+          queries = new HashSet&lt;String&gt;();
+      &#125;
+
+      public synchronized void addUser(String u) &#123;
+          users.add(u);
+      &#125;
+
+      public synchronized void addQuery(String q) &#123;
+          queries.add(q);
+      &#125;
+
+      public synchronized void removeUser(String u) &#123;
+          users.remove(u);
+      &#125;
+
+      public synchronized void removeQuery(String q) &#123;
+          queries.remove(q);
+      &#125;
+  &#125;</code></pre>
+</li>
+<li><p>使用分拆的锁重构ServerStatus</p>
+<pre><code>  @ThreadSafe
+  public class ServerStatusAfterSplit &#123;
+      @GuardedBy(&quot;users&quot;) public final Set&lt;String&gt; users;
+      @GuardedBy(&quot;queries&quot;) public final Set&lt;String&gt; queries;
+
+      public ServerStatusAfterSplit() &#123;
+          users = new HashSet&lt;String&gt;();
+          queries = new HashSet&lt;String&gt;();
+      &#125;
+
+      public void addUser(String u) &#123;
+          synchronized (users) &#123;
+              users.add(u);
+          &#125;
+      &#125;
+
+      public void addQuery(String q) &#123;
+          synchronized (queries) &#123;
+              queries.add(q);
+          &#125;
+      &#125;
+
+      public void removeUser(String u) &#123;
+          synchronized (users) &#123;
+              users.remove(u);
+          &#125;
+      &#125;
+
+      public void removeQuery(String q) &#123;
+          synchronized (users) &#123;
+              queries.remove(q);
+          &#125;
+      &#125;
+  &#125;</code></pre>
+</li>
+<li><p>分拆锁之后，每个新的更精巧的锁，相比于那些原始的粗糙锁，将会看到更少的通信量。</p>
+</li>
+</ul>
+<h3><span id="1143-分离锁">11.4.3 分离锁</span></h3><ul>
+<li><p>把一个锁竞争激烈的锁分拆成两个，很可能形成两个竞争激烈的锁。</p>
+</li>
+<li><p>分拆锁有时候可以被扩展，分成可大可小加锁块的集合，并且它们归属于相互独立的对象，这样的情况就是分离锁。例如，ConcurrentHashMap的实现使用了一个包含16个锁的Array，每一个锁都守护Hash Bucket的1 / 16；Bucket N由第N mod 16个锁来守护。假设哈希提供合理的拓展特性，并且关键字能够以统一的方式访问，这将会把对于锁的请求减少到约为原来的1 / 16。这项技术使得ConcurrentHashMap能够支持16个并发的Writer。</p>
+</li>
+<li><p>分离锁的一个负面作用是：对容器加锁，进行独占访问更加困难，并且更加昂贵了。通常，一个操作可以通过获取最多不超过一个锁来进行，但是有个别的情况需要对整个容器加锁，比如当ConcurrentHashMap的值需要被扩展、重排，放入一个更大的Bucket时。这是获取所有分离的锁的最典型的例子。</p>
+</li>
+<li><p>以下代码，StripedMap阐释了基于哈希的Map实现，其中用到了锁分离。他拥有N_LOCKS个锁，每一个守护Bucket的一个子集，大部分方法，比如get，只需要得到一个Bucket锁。有些方法需要获得所有的锁，但是如clear方法实现的那样，并不需要同时获得所有这些锁。</p>
+<pre><code>  //基于哈希的map中使用分离锁
+  @ThreadSafe
+  public class StripedMap &#123;
+      // Synchronization policy: buckets[n] guarded by locks[n%N_LOCKS]
+      private static final int N_LOCKS = 16;
+      private final Node[] buckets;
+      private final Object[] locks;
+
+      private static class Node &#123;
+          Node next;
+          Object key;
+          Object value;
+      &#125;
+
+      public StripedMap(int numBuckets) &#123;
+          buckets = new Node[numBuckets];
+          locks = new Object[N_LOCKS];
+          for (int i = 0; i &lt; N_LOCKS; i++)
+              locks[i] = new Object();
+      &#125;
+
+      private final int hash(Object key) &#123;
+          return Math.abs(key.hashCode() % buckets.length);
+      &#125;
+
+      public Object get(Object key) &#123;
+          int hash = hash(key);
+          synchronized (locks[hash % N_LOCKS]) &#123;
+              for (Node m = buckets[hash]; m != null; m = m.next)
+                  if (m.key.equals(key))
+                      return m.value;
+          &#125;
+          return null;
+      &#125;
+
+      public void clear() &#123;
+          for (int i = 0; i &lt; buckets.length; i++) &#123;
+              synchronized (locks[i % N_LOCKS]) &#123;
+                  buckets[i] = null;
+              &#125;
+          &#125;
+      &#125;
+  &#125;</code></pre>
+</li>
+</ul>
+<h3><span id="1144-避免热点域">11.4.4 避免热点域</span></h3><ul>
+<li>分拆锁和分离锁能够改进可伸缩性，因为它们能够使不同线程操作不同的数据或者(相同数据结构的不同部分)，而不会发生相互干扰。能够从分析锁受益的程序，通常是那些对锁的竞争普遍大于对锁守护数据竞争的程序。如果一个锁守护两个独立变量X和Y，线程A想要访问X，而线程B想要访问Y，这两个线程没有竞争任何数据，然而它们竞争相同的锁。</li>
+<li>独立的计数器可以提高类似size方法的速度，却使改进可伸缩性变得更难，因为每一个修改map的操作都要更新这个共享的计数器。计数器被称为“热点域(hot field)，因为每个变化操作都要访问它。</li>
+<li>为避免这个问题，ConcurrentHashMap通过枚举每个条目获得size，并把这个值加入到每个条目，而不是维护一个全局计数。为了避免列举所有元素，ConcurrentHashMap为每一个条目维护一个独立的计数域。同样由分离的锁守护。</li>
+</ul>
+<h3><span id="1145-独占锁的替代方法">11.4.5 独占锁的替代方法</span></h3><ul>
+<li>用于减轻竞争锁带来的影响的第三种技术是提前使用独占锁，这有助于使用更友好的并发方式进行共享状态的管理。这包括使用：<ul>
+<li>并发容器</li>
+<li>读写锁</li>
+<li>不可变对象</li>
+<li>原子变量</li>
+</ul>
+</li>
+<li>ReadWriteLock实行了一个多读者单写者加锁规则：只要没有更改，那么多个读者可以并发访问共享资源，但是写者必须独占获得锁。、</li>
+<li>原子变量提供了能够减少更新“热点域”的方式，如静态计数器、序列发生器、或者对链表数据结构头结点的引用。原子变量类提供了针对整数或对象引用的非常精妙的原子操作(因此更具有可伸缩性)，并且使用现代处理器提供的低层并发原语，比如比较并交换实现。</li>
+</ul>
+<h3><span id="1146-检测cpu利用率">11.4.6 检测CPU利用率</span></h3><ul>
+<li>当我们测试可伸缩性的时候，我们的目标通常是保持处理器的充分利用。Unix系统的vmstat和mpstat，或者Windows的perfmon都可以查看处理器忙碌状况。</li>
+<li>如果CPU没有完全利用，可能以下原因：<ul>
+<li>不充足的负载。</li>
+<li>I/O限制。</li>
+<li>外部限制。比如数据库，或者Web Service</li>
+<li>锁竞争。使用Profiling工具能够告诉你，程序中存在多少个锁的竞争，哪些锁很抢手。</li>
+</ul>
+</li>
+</ul>
+<h3><span id="1147-向对象池说不">11.4.7 向“对象池”说“不”</span></h3><ul>
+<li>针对对象的慢生命周期，很多程序员都会选择使用对象池化技术，这项技术中，对象会被循环使用，而不是由垃圾收集器回收并在需要时重新分配。在单线程化的程序中，即使考虑到减少的垃圾收集开销，对象化池技术对于所有不那么昂贵的对象仍然存在性能缺失。</li>
+<li>在并发中，池化表现的更糟糕。当线程分配新的对象时，需要线程内部非常细微的协调，因为分配运算通常使用线程本地的分配块来消除对象堆中的大部分同步。</li>
+</ul>
+<h2><span id="115-比较map的性能">11.5 比较Map的性能</span></h2><ul>
+<li>单线程化的ConcurrentHashMap的性能比同步的HashMap的性能稍好一些，而且在并发应用中，这种作用就十分明显了。</li>
+<li>同步Map的整个Map存在一个锁，所以一次只有一个线程能够访问map</li>
+<li>ConcurrentHashMap并没有对成功的读操作加锁，对写操作和真正需要锁的操作的读操作使用了分离锁的方法。所以多线程并发访问Map，而不被阻塞。</li>
+</ul>
+<h2><span id="116-减少上下文切换的开销">11.6 减少上下文切换的开销</span></h2><ul>
+<li>很多任务引入的操作都会发生阻塞；在运行和阻塞这两个状态之间转换需要使用上下文切换。</li>
+<li>服务器应用程序发生阻塞的一个缘由是在处理请求期间产生日志消息；</li>
+<li>并发系统在多数锁为非竞争锁的时候会有更好的性能，因为请求竞争性的锁意味着更多的上下文切换。代码如果造成更多的上下文切换意味着产生更小的吞吐量。</li>
+</ul>
+<h2><span id="summary">summary</span></h2><ul>
+<li>使用线程最主要的目的是利用多处理器资源</li>
+<li>在并发程序性能讨论中，我们通常更关注吞吐量和可伸缩性，而没有强调自然服务时间。</li>
+<li>Amdahl定律告诉我们，程序的可伸缩性是由必须连续执行的代码比例决定的。</li>
+<li>因为Java程序中串行化首要的来源是独占的资源锁，所以可伸缩性通常可以通过以下这些方式提升：<ul>
+<li>减少用于获取锁的时间，</li>
+<li>减小锁的粒度</li>
+<li>减少锁的占用时间</li>
+<li>用非独占或非阻塞锁来取代独占锁</li>
+</ul>
+</li>
+</ul>
+<p></p>
+
+
+  </div>
+  <div>
+  
+  <div class="post-note note-warning copyright" style="margin-top: 42px">
+    <p><span style="font-weight: bold;">作者：</span><a target="_blank" rel="nofollow noopener noreferrer" href="https://java4u.cn/about">白色蜗牛</a></p>
+    <p><span style="font-weight: bold;">文章链接：</span><a target="_blank" rel="nofollow noopener noreferrer" href="https://java4u.cn/Java%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B/11-%E6%80%A7%E8%83%BD%E5%92%8C%E5%8F%AF%E4%BC%B8%E7%BC%A9%E6%80%A7/">https://java4u.cn/Java%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B/11-%E6%80%A7%E8%83%BD%E5%92%8C%E5%8F%AF%E4%BC%B8%E7%BC%A9%E6%80%A7/</a></p>
+    <p><span style="font-weight: bold;">版权声明：</span>本博客所有文章除特别声明外，均采用<a target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh">CC BY-NC-SA 4.0 协议</a>。转载请注明出处！</p>
+  </div>
+  
+  </div>
+</article>
+<div class="nav">
+  
+  <div class="nav-item-prev">
+    <a href="/Java并发编程/12-测试并发程序/" class="nav-link">
+      <i class="iconfont icon-left nav-prev-icon"></i>
+      <div>
+        <div class="nav-label">上一篇</div>
+        
+        <div class="nav-title">12.测试并发程序 </div>
+        
+      </div>
+    </a>
+  </div>
+  
+  
+  <div class="nav-item-next">
+    <a href="/Java并发编程/10-避免活跃度危险/" class="nav-link">
+      <div>
+        <div class="nav-label">下一篇</div>
+        
+        <div class="nav-title">10.避免活跃度危险 </div>
+        
+      </div>
+      <i class="iconfont icon-right nav-next-icon"></i>
+    </a>
+  </div>
+  
+</div>
+
+<div class="card card-content comment-card" style="margin-top: 16px;">
+  <div class="comment-card-title">评论</div>
+  
+  <div id="vcomments"></div>
+  
+  <script>
+    loadScript("https://cdn.jsdelivr.net/npm/valine@1.4.14/dist/Valine.min.js");
+    var oldLoadVa = window.onload;
+    window.onload = function () {
+      oldLoadVa && oldLoadVa();
+      new Valine({
+        el: '#vcomments',
+        appId: 'Ro9jzghVgwRgtnGQQ99MFbAK-9Nh9j0Va',
+        appKey: 'rbA6uGwupFqEcTUAugUoXn2B',
+        placeholder: '留下你的足迹吧~也可以加我微信 919201148，互换友链~~~',
+        path: window.location.pathname,
+        avatar: 'robohash',
+        meta: ["nick","mail","link"],
+        pageSize: '10',
+        lang: '',
+        visitor: 'true',
+        highlight: true,
+        recordIP: false,
+        
+        
+        
+        enableQQ: 'false',
+        requiredFields: [],
+      });
+    };
+  </script>
+
+</div>
+
+<div class="card card-content toc-card" id="mobiletoc">
+  <div class="toc-header"><i class="iconfont icon-menu" style="padding-right: 2px;"></i>目录</div>
+<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link"><span class="toc-text">11.1 性能的思考</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link"><span class="toc-text">11.1.1 性能“遭遇”可伸缩性</span></a></li><li class="toc-item toc-level-3"><a class="toc-link"><span class="toc-text">11.1.2 对性能的权衡进行评估</span></a></li><li class="toc-item toc-level-3"><a class="toc-link"><span class="toc-text">11.2 Amdahl定律</span></a></li><li class="toc-item toc-level-3"><a class="toc-link"><span class="toc-text">11.2.1 定性地应用Amdahl定律</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link"><span class="toc-text">11.3 线程引入的开销</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link"><span class="toc-text">11.3.1 切换上下文</span></a></li><li class="toc-item toc-level-3"><a class="toc-link"><span class="toc-text">11.3.2 内存同步</span></a></li><li class="toc-item toc-level-3"><a class="toc-link"><span class="toc-text">11.3.3 阻塞</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link"><span class="toc-text">11.4 减少锁的竞争</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link"><span class="toc-text">11.4.1 缩小锁的范围(“快进快出”)</span></a></li><li class="toc-item toc-level-3"><a class="toc-link"><span class="toc-text">11.4.2 减小锁的粒度</span></a></li><li class="toc-item toc-level-3"><a class="toc-link"><span class="toc-text">11.4.3 分离锁</span></a></li><li class="toc-item toc-level-3"><a class="toc-link"><span class="toc-text">11.4.4 避免热点域</span></a></li><li class="toc-item toc-level-3"><a class="toc-link"><span class="toc-text">11.4.5 独占锁的替代方法</span></a></li><li class="toc-item toc-level-3"><a class="toc-link"><span class="toc-text">11.4.6 检测CPU利用率</span></a></li><li class="toc-item toc-level-3"><a class="toc-link"><span class="toc-text">11.4.7 向“对象池”说“不”</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link"><span class="toc-text">11.5 比较Map的性能</span></a></li><li class="toc-item toc-level-2"><a class="toc-link"><span class="toc-text">11.6 减少上下文切换的开销</span></a></li><li class="toc-item toc-level-2"><a class="toc-link"><span class="toc-text">summary</span></a></li></ol>
+</div>
+
+<!-- 百度自动推送链接-->
+<script>
+  (function(){
+      var bp = document.createElement('script');
+      var curProtocol = window.location.protocol.split(':')[0];
+      if (curProtocol === 'https') {
+          bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';        
+      }
+      else {
+          bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+      }
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(bp, s);
+  })();
+  </script>
+  </main>
+          <aside class="left-column">
+            
+            <div class="card card-author">
+              
+<img src="/img/logo.jpg" class="author-img">
+
+<p class="author-name">蜗牛 Java 之家</p>
+<p class="author-description">Java 程序员的成长进阶社区</br>(Java for You)。</p>
+<div class="author-message">
+  <a class="author-posts-count" href="/archives">
+    <span>107</span>
+    <span>文章</span>
+  </a>
+  <a class="author-categories-count" href="/categories">
+    <span>11</span>
+    <span>分类</span>
+  </a>
+  <a class="author-tags-count" href="/tags">
+    <span>118</span>
+    <span>标签</span>
+  </a>
+</div>
+
+<div class="author-card-society">
+  
+    <div class="author-card-society-icon">
+      <a target="_blank" rel="noopener" href="https://gitee.com/java4u/resources/raw/master/global/gh_woniu.png">
+        <i class="iconfont icon-wechat society-icon"></i>
+      </a>
+    </div>
+  
+    <div class="author-card-society-icon">
+      <a target="_blank" rel="noopener" href="https://github.com/huayonglun/">
+        <i class="iconfont icon-github society-icon"></i>
+      </a>
+    </div>
+  
+    <div class="author-card-society-icon">
+      <a target="_blank" rel="noopener" href="http://weibo.com/huayonglun">
+        <i class="iconfont icon-sina society-icon"></i>
+      </a>
+    </div>
+  
+</div>
+
+            </div>
+            
+            <div class="sticky-tablet">
+  
+  
+  <article class="display-when-two-columns spacer">
+    <div class="card card-content toc-card">
+      <div class="toc-header"><i class="iconfont icon-menu" style="padding-right: 2px;"></i>目录</div>
+<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link"><span class="toc-text">11.1 性能的思考</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link"><span class="toc-text">11.1.1 性能“遭遇”可伸缩性</span></a></li><li class="toc-item toc-level-3"><a class="toc-link"><span class="toc-text">11.1.2 对性能的权衡进行评估</span></a></li><li class="toc-item toc-level-3"><a class="toc-link"><span class="toc-text">11.2 Amdahl定律</span></a></li><li class="toc-item toc-level-3"><a class="toc-link"><span class="toc-text">11.2.1 定性地应用Amdahl定律</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link"><span class="toc-text">11.3 线程引入的开销</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link"><span class="toc-text">11.3.1 切换上下文</span></a></li><li class="toc-item toc-level-3"><a class="toc-link"><span class="toc-text">11.3.2 内存同步</span></a></li><li class="toc-item toc-level-3"><a class="toc-link"><span class="toc-text">11.3.3 阻塞</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link"><span class="toc-text">11.4 减少锁的竞争</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link"><span class="toc-text">11.4.1 缩小锁的范围(“快进快出”)</span></a></li><li class="toc-item toc-level-3"><a class="toc-link"><span class="toc-text">11.4.2 减小锁的粒度</span></a></li><li class="toc-item toc-level-3"><a class="toc-link"><span class="toc-text">11.4.3 分离锁</span></a></li><li class="toc-item toc-level-3"><a class="toc-link"><span class="toc-text">11.4.4 避免热点域</span></a></li><li class="toc-item toc-level-3"><a class="toc-link"><span class="toc-text">11.4.5 独占锁的替代方法</span></a></li><li class="toc-item toc-level-3"><a class="toc-link"><span class="toc-text">11.4.6 检测CPU利用率</span></a></li><li class="toc-item toc-level-3"><a class="toc-link"><span class="toc-text">11.4.7 向“对象池”说“不”</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link"><span class="toc-text">11.5 比较Map的性能</span></a></li><li class="toc-item toc-level-2"><a class="toc-link"><span class="toc-text">11.6 减少上下文切换的开销</span></a></li><li class="toc-item toc-level-2"><a class="toc-link"><span class="toc-text">summary</span></a></li></ol>
+    </div>
+  </article>
+  
+  
+  <article class="card card-content categories-widget">
+    <div class="categories-card">
+  <div class="categories-header"><i class="iconfont icon-fenlei" style="padding-right: 2px;"></i>分类</div>
+  <div class="categories-list">
+    
+      <a href="/categories/Java">
+        <div class="categories-list-item">
+          Java
+          <span class="categories-list-item-badge">14</span>
+        </div>
+      </a>
+    
+      <a href="/categories/Java并发编程">
+        <div class="categories-list-item">
+          Java并发编程
+          <span class="categories-list-item-badge">18</span>
+        </div>
+      </a>
+    
+      <a href="/categories/Linux">
+        <div class="categories-list-item">
+          Linux
+          <span class="categories-list-item-badge">1</span>
+        </div>
+      </a>
+    
+      <a href="/categories/spring">
+        <div class="categories-list-item">
+          spring
+          <span class="categories-list-item-badge">21</span>
+        </div>
+      </a>
+    
+      <a href="/categories/struts2">
+        <div class="categories-list-item">
+          struts2
+          <span class="categories-list-item-badge">16</span>
+        </div>
+      </a>
+    
+      <a href="/categories/夯实基础系列">
+        <div class="categories-list-item">
+          夯实基础系列
+          <span class="categories-list-item-badge">4</span>
+        </div>
+      </a>
+    
+      <a href="/categories/工具教程">
+        <div class="categories-list-item">
+          工具教程
+          <span class="categories-list-item-badge">3</span>
+        </div>
+      </a>
+    
+      <a href="/categories/思维">
+        <div class="categories-list-item">
+          思维
+          <span class="categories-list-item-badge">2</span>
+        </div>
+      </a>
+    
+      <a href="/categories/数据库">
+        <div class="categories-list-item">
+          数据库
+          <span class="categories-list-item-badge">2</span>
+        </div>
+      </a>
+    
+      <a href="/categories/算法">
+        <div class="categories-list-item">
+          算法
+          <span class="categories-list-item-badge">25</span>
+        </div>
+      </a>
+    
+      <a href="/categories/网络">
+        <div class="categories-list-item">
+          网络
+          <span class="categories-list-item-badge">1</span>
+        </div>
+      </a>
+    
+  </div>
+</div>
+  </article>
+  
+  <article class="card card-content tags-widget">
+    <div class="tags-card">
+  <div class="tags-header"><i class="iconfont icon-biaoqian" style="padding-right: 2px;"></i>热门标签</div>
+  <div class="tags-list">
+    
+    <a href="\tags\Java" title="Java"><div class="tags-list-item">Java</div></a>
+    
+    <a href="\tags\ssh" title="ssh"><div class="tags-list-item">ssh</div></a>
+    
+    <a href="\tags\spring" title="spring"><div class="tags-list-item">spring</div></a>
+    
+    <a href="\tags\Java并发" title="Java并发"><div class="tags-list-item">Java并发</div></a>
+    
+    <a href="\tags\struts2" title="struts2"><div class="tags-list-item">struts2</div></a>
+    
+    <a href="\tags\bean" title="bean"><div class="tags-list-item">bean</div></a>
+    
+    <a href="\tags\树" title="树"><div class="tags-list-item">树</div></a>
+    
+    <a href="\tags\AOP" title="AOP"><div class="tags-list-item">AOP</div></a>
+    
+    <a href="\tags\分布式" title="分布式"><div class="tags-list-item">分布式</div></a>
+    
+    <a href="\tags\链表" title="链表"><div class="tags-list-item">链表</div></a>
+    
+    <a href="\tags\装配属性" title="装配属性"><div class="tags-list-item">装配属性</div></a>
+    
+    <a href="\tags\集合" title="集合"><div class="tags-list-item">集合</div></a>
+    
+    <a href="\tags\二叉树" title="二叉树"><div class="tags-list-item">二叉树</div></a>
+    
+    <a href="\tags\查找" title="查找"><div class="tags-list-item">查找</div></a>
+    
+    <a href="\tags\排序" title="排序"><div class="tags-list-item">排序</div></a>
+    
+    <a href="\tags\同步" title="同步"><div class="tags-list-item">同步</div></a>
+    
+  </div>
+</div>
+  </article>
+  
+  
+</div>
+          </aside>
+          <aside class="right-column">
+            <div class="sticky-widescreen">
+
+  <!-- 我的公众号 -->
+  
+  <article class="card card-content toc-card">
+    <div style="float: left; ">
+      <img class="adv" style="width: 100%; height: 100%; border: solid 1px #ddd;" src="https://gitee.com/java4u/resources/raw/master/2020-12-17/1608142536200-image.png">
+    </div>
+    <div style="float: left; margin-left: 17px; margin-top: 12px;">
+        <div style="font-size: 18px; margin-bottom: 12px;color:#159957;"><b>微信搜一搜: 蜗牛互联网</b></div>
+        <small style="font-size: 0.9em;">
+          👉「<a target="_blank" rel="noopener" href="https://mp.weixin.qq.com/s/OyboCy8Drh8AWNqE_DUROg">技术干货</a>」每周推送<br>
+          👉「<a href="https://java4u.cn/resources/">免费资料</a>」随时领取<br>
+          👉「<a target="_blank" rel="noopener" href="https://gitee.com/java4u/resources/raw/master/2020-12-17/1608143152021-image.png">优质社群</a>」随时加入<br>
+        </small>
+    </div>
+    <div style="clear: both;"></div>
+    <div style="font-size: 0.8em; margin: 15px 0 15px 0;">
+      <a href="" target="_blank" style="color:#159957;font-size: 14px;" rel="noopener noreferrer">扫描上方二维码，关注我的公众号</a>
+      <br>
+    </div>
+  </article>
+
+
+  
+  
+  <article class="card card-content toc-card">
+    <div class="toc-header"><i class="iconfont icon-menu" style="padding-right: 2px;"></i>目录</div>
+<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link"><span class="toc-text">11.1 性能的思考</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link"><span class="toc-text">11.1.1 性能“遭遇”可伸缩性</span></a></li><li class="toc-item toc-level-3"><a class="toc-link"><span class="toc-text">11.1.2 对性能的权衡进行评估</span></a></li><li class="toc-item toc-level-3"><a class="toc-link"><span class="toc-text">11.2 Amdahl定律</span></a></li><li class="toc-item toc-level-3"><a class="toc-link"><span class="toc-text">11.2.1 定性地应用Amdahl定律</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link"><span class="toc-text">11.3 线程引入的开销</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link"><span class="toc-text">11.3.1 切换上下文</span></a></li><li class="toc-item toc-level-3"><a class="toc-link"><span class="toc-text">11.3.2 内存同步</span></a></li><li class="toc-item toc-level-3"><a class="toc-link"><span class="toc-text">11.3.3 阻塞</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link"><span class="toc-text">11.4 减少锁的竞争</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link"><span class="toc-text">11.4.1 缩小锁的范围(“快进快出”)</span></a></li><li class="toc-item toc-level-3"><a class="toc-link"><span class="toc-text">11.4.2 减小锁的粒度</span></a></li><li class="toc-item toc-level-3"><a class="toc-link"><span class="toc-text">11.4.3 分离锁</span></a></li><li class="toc-item toc-level-3"><a class="toc-link"><span class="toc-text">11.4.4 避免热点域</span></a></li><li class="toc-item toc-level-3"><a class="toc-link"><span class="toc-text">11.4.5 独占锁的替代方法</span></a></li><li class="toc-item toc-level-3"><a class="toc-link"><span class="toc-text">11.4.6 检测CPU利用率</span></a></li><li class="toc-item toc-level-3"><a class="toc-link"><span class="toc-text">11.4.7 向“对象池”说“不”</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link"><span class="toc-text">11.5 比较Map的性能</span></a></li><li class="toc-item toc-level-2"><a class="toc-link"><span class="toc-text">11.6 减少上下文切换的开销</span></a></li><li class="toc-item toc-level-2"><a class="toc-link"><span class="toc-text">summary</span></a></li></ol>
+  </article>
+  
+
+  
+  <article class="card card-content">
+    <div class="recent-posts-card">
+  <div class="recent-posts-header"><i class="iconfont icon-wenzhang_huaban" style="padding-right: 2px;"></i>最近文章</div>
+  <div class="recent-posts-list">
+    
+      <div class="recent-posts-item">
+        <div class="recent-posts-item-title">2020-12-15</div>
+        <a href="/tools-course/cai_yun_xiao_yi/"><div class="recent-posts-item-content">彩云小译：最佳的网页翻译插件</div></a>
+      </div>
+    
+      <div class="recent-posts-item">
+        <div class="recent-posts-item-title">2020-12-14</div>
+        <a href="/tools-course/markmap/"><div class="recent-posts-item-content">最佳的思维导图生成工具： markmap 使用教程</div></a>
+      </div>
+    
+      <div class="recent-posts-item">
+        <div class="recent-posts-item-title">2020-12-13</div>
+        <a href="/tools-course/hexo_site_course/"><div class="recent-posts-item-content">建站神器：Hexo+Kaze+Gitee Pages 搭建静态博客网站</div></a>
+      </div>
+    
+      <div class="recent-posts-item">
+        <div class="recent-posts-item-title">2019-01-24</div>
+        <a href="/思维/知识的诅咒：为什么你觉得显而易见，而对方却无法理解/"><div class="recent-posts-item-content">知识的诅咒：为什么你觉得显而易见，而对方却无法理解</div></a>
+      </div>
+    
+  </div>
+</div>
+  </article>
+  
+  
+</div>
+          </aside>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <footer class="footer">
+  <div class="footer-container">
+    <div>
+      
+      <!-- copyringt-->
+      <div class="footer-dsc">
+        <span>Copyright ©
+          
+          2020 -
+          
+          2020
+        </span>
+        &nbsp;
+        <a href="/" class="footer-link">蜗牛 Java 之家 </a>
+      </div>
+
+       <!-- copyringt-->
+       <div class="footer-dsc">
+        <center><span>
+        <a href="https://java4u.cn/resources/" target="_blank">Java 程序员最全资源下载</a> - <a href="https://java4u.cn/links/" target="_blank">友情链接</a>
+        </span></center>
+      </div>
+     
+    </div>
+
+    
+    
+    
+    
+      <div class="footer-dsc">
+        
+        本站总访问量<span id="busuanzi_value_site_pv"></span>次
+        
+        
+        <span>&nbsp;|&nbsp;</span>
+        
+        
+        本站总访客数<span id="busuanzi_value_site_uv"></span>次
+        
+      </div>
+      
+    
+</footer>
+  <a role="button" id="scrollbutton" class="basebutton"  aria-label="回到顶部">
+  <i class="iconfont icon-arrowleft button-icon"></i>
+</a>
+<a role="button" id="menubutton" class="basebutton">
+  <i class="iconfont icon-menu button-icon"></i>
+</a>
+<a role="button" id="popbutton" class="basebutton" aria-label="控制中心">
+  <i class="iconfont icon-expand button-icon"></i>
+</a>
+<a role="button" id="darkbutton" class="basebutton darkwidget" aria-label="夜色模式">
+  <i class="iconfont icon-weather button-icon"></i>
+</a>
+<a role="button" id="searchbutton" class="basebutton searchwidget" aria-label="搜索">
+  <i class="iconfont icon-search button-icon"></i>
+</a>
+
+  
+  
+  
+
+  
+  
+  <script>
+  var addImgLayout = function () {
+    var img = document.querySelectorAll('.post-content img');
+    var i;
+    for (i = 0; i < img.length; i++) {
+      var wrapper = document.createElement('a');
+      wrapper.setAttribute('href', img[i].getAttribute('data-src'));
+      wrapper.setAttribute('aria-label', 'illustration');
+      wrapper.style.cssText = 'width: 100%; display: flex; justify-content: center;';
+      if (img[i].alt) wrapper.dataset.caption = img[i].alt;
+      wrapper.dataset.nolink = true;
+      img[i].before(wrapper);
+      wrapper.append(img[i]);
+      var divWrap = document.createElement('div');
+      divWrap.classList.add('gallery');
+      wrapper.before(divWrap);
+      divWrap.append(wrapper);
+    }
+    baguetteBox.run('.gallery');
+  }
+</script>
+<script>loadScript("/js/lib/lightbox/baguetteBox.min.js", addImgLayout)</script>
+  
+  
+  
+<script src="/js/main.js"></script>
+
+  
+  <script>loadScript("/js/lib/busuanzi.min.js")</script>
+  
+  
+  <script>
+    var addLazyload = function () {
+      var observer = lozad('.lozad', {
+        load: function (el) {
+          el.srcset = el.getAttribute('data-src');
+        },
+        loaded: function (el) {
+          el.classList.add('loaded');
+        }
+      });
+      observer.observe();
+    }
+  </script>
+  <script>loadScript("/js/lib/lozad.min.js", addLazyload)</script>
+  
+  
+</body>
+
+</html>

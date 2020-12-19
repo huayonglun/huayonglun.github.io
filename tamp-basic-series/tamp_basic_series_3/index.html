@@ -1,0 +1,1280 @@
+<!DOCTYPE html>
+<html  lang="zh-CN" >
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport"
+    content="width=device-width, initial-scale=1.0, minimum-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <meta name="theme-color" content="#fff" id="theme-color">
+  <meta name="description" content="蜗牛 Java 之家 (java4u.cn) 是 Java 程序员的成长进阶社区，致力于为广大学习 Java 的程序员们提供计算机专业相关的经验教程、学习资料和书籍，包括Java、数据库、Linux、网络等学习干货、IT程序员常用软件工具分享、计算机专业经典电子书PDF，帮助 Java 程序员更快入门和提高。">
+  <link rel="icon" href="/img/logo.jpg">
+  <title>夯实基础系列三：数据库知识总结&nbsp; | &nbsp;Java for You</title>
+  
+  
+  <meta property="og:title" content="夯实基础系列三：数据库知识总结">
+  
+  
+  <meta property="og:url" content="https://java4u.cn/tamp-basic-series/tamp_basic_series_3/index.html">
+  
+  
+  <meta property="og:img" content="/img/logo.jpg">
+  
+  
+  <meta property="og:img" content="&lt;h2 id=&#34;前言&#34;&gt;&lt;a href=&#34;#前言&#34; class=&#34;headerlink&#34; title=&#34;前言&#34;&gt;&lt;/a&gt;前言&lt;/h2&gt;&lt;p&gt;对于后端开发人员来说，经常会和数据打交道，今天总结下数据库相关的知识。包括MySQL，JDBC基础，JDBC进阶，MongoDB，性能优化。以下对这些内容做一些简单的总结。&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://gitee.com/java4u/resources/raw/master/2020-12-19/1608392128657-image.png&#34; alt=&#34;MySql 大纲&#34;&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://gitee.com/java4u/resources/raw/master/2020-12-19/1608392178221-image.png&#34; alt=&#34;JDBC&#34;&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://gitee.com/java4u/resources/raw/master/2020-12-19/1608392254736-image.png&#34; alt=&#34;JDBC 进阶&#34;&gt;&lt;/p&gt;
+&lt;h2 id=&#34;细节&#34;&gt;&lt;a href=&#34;#细节&#34; class=&#34;headerlink&#34; title=&#34;细节&#34;&gt;&lt;/a&gt;细节&lt;/h2&gt;&lt;h3 id=&#34;1-MySQL&#34;&gt;&lt;a href=&#34;#1-MySQL&#34; class=&#34;headerlink&#34; title=&#34;1. MySQL&#34;&gt;&lt;/a&gt;1. MySQL&lt;/h3&gt;&lt;h5 id=&#34;1-1-数据库的概述&#34;&gt;&lt;a href=&#34;#1-1-数据库的概述&#34; class=&#34;headerlink&#34; title=&#34;1.1 数据库的概述&#34;&gt;&lt;/a&gt;1.1 数据库的概述&lt;/h5&gt;&lt;ul&gt;
+&lt;li&gt;DBMS&lt;ul&gt;
+&lt;li&gt;解释：关系型数据库管理系统&lt;/li&gt;
+&lt;li&gt;库管+N个仓库&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;常见的数据库管理系统&lt;ul&gt;
+&lt;li&gt;MySQL&lt;/li&gt;
+&lt;li&gt;Orcale&lt;/li&gt;
+&lt;li&gt;DB2&lt;/li&gt;
+&lt;li&gt;SQL Server&lt;/li&gt;
+&lt;li&gt;Sybase&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;/ul&gt;">
+  
+  
+  <meta property="og:type" content="article">
+  <meta property="og:article:published_time" content="2016-08-29">
+  <meta property="og:article:modified_time" content="2020-12-19">
+  <meta property="og:article:author" content="蜗牛 Java 之家">
+  
+  
+  <meta property="og:article:tag" content="数据库">
+  
+  <meta property="og:article:tag" content="总结">
+  
+  <meta property="og:article:tag" content="心得">
+  
+  <meta property="og:article:tag" content="MySQL">
+  
+  <meta property="og:article:tag" content="MongoDB">
+  
+  
+  
+  
+  <script>
+    // control reverse button
+    var reverseDarkList = {
+      dark: 'light',
+      light: 'dark'
+    };
+    var themeColor = {
+      dark: '#1c1c1e',
+      light: '#fff'
+    }
+    // get the data of css prefers-color-scheme
+    var getCssMediaQuery = function() {
+      return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+    };
+    // reverse current darkmode setting function
+    var reverseDarkModeSetting = function() {
+      var setting = localStorage.getItem('user-color-scheme');
+      if(reverseDarkList[setting]) {
+        setting = reverseDarkList[setting];
+      } else if(setting === null) {
+        setting = reverseDarkList[getCssMediaQuery()];
+      } else {
+        return;
+      }
+      localStorage.setItem('user-color-scheme', setting);
+      return setting;
+    };
+    // apply current darkmode setting
+    var setDarkmode = function(mode) {
+      var setting = mode || localStorage.getItem('user-color-scheme');
+      if(setting === getCssMediaQuery()) {
+        document.documentElement.removeAttribute('data-user-color-scheme');
+        localStorage.removeItem('user-color-scheme');
+        document.getElementById('theme-color').content = themeColor[setting];
+      } else if(reverseDarkList[setting]) {
+        document.documentElement.setAttribute('data-user-color-scheme', setting);
+        document.getElementById('theme-color').content = themeColor[setting];
+      } else {
+        document.documentElement.removeAttribute('data-user-color-scheme');
+        localStorage.removeItem('user-color-scheme');
+        document.getElementById('theme-color').content = themeColor[getCssMediaQuery()];
+      }
+    };
+    setDarkmode();
+  </script>
+  <script>
+    function loadScript(url, cb) {
+      var script = document.createElement('script');
+      script.src = url;
+      if (cb) script.onload = cb;
+      script.async = true;
+      document.body.appendChild(script);
+    }
+  </script>
+  
+  <link rel="preload" href="//at.alicdn.com/t/font_1946621_i1kgafibvw.css" as="style" >
+  <link rel="preload" href="//at.alicdn.com/t/font_1952792_89b4ac4k4up.css" as="style" >
+  
+  <link rel="preload" href="/js/lib/lightbox/baguetteBox.min.js" as="script">
+  <link rel="preload" href="/js/lib/lightbox/baguetteBox.min.css" as="style" >
+  
+  
+  <link rel="preload" href="/js/lib/lozad.min.js" as="script">
+  
+  
+  
+  
+  
+  <link rel="prefetch" href="//cdn.jsdelivr.net/npm/mathjax@3.0.5/es5/tex-svg.js" as="script">
+  
+  
+  
+  <link rel="prefetch" href="https://cdn.jsdelivr.net/npm/valine@1.4.14/dist/Valine.min.js" as="script">
+  
+  
+  
+  
+<link rel="stylesheet" href="/css/main.css">
+
+  
+  
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1946621_i1kgafibvw.css">
+
+  
+  
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1952792_89b4ac4k4up.css">
+
+  
+  
+<link rel="stylesheet" href="/js/lib/lightbox/baguetteBox.min.css">
+
+  
+  
+  
+  
+
+
+  <!-- 百度站长工具验证 -->
+  <meta name="baidu-site-verification" content="code-9cIsKsXy75" />
+
+  <!-- 必应站长工具验证-->
+  <meta name="msvalidate.01" content="81AA8F485E800B7335F07A558BE9A636" />
+
+  <!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-C22LNC79YC"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-C22LNC79YC');
+</script>
+<meta name="generator" content="Hexo 5.2.0"></head>
+
+
+<body>
+  <div class="wrapper">
+    
+    <nav class="navbar">
+  <div class="navbar-logo">
+    <span class="navbar-logo-main">
+      
+      <img class="navbar-logo-img" src="/img/logo.jpg" alt="logo">
+      
+      <span class="navbar-logo-dsc">蜗牛 Java 之家</span>
+    </span>
+  </div>
+  <div class="navbar-menu">
+    
+    <a href="/" class="navbar-menu-item">
+    
+    首页
+    
+    </a>
+    
+    <a href="/resources" class="navbar-menu-item">
+    
+    免费资源
+    
+    </a>
+    
+    <a href="/tools" class="navbar-menu-item">
+    
+    免费工具
+    
+    </a>
+    
+    <a href="/categories" class="navbar-menu-item">
+    
+    分类
+    
+    </a>
+    
+    <a href="/links" class="navbar-menu-item">
+    
+    友链
+    
+    </a>
+    
+    <a class="navbar-menu-item darknavbar" id="dark"><i class="iconfont icon-weather"></i></a>
+    <a class="navbar-menu-item searchnavbar" id="search"><i class="iconfont icon-search" style="font-size: 1.2rem; font-weight: 400;"></i></a>
+  </div>
+</nav>
+    
+    <div id="local-search" style="display: none;">
+      <input class="navbar-menu-item" id="search-input" placeholder="请输入搜索内容...">
+      <div id="search-content"></div>
+    </div>
+    
+    <div class="section-wrap">
+      <div class="container">
+        <div class="columns">
+          <main class="main-column">
+<div class="image-wrapper">
+  <img src="/img/logo.jpg" data-src="/img/logo.jpg"
+    srcset="data:image/svg+xml,%3Csvg%20xmlns=&#39;http://www.w3.org/2000/svg&#39;%20viewBox=&#39;0%200%20300%20300&#39;%3E%3C/svg%3E"
+    class="image lozad"
+    alt="thumbnail"
+  >
+</div>
+
+<article class="card card-content">
+  <header>
+    <h1 class="post-title">
+      夯实基础系列三：数据库知识总结
+    </h1>
+  </header>
+  <div class="post-meta post-show-meta">
+    <time datetime="2016-08-29T15:26:08.000Z">
+      <i class="iconfont icon-calendar" style="margin-right: 2px;"></i>
+      <span>2016-08-29</span>
+    </time>
+    
+    <span class="dot"></span>
+    
+    <a href="/categories/tamp-basic-series/" class="post-meta-link">夯实基础系列</a>
+    
+    
+    
+    <span class="dot"></span>
+    <span>3.2k 字</span>
+    
+
+    <span class="dot"></span>
+    <!-- 增加阅读量统计样式代码 -->
+    
+    <!-- id 将作为查询条件 -->
+    <i class="iconfont icon-wodebaobiao" style="margin-right: 2px; font-size: 1.15rem;"></i>
+    <span id="/tamp-basic-series/tamp_basic_series_3/" class="leancloud_visitors" data-flag-title="夯实基础系列三：数据库知识总结">
+      <em class="post-meta-item-text">阅读量 </em>
+      <i class="leancloud-visitors-count"></i>
+    </span>
+
+  </div>
+  
+  <div class="post-meta post-show-meta" style="margin-top: -10px;">
+    <div style="display: flex; align-items: center;">
+      <i class="iconfont icon-biaoqian" style="margin-right: 2px; font-size: 1.15rem;"></i>
+      
+      
+        <a href="/tags/数据库/" class="post-meta-link">数据库</a>
+      
+      
+      <span class="dot"></span>
+      
+        <a href="/tags/总结/" class="post-meta-link">总结</a>
+      
+      
+      <span class="dot"></span>
+      
+        <a href="/tags/心得/" class="post-meta-link">心得</a>
+      
+      
+      <span class="dot"></span>
+      
+        <a href="/tags/MySQL/" class="post-meta-link">MySQL</a>
+      
+      
+      <span class="dot"></span>
+      
+        <a href="/tags/MongoDB/" class="post-meta-link">MongoDB</a>
+      
+    </div>
+  </div>
+  
+  </header>
+  <div id="section" class="post-content">
+    <h2><span id="前言">前言</span></h2><p>对于后端开发人员来说，经常会和数据打交道，今天总结下数据库相关的知识。包括MySQL，JDBC基础，JDBC进阶，MongoDB，性能优化。以下对这些内容做一些简单的总结。</p>
+<p><img src="https://gitee.com/java4u/resources/raw/master/2020-12-19/1608392128657-image.png" alt="MySql 大纲" srcset="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20300%20300'%3E%3C/svg%3E" data-src="https://gitee.com/java4u/resources/raw/master/2020-12-19/1608392128657-image.png" class="lozad post-image"></p>
+<p><img src="https://gitee.com/java4u/resources/raw/master/2020-12-19/1608392178221-image.png" alt="JDBC" srcset="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20300%20300'%3E%3C/svg%3E" data-src="https://gitee.com/java4u/resources/raw/master/2020-12-19/1608392178221-image.png" class="lozad post-image"></p>
+<p><img src="https://gitee.com/java4u/resources/raw/master/2020-12-19/1608392254736-image.png" alt="JDBC 进阶" srcset="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20300%20300'%3E%3C/svg%3E" data-src="https://gitee.com/java4u/resources/raw/master/2020-12-19/1608392254736-image.png" class="lozad post-image"></p>
+<h2><span id="细节">细节</span></h2><h3><span id="1-mysql">1. MySQL</span></h3><h5><span id="11-数据库的概述">1.1 数据库的概述</span></h5><ul>
+<li>DBMS<ul>
+<li>解释：关系型数据库管理系统</li>
+<li>库管+N个仓库</li>
+</ul>
+</li>
+<li>常见的数据库管理系统<ul>
+<li>MySQL</li>
+<li>Orcale</li>
+<li>DB2</li>
+<li>SQL Server</li>
+<li>Sybase</li>
+</ul>
+</li>
+</ul>
+<a id="more"></a>
+
+<h5><span id="12-安装mysql">1.2 安装MySQL</span></h5><ul>
+<li>目录结构<ul>
+<li>mysql.exe：客户端</li>
+<li>mysqld.exe：服务器</li>
+<li>my.ini：总配置文件</li>
+</ul>
+</li>
+<li>在windows下开户和关闭mysql服务器<ul>
+<li>net start mysql</li>
+<li>net stop mysql</li>
+</ul>
+</li>
+<li>登录和退出mysql客户端<ul>
+<li>mysql -u用户名 -p密码 -hIP</li>
+<li>exit或quit</li>
+</ul>
+</li>
+</ul>
+<h5><span id="13-sql">1.3 SQL</span></h5><ul>
+<li>概述<ul>
+<li>解释：结构化查询语言</li>
+<li>ISO：国际标准化组织</li>
+<li>ISO 定义了很多 SQL 标准，例如：SQL99</li>
+<li>各个数据库厂商需要遵循这个标签！但各个厂商也有自己的方言</li>
+</ul>
+</li>
+<li>SQL的分类<ul>
+<li>DDL：数据定义语言</li>
+<li>DML：数据操作语言</li>
+<li>DCL：数据控制语言</li>
+<li>DQL（不在标准中）：数据查询语言</li>
+</ul>
+</li>
+</ul>
+<h5><span id="14-ddl">1.4 DDL</span></h5><ul>
+<li>数据库的操作<ul>
+<li>create database</li>
+<li>show databases</li>
+<li>use mydb1</li>
+<li>alter database</li>
+<li>drop database</li>
+</ul>
+</li>
+<li>表的操作<ul>
+<li>create table</li>
+<li>show tables</li>
+<li>desc mytable1</li>
+<li>drop table</li>
+<li>alter table<ul>
+<li>add</li>
+<li>modify</li>
+<li>change</li>
+<li>drop</li>
+<li>rename to</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h5><span id="15-dml">1.5 DML</span></h5><ul>
+<li>插入记录</li>
+<li>修改记录</li>
+<li>删除记录<ul>
+<li>delete</li>
+<li>truncat</li>
+</ul>
+</li>
+</ul>
+<h5><span id="16-dcl">1.6 DCL</span></h5><ul>
+<li>创建用户</li>
+<li>授权</li>
+<li>撤消权限</li>
+<li>查看权限</li>
+<li>删除用户</li>
+</ul>
+<h5><span id="17-dql">1.7 DQL</span></h5><ul>
+<li>基本查询<ul>
+<li>查看整张表<ul>
+<li>select * from 表名</li>
+</ul>
+</li>
+<li>列控制<ul>
+<li>列运算：select sal * 1.5 from emp</li>
+<li>列运算：连接字符串：select concat(‘我的名称是’, ename) from emp</li>
+<li>处理 NULL 值：select sal + IFNULL(comm, 0) from emp</li>
+<li>select ename 姓名 from emp</li>
+<li>去除完全重复的行：select distinct comm from emp</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>条件查询<ul>
+<li>模糊查询<ul>
+<li>下划线</li>
+<li>百分号</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>排序<ul>
+<li>desc</li>
+<li>asc</li>
+</ul>
+</li>
+<li>聚合函数<ul>
+<li>count</li>
+<li>min</li>
+<li>max</li>
+<li>sum</li>
+<li>avg</li>
+</ul>
+</li>
+<li>分组<ul>
+<li>group by</li>
+<li>having</li>
+</ul>
+</li>
+<li>limit</li>
+</ul>
+<h5><span id="18-约束">1.8 约束</span></h5><ul>
+<li>约束保证数据的完整性和一致性</li>
+<li>约束分为表级约束和列级约束<ul>
+<li>对一个数据列建立的约束，列级约束</li>
+<li>对多个数据列建立的约束，表级约束</li>
+</ul>
+</li>
+<li>约束类型包括：<ul>
+<li>NOT NULL</li>
+<li>PRIMARY KEY</li>
+<li>UNIQUE KEY</li>
+<li>DEFAULT</li>
+<li>FOREIGN KEY</li>
+</ul>
+</li>
+</ul>
+<h5><span id="19-中文无法插入解决办法">1.9 中文无法插入解决办法</span></h5><ul>
+<li>dos 下不支持直接使用 utf8,set names gbk，再插入即可。</li>
+</ul>
+<h5><span id="110-连接类型">1.10 连接类型</span></h5><ul>
+<li>内连接<ul>
+<li>显示左表及右表符合连接条件的记录</li>
+</ul>
+</li>
+<li>左外连接<ul>
+<li>显示左表的全部记录及右表符合连接条件的记录</li>
+</ul>
+</li>
+<li>右外连接<ul>
+<li>显示右表的全部记录及左表符合连接条件的记录</li>
+</ul>
+</li>
+<li>自身连接<ul>
+<li>同一个数据表对其自身进行连接</li>
+</ul>
+</li>
+</ul>
+<h3><span id="2-jdbc">2. JDBC</span></h3><h5><span id="21-jdbc-的原理">2.1 JDBC 的原理</span></h5><ul>
+<li>是由 JavaEE 提供的连接数据库的规范</li>
+<li>需要由各大数据库的厂商提供对 JDBC 的实现类</li>
+</ul>
+<h5><span id="22-四大核心类">2.2 四大核心类</span></h5><ul>
+<li><p>DriverManager</p>
+<ul>
+<li>getConnection</li>
+</ul>
+</li>
+<li><p>Connection</p>
+<ul>
+<li>createStatement</li>
+<li>prepareStatement(String sql)</li>
+</ul>
+</li>
+<li><p>Statement</p>
+<pre><code>  方法：</code></pre>
+<p>  ​    1.executeUpdate()–&gt;增、删、改　<br>  ​    2.executeQuery()–&gt;查<br>  ​    3.addBatch(String sql)<br>  ​    4.executeBatch()<br>  ​    5.execute(String sql)</p>
+</li>
+<li><p>ResultSet</p>
+<ul>
+<li>getXxx()系统方法</li>
+<li>移动光标系统方法</li>
+</ul>
+</li>
+</ul>
+<h5><span id="23-四大参数">2.3 四大参数</span></h5><ul>
+<li>driverClassName</li>
+<li>url</li>
+<li>username</li>
+<li>password</li>
+</ul>
+<h5><span id="24-预编译语句集">2.4 预编译语句集</span></h5><ul>
+<li>防SQL攻击</li>
+<li>可读性提高了</li>
+<li>效率高</li>
+</ul>
+<h5><span id="25-dao模式">2.5 DAO模式</span></h5><ul>
+<li>面向接口编程<ul>
+<li>DAO接口</li>
+<li>DAO实现，可以提供多个实现</li>
+<li>DAO工厂</li>
+<li>DAO配置文件：提供实现类名称</li>
+</ul>
+</li>
+</ul>
+<h5><span id="26-时间类型的转换">2.6 时间类型的转换</span></h5><ul>
+<li>领域对象中的日期时间，必须为 util 的Date</li>
+<li>在 JDBC 中使用的都是 sql 的 Date</li>
+<li>insert、update、delete，需要把领域对象中的 util 的 Date 转换成 sql 的 Date</li>
+<li>在 select 时，需要把 sql 的 Date 赋给领域对象的 util 的 Date 类型的属性，这不需要处理</li>
+</ul>
+<h5><span id="27-大数据存取">2.7 大数据存取</span></h5><ul>
+<li>把文件转换成 Blob 类型</li>
+<li>把 Blob 类型转换成文件</li>
+</ul>
+<h6><span id="28-批处理">2.8 批处理</span></h6><ul>
+<li>添加批</li>
+<li>执行批</li>
+</ul>
+<h3><span id="3-jdbc_进阶">3. JDBC_进阶</span></h3><h5><span id="31-事务">3.1 事务</span></h5><ul>
+<li><p>ACID</p>
+<ul>
+<li>原子性</li>
+<li>一致性</li>
+<li>隔离性</li>
+<li>持久性</li>
+</ul>
+</li>
+<li><p>mysql 中开启和关闭事务</p>
+<ul>
+<li>开启事务：START TRANSACTION</li>
+<li>结束事务<ul>
+<li>提交事务：COMMIT</li>
+<li>回滚事务：ROLLBACK</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p>JDBC 中开启和关闭事务</p>
+<ul>
+<li>开启事务：connection.setAutoCommit(false)</li>
+<li>结束事务<ul>
+<li>connection.commit()</li>
+<li>connection.rollback()</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p>格式：</p>
+<pre><code>  try &#123;</code></pre>
+<p>  ​      con.setAutoCommit(false);//开始事务<br>  ​      …<br>  ​       con.commit();//提交事务<br>  ​    } catch(…) {<br>  ​       con.rollback();//回滚事务<br>  ​    }</p>
+</li>
+</ul>
+<h5><span id="32-三种并发读问题">3.2 三种并发读问题</span></h5><ul>
+<li>脏读<ul>
+<li>读到未提交</li>
+</ul>
+</li>
+<li>不可重复读<ul>
+<li>两次读取不一致，读取到另一事务修改的记录</li>
+</ul>
+</li>
+<li>幻读<ul>
+<li>两次读取不一致，读取到另一事务插入的记录</li>
+</ul>
+</li>
+</ul>
+<h5><span id="33-四种隔离级别">3.3 四种隔离级别</span></h5><ul>
+<li>串行化</li>
+<li>可重复读<ul>
+<li>防止了脏读、不可重复读    MySQL</li>
+</ul>
+</li>
+<li>读已提交<ul>
+<li>防止了脏读    Oracle</li>
+</ul>
+</li>
+<li>读未提交</li>
+</ul>
+<h5><span id="34-连接池">3.4 连接池</span></h5><ul>
+<li>必须实现 javax.sql.DataSource</li>
+<li>DBCP</li>
+<li>C3P0</li>
+</ul>
+<h5><span id="35-jndi">3.5 JNDI</span></h5><ul>
+<li>在 tomcat 的 conf/catalina/localhost 下创建 xml 文件<ul>
+<li>配置<context>元素</context></li>
+<li>在<context>中配置<resource>元素</resource></context></li>
+</ul>
+</li>
+<li>在代码中使得 Context 类的 lookup 方法来获取资源<ul>
+<li>java:comp/env/ 资源名称</li>
+</ul>
+</li>
+</ul>
+<h5><span id="36-threadlocal">3.6 ThreadLocal</span></h5><ul>
+<li>内部有一个 Map<ul>
+<li>key 是当前线程</li>
+</ul>
+</li>
+</ul>
+<h3><span id="4-mongodb">4. MongoDB</span></h3><h5><span id="41-mongodb-安装">4.1 MongoDB 安装</span></h5><ul>
+<li>在 github 上获取源码包 mongo-r2.6.5.zip</li>
+<li>解压缩 </li>
+</ul>
+<blockquote>
+<p>unzip mongo-r2.6.5.zip</p>
+</blockquote>
+<ul>
+<li>编译源码文件</li>
+</ul>
+<blockquote>
+<p>cd mongo-r2.6.5</p>
+</blockquote>
+<blockquote>
+<p>scons all -j 12        //12 为 CPU 核数，用来加速编译过程</p>
+</blockquote>
+<p>若未安装 scons，使用命令 sudo apt-get install scons</p>
+<h5><span id="42-编译后的文件">4.2 编译后的文件</span></h5><ul>
+<li>mongod:mongodb 的启动文件，用来部署数据库</li>
+<li>mongo：链接服务器的客户端</li>
+<li>mongoimport,,mongoexport:用来导入导出数据库</li>
+<li>mongodump,mongorestore:用来导入导出二进制数据，一般用来数据的备份与恢复。</li>
+<li>mongooplog 操作日志</li>
+<li>mongostat:用来查看 mongodb 服务器的各种状态。</li>
+</ul>
+<h5><span id="43-mongodb-搭建">4.3 MongoDB 搭建</span></h5><ul>
+<li><p>建立相关目录</p>
+<ul>
+<li>data (用于存放数据文件)</li>
+<li>log（用于存放日志文件）</li>
+<li>conf（用于存放数据库配置文件 mongod.conf）</li>
+<li>bin（用于存放数据库可执行文件 mongod） </li>
+</ul>
+</li>
+<li><p>编辑配置文件</p>
+<pre><code>  mongod.conf&#123;</code></pre>
+<p>  ​    port = 12345 /<em>监听端口</em>/<br>  ​    dbpath = data /<em>指定数据文件</em>/<br>  ​    logpath = log/mongod.log /<em>指定日志文件</em>/<br>  ​    fork = ture /<em>linux后台运行标志，window无效</em>/<br>  ​    }</p>
+</li>
+<li><p>运行程序</p>
+</li>
+</ul>
+<blockquote>
+<p>mongod -f conf/mongod.conf /<em>运行mongod 加载指定配置文件</em>/</p>
+</blockquote>
+<ul>
+<li><p>查看运行状态</p>
+<pre><code>  data 和 log 目录 </code></pre>
+<p>  ​    tail mongod.log /<em>查看日志</em>/</p>
+</li>
+</ul>
+<h5><span id="44-mongodb-连接">4.4 MongoDB 连接</span></h5><pre><code>操作：
+1、拷贝到指定目录 ：cp mongo bin
+2、执行程序 mongo 127.0.0.1:12345/test(ip端口数据库)~
+3、关闭 mongodb use admin -》db.shutdownServer(),kill -15 进程
+4、重新启动 mongodb：numactl --interleave=all bin/mongod -f conf/mongod.conf</code></pre>
+<h5><span id="45-数据库使用">4.5 数据库使用</span></h5><pre><code>1、连接数据库
+/bin/mongo 127.0.0.1:12345
+2、显示数据库
+show dbs
+3、切换数据库
+use imooc(库名)
+4、切换后删除数据库
+db.dropDatabase()
+5、创建数据库
+use imooc(库名)
+6、查看数据库
+show dbs
+7、创建 imooc_collection 并插入数据
+db.imooc_collection.insert(&#123;x:1&#125;) -&gt; json 数据
+_id全局唯一不重复，可自行定义不重复字段
+db.imooc_collection.insert(&#123;x:1,_id:1&#125;)
+插入多条语句（支持js语法）
+for(i=3;i&lt;100;i++) db.imooc_collection.insert(&#123;x:i&#125;)
+8、显示表结构
+show collections
+9、查询数据表中数据
+    a) 查询所有 db.imooc_collection.find()
+    b) 条件查询(x:1的数据) db.imooc_collection.find(&#123;x:1&#125;)
+    c)高级查询
+        db.imooc_collection.find().count()/*统计条数*/
+        db.imooc_collection.find().skip(3).limit(2).sor(&#123;x:1&#125;)/*过滤掉前三条并限制返回2条且使用x排序*</code></pre>
+<h5><span id="46-数据更新-update">4.6 数据更新 update</span></h5><pre><code>1.db.imooc_collection.update(&#123;x:1&#125;,&#123;x:999&#125;) #将x为1的数据更新为x=999
+update接收两个参数，第一个是过滤条件，这里是x=1的数据，第二个是需要修改的目标值
+2.另一种情况，一条数据包含三个字段值，如
+&gt;db.imooc_collection.insert(&#123;x:100,y:100,z:100&#125;)
+如果直接执行&gt;db.imooc_collection.update(&#123;z:100&#125;,&#123;y:99&#125;) #将z为100的数据中的y更新为99
+这样会将x和z覆盖掉，只剩下y:99
+为了避免这种情况，需要：
+&gt;db.imooc_collection.update(&#123;z:100&#125;,&#123;$set:&#123;y:99&#125;&#125;) #加入set操作符
+set操作符为部分更新操作符，使用set后，内容中存在的字段会被更新，而不存在的字段会保持原状
+
+如果查找的数据不存在则创建：
+&gt; db.user.update(&#123;name: &#39;admin&#39;&#125;, &#123;name: &#39;admin-updated&#39;&#125;, true)
+第三个参数为true即可
+
+mongoDB：update方法有四个参数
+第一个参数：查找数据的条件，如&#123;c:1&#125; 表示查找c为1的数据
+第二个参数：要更新的数据，如&#123;c:2&#125; 跟新符合条件的数据c为2，默认只更新第一个符合条件的数据。
+第三个参数：boolean类型，更新数据不存在时是否创建一条数据，默认为false,设置为true时，自动创建数据。
+第四个参数：boolean类型，跟新数据时是否更新所有符合条件的数据，默认为false,只跟新一条符合条件的数据，设置为true时，更新所有符合条件的数据。
+
+如db.collection.update(&#123;c:1&#125;,&#123;$set&#123;c:2&#125;&#125;,false,true)
+update(旧数据,&#123;$set:新数据&#125;,false,true),只能使用部分更新操作符号$SET</code></pre>
+<h5><span id="47-mongodb-方法api">4.7 MongoDB 方法API</span></h5><pre><code>db.test.save(&#123;1:&quot;hello&quot;&#125;);保存数据到test集合中
+db.test.insert(&#123;1:&quot;hello&quot;&#125;);插入数据到test集合中(和insert功能相同) 
+find:一个参数，查找数据的条件，不填则查找所有数据
+update:上章说过
+remove:删除数据，一个参数（必须，否则会报错）：条件，默认删除所有符合条件的数据。
+drop：没有参数，删除当前数据表
+count:查找数据的条数
+sort:排序，一个参数，排序条件，&#123;c:1&#125; 根据c排序， 1为正序，-1为倒序。
+show dbs:查询所有数据库
+show tables:查询数据表
+show collections; 显示当前选择的db中的集合 
+use dbname:选择数据库，如果数据库不存在，在第一次保存数据的时候会创建数据库。</code></pre>
+<h5><span id="48-命令小结">4.8 命令小结</span></h5><pre><code>scons all
+mongod -f file
+mongo ip:port
+show dbs
+use db
+show collections
+db.collection.insert();
+db.collection.update()
+db.collection.delete()
+db.collection.count();
+db.collection.find()
+db.collection.getIndexes()
+db.collection.ensuerIndex()</code></pre>
+<h3><span id="5-性能优化">5. 性能优化</span></h3><h6><span id="51-mysql-性能优化">5.1 MySQL 性能优化</span></h6><ul>
+<li>表的设计合理化(符合3NF)<ul>
+<li>1NF 是对属性的原子性约束，要求属性(列)具有原子性，不可再分解；(只要是关系型数据库都满足1NF)</li>
+<li>2NF 是对记录的惟一性约束，要求记录有惟一标识，即实体的惟一性；</li>
+<li>3NF 是对字段冗余性的约束，它要求字段没有冗余。 没有冗余的数据库设计可以做到。</li>
+</ul>
+</li>
+<li>添加适当索引(index) [四种: 普通索引、主键索引、唯一索引 unique、全文索引]<ul>
+<li>较频繁的作为查询条件字段应该创建索引</li>
+<li>唯一性太差的字段不适合单独创建索引，即使频繁作为查询条件</li>
+<li>更新非常频繁的字段不适合创建索引</li>
+<li>不会出现在 WHERE 子句中的字段不该创建索引</li>
+</ul>
+</li>
+<li>分表技术(水平分割、垂直分割)</li>
+<li>读写[写: update/delete/add]分离</li>
+<li>存储过程 [模块化编程，可以提高速度]</li>
+<li>对 mysql 配置优化 [配置最大并发数 my.ini, 调整缓存大小 ]</li>
+<li>mysql 服务器硬件升级</li>
+<li>定时的去清除不需要的数据,定时进行碎片整理(MyISAM)</li>
+</ul>
+<h5><span id="52-sql语句优化">5.2 SQL语句优化</span></h5><ul>
+<li>通过 show status 命令了解各种 SQL 的执行频率。</li>
+<li>定位执行效率较低的 SQL 语句-（重点 select）</li>
+<li>通过 explain 分析低效率的 SQL</li>
+<li>确定问题并采取相应的优化措施</li>
+</ul>
+<h5><span id="53-索引">5.3 索引</span></h5><ul>
+<li>索引的类型<ul>
+<li>主键索引，主键自动的为主索引 (类型 Primary)</li>
+<li>唯一索引 (UNIQUE)</li>
+<li>普通索引 (INDEX)</li>
+<li>全文索引 (FULLTEXT) [适用于MyISAM] ——》sphinx + 中文分词    coreseek [sphinx 的中文版 ]</li>
+<li>综合使用=&gt;复合索引</li>
+</ul>
+</li>
+<li>可能使用到索引<ul>
+<li>对于创建的多列索引，只要查询条件使用了最左边的列，索引一般就会被使用。</li>
+<li>对于使用like的查询，查询如果是  ‘%aaa’ 不会使用到索引， ‘aaa%’ 会使用到索引。</li>
+</ul>
+</li>
+<li>不使用索引<ul>
+<li>如果条件中有 or，即使其中有条件带索引也不会使用。</li>
+<li>对于多列索引，不是使用的第一部分，则不会使用索引。</li>
+<li>like 查询是以%开头</li>
+<li>如果列类型是字符串，那一定要在条件中将数据使用引号引用起来。否则不使用索引。(添加时,字符串必须’’)</li>
+<li> 如果mysql估计使用全表扫描要比使用索引快，则不使用索引。</li>
+</ul>
+</li>
+</ul>
+<pre><code>&lt;p&gt;&lt;/p&gt;</code></pre>
+<hr>
+<p><img  srcset="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20300%20300'%3E%3C/svg%3E" data-src="https://gitee.com/java4u/resources/raw/master/global/gh_woniu.png" class="lozad post-image"src="https://gitee.com/java4u/resources/raw/master/global/gh_woniu.png"></p>
+
+  </div>
+  <div>
+  
+  <div class="post-note note-warning copyright" style="margin-top: 42px">
+    <p><span style="font-weight: bold;">作者：</span><a target="_blank" rel="nofollow noopener noreferrer" href="https://java4u.cn/about">白色蜗牛</a></p>
+    <p><span style="font-weight: bold;">文章链接：</span><a target="_blank" rel="nofollow noopener noreferrer" href="https://java4u.cn/tamp-basic-series/tamp_basic_series_3/">https://java4u.cn/tamp-basic-series/tamp_basic_series_3/</a></p>
+    <p><span style="font-weight: bold;">版权声明：</span>本博客所有文章除特别声明外，均采用<a target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh">CC BY-NC-SA 4.0 协议</a>。转载请注明出处！</p>
+  </div>
+  
+  </div>
+</article>
+<div class="nav">
+  
+  <div class="nav-item-prev">
+    <a href="/tamp-basic-series/tamp_basic_series_4/" class="nav-link">
+      <i class="iconfont icon-left nav-prev-icon"></i>
+      <div>
+        <div class="nav-label">上一篇</div>
+        
+        <div class="nav-title">夯实基础系列四：Linux 知识总结 </div>
+        
+      </div>
+    </a>
+  </div>
+  
+  
+  <div class="nav-item-next">
+    <a href="/tamp-basic-series/tamp_basic_series_2/" class="nav-link">
+      <div>
+        <div class="nav-label">下一篇</div>
+        
+        <div class="nav-title">夯实基础系列二：网络知识总结 </div>
+        
+      </div>
+      <i class="iconfont icon-right nav-next-icon"></i>
+    </a>
+  </div>
+  
+</div>
+
+<div class="card card-content comment-card" style="margin-top: 16px;">
+  <div class="comment-card-title">评论</div>
+  
+  <div id="vcomments"></div>
+  
+  <script>
+    loadScript("https://cdn.jsdelivr.net/npm/valine@1.4.14/dist/Valine.min.js");
+    var oldLoadVa = window.onload;
+    window.onload = function () {
+      oldLoadVa && oldLoadVa();
+      new Valine({
+        el: '#vcomments',
+        appId: 'Ro9jzghVgwRgtnGQQ99MFbAK-9Nh9j0Va',
+        appKey: 'rbA6uGwupFqEcTUAugUoXn2B',
+        placeholder: '留下你的足迹吧~也可以加我微信 919201148，互换友链~~~',
+        path: window.location.pathname,
+        avatar: 'robohash',
+        meta: ["nick","mail","link"],
+        pageSize: '10',
+        lang: '',
+        visitor: 'true',
+        highlight: true,
+        recordIP: false,
+        
+        
+        
+        enableQQ: 'false',
+        requiredFields: [],
+      });
+    };
+  </script>
+
+</div>
+
+<div class="card card-content toc-card" id="mobiletoc">
+  <div class="toc-header"><i class="iconfont icon-menu" style="padding-right: 2px;"></i>目录</div>
+<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link"><span class="toc-text">前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link"><span class="toc-text">细节</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link"><span class="toc-text">1. MySQL</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link"><span class="toc-text">1.1 数据库的概述</span></a></li><li class="toc-item toc-level-5"><a class="toc-link"><span class="toc-text">1.2 安装MySQL</span></a></li><li class="toc-item toc-level-5"><a class="toc-link"><span class="toc-text">1.3 SQL</span></a></li><li class="toc-item toc-level-5"><a class="toc-link"><span class="toc-text">1.4 DDL</span></a></li><li class="toc-item toc-level-5"><a class="toc-link"><span class="toc-text">1.5 DML</span></a></li><li class="toc-item toc-level-5"><a class="toc-link"><span class="toc-text">1.6 DCL</span></a></li><li class="toc-item toc-level-5"><a class="toc-link"><span class="toc-text">1.7 DQL</span></a></li><li class="toc-item toc-level-5"><a class="toc-link"><span class="toc-text">1.8 约束</span></a></li><li class="toc-item toc-level-5"><a class="toc-link"><span class="toc-text">1.9 中文无法插入解决办法</span></a></li><li class="toc-item toc-level-5"><a class="toc-link"><span class="toc-text">1.10 连接类型</span></a></li></ol></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link"><span class="toc-text">2. JDBC</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link"><span class="toc-text">2.1 JDBC 的原理</span></a></li><li class="toc-item toc-level-5"><a class="toc-link"><span class="toc-text">2.2 四大核心类</span></a></li><li class="toc-item toc-level-5"><a class="toc-link"><span class="toc-text">2.3 四大参数</span></a></li><li class="toc-item toc-level-5"><a class="toc-link"><span class="toc-text">2.4 预编译语句集</span></a></li><li class="toc-item toc-level-5"><a class="toc-link"><span class="toc-text">2.5 DAO模式</span></a></li><li class="toc-item toc-level-5"><a class="toc-link"><span class="toc-text">2.6 时间类型的转换</span></a></li><li class="toc-item toc-level-5"><a class="toc-link"><span class="toc-text">2.7 大数据存取</span></a><ol class="toc-child"><li class="toc-item toc-level-6"><a class="toc-link"><span class="toc-text">2.8 批处理</span></a></li></ol></li></ol></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link"><span class="toc-text">3. JDBC_进阶</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link"><span class="toc-text">3.1 事务</span></a></li><li class="toc-item toc-level-5"><a class="toc-link"><span class="toc-text">3.2 三种并发读问题</span></a></li><li class="toc-item toc-level-5"><a class="toc-link"><span class="toc-text">3.3 四种隔离级别</span></a></li><li class="toc-item toc-level-5"><a class="toc-link"><span class="toc-text">3.4 连接池</span></a></li><li class="toc-item toc-level-5"><a class="toc-link"><span class="toc-text">3.5 JNDI</span></a></li><li class="toc-item toc-level-5"><a class="toc-link"><span class="toc-text">3.6 ThreadLocal</span></a></li></ol></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link"><span class="toc-text">4. MongoDB</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link"><span class="toc-text">4.1 MongoDB 安装</span></a></li><li class="toc-item toc-level-5"><a class="toc-link"><span class="toc-text">4.2 编译后的文件</span></a></li><li class="toc-item toc-level-5"><a class="toc-link"><span class="toc-text">4.3 MongoDB 搭建</span></a></li><li class="toc-item toc-level-5"><a class="toc-link"><span class="toc-text">4.4 MongoDB 连接</span></a></li><li class="toc-item toc-level-5"><a class="toc-link"><span class="toc-text">4.5 数据库使用</span></a></li><li class="toc-item toc-level-5"><a class="toc-link"><span class="toc-text">4.6 数据更新 update</span></a></li><li class="toc-item toc-level-5"><a class="toc-link"><span class="toc-text">4.7 MongoDB 方法API</span></a></li><li class="toc-item toc-level-5"><a class="toc-link"><span class="toc-text">4.8 命令小结</span></a></li></ol></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link"><span class="toc-text">5. 性能优化</span></a><ol class="toc-child"><li class="toc-item toc-level-6"><a class="toc-link"><span class="toc-text">5.1 MySQL 性能优化</span></a></li></ol></li><li class="toc-item toc-level-5"><a class="toc-link"><span class="toc-text">5.2 SQL语句优化</span></a></li><li class="toc-item toc-level-5"><a class="toc-link"><span class="toc-text">5.3 索引</span></a></li></ol></li></ol></li></ol></li></ol>
+</div>
+
+<!-- 百度自动推送链接-->
+<script>
+  (function(){
+      var bp = document.createElement('script');
+      var curProtocol = window.location.protocol.split(':')[0];
+      if (curProtocol === 'https') {
+          bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';        
+      }
+      else {
+          bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+      }
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(bp, s);
+  })();
+  </script>
+  </main>
+          <aside class="left-column">
+            
+            <div class="card card-author">
+              
+<img src="/img/logo.jpg" class="author-img">
+
+<p class="author-name">蜗牛 Java 之家</p>
+<p class="author-description">Java 程序员的成长进阶社区</br>(Java for You)。</p>
+<div class="author-message">
+  <a class="author-posts-count" href="/archives">
+    <span>107</span>
+    <span>文章</span>
+  </a>
+  <a class="author-categories-count" href="/categories">
+    <span>11</span>
+    <span>分类</span>
+  </a>
+  <a class="author-tags-count" href="/tags">
+    <span>118</span>
+    <span>标签</span>
+  </a>
+</div>
+
+<div class="author-card-society">
+  
+    <div class="author-card-society-icon">
+      <a target="_blank" rel="noopener" href="https://gitee.com/java4u/resources/raw/master/global/gh_woniu.png">
+        <i class="iconfont icon-wechat society-icon"></i>
+      </a>
+    </div>
+  
+    <div class="author-card-society-icon">
+      <a target="_blank" rel="noopener" href="https://github.com/huayonglun/">
+        <i class="iconfont icon-github society-icon"></i>
+      </a>
+    </div>
+  
+    <div class="author-card-society-icon">
+      <a target="_blank" rel="noopener" href="http://weibo.com/huayonglun">
+        <i class="iconfont icon-sina society-icon"></i>
+      </a>
+    </div>
+  
+</div>
+
+            </div>
+            
+            <div class="sticky-tablet">
+  
+  
+  <article class="display-when-two-columns spacer">
+    <div class="card card-content toc-card">
+      <div class="toc-header"><i class="iconfont icon-menu" style="padding-right: 2px;"></i>目录</div>
+<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link"><span class="toc-text">前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link"><span class="toc-text">细节</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link"><span class="toc-text">1. MySQL</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link"><span class="toc-text">1.1 数据库的概述</span></a></li><li class="toc-item toc-level-5"><a class="toc-link"><span class="toc-text">1.2 安装MySQL</span></a></li><li class="toc-item toc-level-5"><a class="toc-link"><span class="toc-text">1.3 SQL</span></a></li><li class="toc-item toc-level-5"><a class="toc-link"><span class="toc-text">1.4 DDL</span></a></li><li class="toc-item toc-level-5"><a class="toc-link"><span class="toc-text">1.5 DML</span></a></li><li class="toc-item toc-level-5"><a class="toc-link"><span class="toc-text">1.6 DCL</span></a></li><li class="toc-item toc-level-5"><a class="toc-link"><span class="toc-text">1.7 DQL</span></a></li><li class="toc-item toc-level-5"><a class="toc-link"><span class="toc-text">1.8 约束</span></a></li><li class="toc-item toc-level-5"><a class="toc-link"><span class="toc-text">1.9 中文无法插入解决办法</span></a></li><li class="toc-item toc-level-5"><a class="toc-link"><span class="toc-text">1.10 连接类型</span></a></li></ol></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link"><span class="toc-text">2. JDBC</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link"><span class="toc-text">2.1 JDBC 的原理</span></a></li><li class="toc-item toc-level-5"><a class="toc-link"><span class="toc-text">2.2 四大核心类</span></a></li><li class="toc-item toc-level-5"><a class="toc-link"><span class="toc-text">2.3 四大参数</span></a></li><li class="toc-item toc-level-5"><a class="toc-link"><span class="toc-text">2.4 预编译语句集</span></a></li><li class="toc-item toc-level-5"><a class="toc-link"><span class="toc-text">2.5 DAO模式</span></a></li><li class="toc-item toc-level-5"><a class="toc-link"><span class="toc-text">2.6 时间类型的转换</span></a></li><li class="toc-item toc-level-5"><a class="toc-link"><span class="toc-text">2.7 大数据存取</span></a><ol class="toc-child"><li class="toc-item toc-level-6"><a class="toc-link"><span class="toc-text">2.8 批处理</span></a></li></ol></li></ol></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link"><span class="toc-text">3. JDBC_进阶</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link"><span class="toc-text">3.1 事务</span></a></li><li class="toc-item toc-level-5"><a class="toc-link"><span class="toc-text">3.2 三种并发读问题</span></a></li><li class="toc-item toc-level-5"><a class="toc-link"><span class="toc-text">3.3 四种隔离级别</span></a></li><li class="toc-item toc-level-5"><a class="toc-link"><span class="toc-text">3.4 连接池</span></a></li><li class="toc-item toc-level-5"><a class="toc-link"><span class="toc-text">3.5 JNDI</span></a></li><li class="toc-item toc-level-5"><a class="toc-link"><span class="toc-text">3.6 ThreadLocal</span></a></li></ol></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link"><span class="toc-text">4. MongoDB</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link"><span class="toc-text">4.1 MongoDB 安装</span></a></li><li class="toc-item toc-level-5"><a class="toc-link"><span class="toc-text">4.2 编译后的文件</span></a></li><li class="toc-item toc-level-5"><a class="toc-link"><span class="toc-text">4.3 MongoDB 搭建</span></a></li><li class="toc-item toc-level-5"><a class="toc-link"><span class="toc-text">4.4 MongoDB 连接</span></a></li><li class="toc-item toc-level-5"><a class="toc-link"><span class="toc-text">4.5 数据库使用</span></a></li><li class="toc-item toc-level-5"><a class="toc-link"><span class="toc-text">4.6 数据更新 update</span></a></li><li class="toc-item toc-level-5"><a class="toc-link"><span class="toc-text">4.7 MongoDB 方法API</span></a></li><li class="toc-item toc-level-5"><a class="toc-link"><span class="toc-text">4.8 命令小结</span></a></li></ol></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link"><span class="toc-text">5. 性能优化</span></a><ol class="toc-child"><li class="toc-item toc-level-6"><a class="toc-link"><span class="toc-text">5.1 MySQL 性能优化</span></a></li></ol></li><li class="toc-item toc-level-5"><a class="toc-link"><span class="toc-text">5.2 SQL语句优化</span></a></li><li class="toc-item toc-level-5"><a class="toc-link"><span class="toc-text">5.3 索引</span></a></li></ol></li></ol></li></ol></li></ol>
+    </div>
+  </article>
+  
+  
+  <article class="card card-content categories-widget">
+    <div class="categories-card">
+  <div class="categories-header"><i class="iconfont icon-fenlei" style="padding-right: 2px;"></i>分类</div>
+  <div class="categories-list">
+    
+      <a href="/categories/Java">
+        <div class="categories-list-item">
+          Java
+          <span class="categories-list-item-badge">14</span>
+        </div>
+      </a>
+    
+      <a href="/categories/Java并发编程">
+        <div class="categories-list-item">
+          Java并发编程
+          <span class="categories-list-item-badge">18</span>
+        </div>
+      </a>
+    
+      <a href="/categories/Linux">
+        <div class="categories-list-item">
+          Linux
+          <span class="categories-list-item-badge">1</span>
+        </div>
+      </a>
+    
+      <a href="/categories/spring">
+        <div class="categories-list-item">
+          spring
+          <span class="categories-list-item-badge">21</span>
+        </div>
+      </a>
+    
+      <a href="/categories/struts2">
+        <div class="categories-list-item">
+          struts2
+          <span class="categories-list-item-badge">16</span>
+        </div>
+      </a>
+    
+      <a href="/categories/夯实基础系列">
+        <div class="categories-list-item">
+          夯实基础系列
+          <span class="categories-list-item-badge">4</span>
+        </div>
+      </a>
+    
+      <a href="/categories/工具教程">
+        <div class="categories-list-item">
+          工具教程
+          <span class="categories-list-item-badge">3</span>
+        </div>
+      </a>
+    
+      <a href="/categories/思维">
+        <div class="categories-list-item">
+          思维
+          <span class="categories-list-item-badge">2</span>
+        </div>
+      </a>
+    
+      <a href="/categories/数据库">
+        <div class="categories-list-item">
+          数据库
+          <span class="categories-list-item-badge">2</span>
+        </div>
+      </a>
+    
+      <a href="/categories/算法">
+        <div class="categories-list-item">
+          算法
+          <span class="categories-list-item-badge">25</span>
+        </div>
+      </a>
+    
+      <a href="/categories/网络">
+        <div class="categories-list-item">
+          网络
+          <span class="categories-list-item-badge">1</span>
+        </div>
+      </a>
+    
+  </div>
+</div>
+  </article>
+  
+  <article class="card card-content tags-widget">
+    <div class="tags-card">
+  <div class="tags-header"><i class="iconfont icon-biaoqian" style="padding-right: 2px;"></i>热门标签</div>
+  <div class="tags-list">
+    
+    <a href="\tags\Java" title="Java"><div class="tags-list-item">Java</div></a>
+    
+    <a href="\tags\ssh" title="ssh"><div class="tags-list-item">ssh</div></a>
+    
+    <a href="\tags\spring" title="spring"><div class="tags-list-item">spring</div></a>
+    
+    <a href="\tags\Java并发" title="Java并发"><div class="tags-list-item">Java并发</div></a>
+    
+    <a href="\tags\struts2" title="struts2"><div class="tags-list-item">struts2</div></a>
+    
+    <a href="\tags\bean" title="bean"><div class="tags-list-item">bean</div></a>
+    
+    <a href="\tags\树" title="树"><div class="tags-list-item">树</div></a>
+    
+    <a href="\tags\AOP" title="AOP"><div class="tags-list-item">AOP</div></a>
+    
+    <a href="\tags\分布式" title="分布式"><div class="tags-list-item">分布式</div></a>
+    
+    <a href="\tags\链表" title="链表"><div class="tags-list-item">链表</div></a>
+    
+    <a href="\tags\装配属性" title="装配属性"><div class="tags-list-item">装配属性</div></a>
+    
+    <a href="\tags\集合" title="集合"><div class="tags-list-item">集合</div></a>
+    
+    <a href="\tags\二叉树" title="二叉树"><div class="tags-list-item">二叉树</div></a>
+    
+    <a href="\tags\查找" title="查找"><div class="tags-list-item">查找</div></a>
+    
+    <a href="\tags\排序" title="排序"><div class="tags-list-item">排序</div></a>
+    
+    <a href="\tags\同步" title="同步"><div class="tags-list-item">同步</div></a>
+    
+  </div>
+</div>
+  </article>
+  
+  
+</div>
+          </aside>
+          <aside class="right-column">
+            <div class="sticky-widescreen">
+
+  <!-- 我的公众号 -->
+  
+  <article class="card card-content toc-card">
+    <div style="float: left; ">
+      <img class="adv" style="width: 100%; height: 100%; border: solid 1px #ddd;" src="https://gitee.com/java4u/resources/raw/master/2020-12-17/1608142536200-image.png">
+    </div>
+    <div style="float: left; margin-left: 17px; margin-top: 12px;">
+        <div style="font-size: 18px; margin-bottom: 12px;color:#159957;"><b>微信搜一搜: 蜗牛互联网</b></div>
+        <small style="font-size: 0.9em;">
+          👉「<a target="_blank" rel="noopener" href="https://mp.weixin.qq.com/s/OyboCy8Drh8AWNqE_DUROg">技术干货</a>」每周推送<br>
+          👉「<a href="https://java4u.cn/resources/">免费资料</a>」随时领取<br>
+          👉「<a target="_blank" rel="noopener" href="https://gitee.com/java4u/resources/raw/master/2020-12-17/1608143152021-image.png">优质社群</a>」随时加入<br>
+        </small>
+    </div>
+    <div style="clear: both;"></div>
+    <div style="font-size: 0.8em; margin: 15px 0 15px 0;">
+      <a href="" target="_blank" style="color:#159957;font-size: 14px;" rel="noopener noreferrer">扫描上方二维码，关注我的公众号</a>
+      <br>
+    </div>
+  </article>
+
+
+  
+  
+  <article class="card card-content toc-card">
+    <div class="toc-header"><i class="iconfont icon-menu" style="padding-right: 2px;"></i>目录</div>
+<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link"><span class="toc-text">前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link"><span class="toc-text">细节</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link"><span class="toc-text">1. MySQL</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link"><span class="toc-text">1.1 数据库的概述</span></a></li><li class="toc-item toc-level-5"><a class="toc-link"><span class="toc-text">1.2 安装MySQL</span></a></li><li class="toc-item toc-level-5"><a class="toc-link"><span class="toc-text">1.3 SQL</span></a></li><li class="toc-item toc-level-5"><a class="toc-link"><span class="toc-text">1.4 DDL</span></a></li><li class="toc-item toc-level-5"><a class="toc-link"><span class="toc-text">1.5 DML</span></a></li><li class="toc-item toc-level-5"><a class="toc-link"><span class="toc-text">1.6 DCL</span></a></li><li class="toc-item toc-level-5"><a class="toc-link"><span class="toc-text">1.7 DQL</span></a></li><li class="toc-item toc-level-5"><a class="toc-link"><span class="toc-text">1.8 约束</span></a></li><li class="toc-item toc-level-5"><a class="toc-link"><span class="toc-text">1.9 中文无法插入解决办法</span></a></li><li class="toc-item toc-level-5"><a class="toc-link"><span class="toc-text">1.10 连接类型</span></a></li></ol></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link"><span class="toc-text">2. JDBC</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link"><span class="toc-text">2.1 JDBC 的原理</span></a></li><li class="toc-item toc-level-5"><a class="toc-link"><span class="toc-text">2.2 四大核心类</span></a></li><li class="toc-item toc-level-5"><a class="toc-link"><span class="toc-text">2.3 四大参数</span></a></li><li class="toc-item toc-level-5"><a class="toc-link"><span class="toc-text">2.4 预编译语句集</span></a></li><li class="toc-item toc-level-5"><a class="toc-link"><span class="toc-text">2.5 DAO模式</span></a></li><li class="toc-item toc-level-5"><a class="toc-link"><span class="toc-text">2.6 时间类型的转换</span></a></li><li class="toc-item toc-level-5"><a class="toc-link"><span class="toc-text">2.7 大数据存取</span></a><ol class="toc-child"><li class="toc-item toc-level-6"><a class="toc-link"><span class="toc-text">2.8 批处理</span></a></li></ol></li></ol></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link"><span class="toc-text">3. JDBC_进阶</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link"><span class="toc-text">3.1 事务</span></a></li><li class="toc-item toc-level-5"><a class="toc-link"><span class="toc-text">3.2 三种并发读问题</span></a></li><li class="toc-item toc-level-5"><a class="toc-link"><span class="toc-text">3.3 四种隔离级别</span></a></li><li class="toc-item toc-level-5"><a class="toc-link"><span class="toc-text">3.4 连接池</span></a></li><li class="toc-item toc-level-5"><a class="toc-link"><span class="toc-text">3.5 JNDI</span></a></li><li class="toc-item toc-level-5"><a class="toc-link"><span class="toc-text">3.6 ThreadLocal</span></a></li></ol></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link"><span class="toc-text">4. MongoDB</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link"><span class="toc-text">4.1 MongoDB 安装</span></a></li><li class="toc-item toc-level-5"><a class="toc-link"><span class="toc-text">4.2 编译后的文件</span></a></li><li class="toc-item toc-level-5"><a class="toc-link"><span class="toc-text">4.3 MongoDB 搭建</span></a></li><li class="toc-item toc-level-5"><a class="toc-link"><span class="toc-text">4.4 MongoDB 连接</span></a></li><li class="toc-item toc-level-5"><a class="toc-link"><span class="toc-text">4.5 数据库使用</span></a></li><li class="toc-item toc-level-5"><a class="toc-link"><span class="toc-text">4.6 数据更新 update</span></a></li><li class="toc-item toc-level-5"><a class="toc-link"><span class="toc-text">4.7 MongoDB 方法API</span></a></li><li class="toc-item toc-level-5"><a class="toc-link"><span class="toc-text">4.8 命令小结</span></a></li></ol></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link"><span class="toc-text">5. 性能优化</span></a><ol class="toc-child"><li class="toc-item toc-level-6"><a class="toc-link"><span class="toc-text">5.1 MySQL 性能优化</span></a></li></ol></li><li class="toc-item toc-level-5"><a class="toc-link"><span class="toc-text">5.2 SQL语句优化</span></a></li><li class="toc-item toc-level-5"><a class="toc-link"><span class="toc-text">5.3 索引</span></a></li></ol></li></ol></li></ol></li></ol>
+  </article>
+  
+
+  
+  <article class="card card-content">
+    <div class="recent-posts-card">
+  <div class="recent-posts-header"><i class="iconfont icon-wenzhang_huaban" style="padding-right: 2px;"></i>最近文章</div>
+  <div class="recent-posts-list">
+    
+      <div class="recent-posts-item">
+        <div class="recent-posts-item-title">2020-12-15</div>
+        <a href="/tools-course/cai_yun_xiao_yi/"><div class="recent-posts-item-content">彩云小译：最佳的网页翻译插件</div></a>
+      </div>
+    
+      <div class="recent-posts-item">
+        <div class="recent-posts-item-title">2020-12-14</div>
+        <a href="/tools-course/markmap/"><div class="recent-posts-item-content">最佳的思维导图生成工具： markmap 使用教程</div></a>
+      </div>
+    
+      <div class="recent-posts-item">
+        <div class="recent-posts-item-title">2020-12-13</div>
+        <a href="/tools-course/hexo_site_course/"><div class="recent-posts-item-content">建站神器：Hexo+Kaze+Gitee Pages 搭建静态博客网站</div></a>
+      </div>
+    
+      <div class="recent-posts-item">
+        <div class="recent-posts-item-title">2019-01-24</div>
+        <a href="/思维/知识的诅咒：为什么你觉得显而易见，而对方却无法理解/"><div class="recent-posts-item-content">知识的诅咒：为什么你觉得显而易见，而对方却无法理解</div></a>
+      </div>
+    
+  </div>
+</div>
+  </article>
+  
+  
+</div>
+          </aside>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <footer class="footer">
+  <div class="footer-container">
+    <div>
+      
+      <!-- copyringt-->
+      <div class="footer-dsc">
+        <span>Copyright ©
+          
+          2020 -
+          
+          2020
+        </span>
+        &nbsp;
+        <a href="/" class="footer-link">蜗牛 Java 之家 </a>
+      </div>
+
+       <!-- copyringt-->
+       <div class="footer-dsc">
+        <center><span>
+        <a href="https://java4u.cn/resources/" target="_blank">Java 程序员最全资源下载</a> - <a href="https://java4u.cn/links/" target="_blank">友情链接</a>
+        </span></center>
+      </div>
+     
+    </div>
+
+    
+    
+    
+    
+      <div class="footer-dsc">
+        
+        本站总访问量<span id="busuanzi_value_site_pv"></span>次
+        
+        
+        <span>&nbsp;|&nbsp;</span>
+        
+        
+        本站总访客数<span id="busuanzi_value_site_uv"></span>次
+        
+      </div>
+      
+    
+</footer>
+  <a role="button" id="scrollbutton" class="basebutton"  aria-label="回到顶部">
+  <i class="iconfont icon-arrowleft button-icon"></i>
+</a>
+<a role="button" id="menubutton" class="basebutton">
+  <i class="iconfont icon-menu button-icon"></i>
+</a>
+<a role="button" id="popbutton" class="basebutton" aria-label="控制中心">
+  <i class="iconfont icon-expand button-icon"></i>
+</a>
+<a role="button" id="darkbutton" class="basebutton darkwidget" aria-label="夜色模式">
+  <i class="iconfont icon-weather button-icon"></i>
+</a>
+<a role="button" id="searchbutton" class="basebutton searchwidget" aria-label="搜索">
+  <i class="iconfont icon-search button-icon"></i>
+</a>
+
+  
+  
+  
+
+  
+  
+  <script>
+  var addImgLayout = function () {
+    var img = document.querySelectorAll('.post-content img');
+    var i;
+    for (i = 0; i < img.length; i++) {
+      var wrapper = document.createElement('a');
+      wrapper.setAttribute('href', img[i].getAttribute('data-src'));
+      wrapper.setAttribute('aria-label', 'illustration');
+      wrapper.style.cssText = 'width: 100%; display: flex; justify-content: center;';
+      if (img[i].alt) wrapper.dataset.caption = img[i].alt;
+      wrapper.dataset.nolink = true;
+      img[i].before(wrapper);
+      wrapper.append(img[i]);
+      var divWrap = document.createElement('div');
+      divWrap.classList.add('gallery');
+      wrapper.before(divWrap);
+      divWrap.append(wrapper);
+    }
+    baguetteBox.run('.gallery');
+  }
+</script>
+<script>loadScript("/js/lib/lightbox/baguetteBox.min.js", addImgLayout)</script>
+  
+  
+  
+<script src="/js/main.js"></script>
+
+  
+  <script>loadScript("/js/lib/busuanzi.min.js")</script>
+  
+  
+  <script>
+    var addLazyload = function () {
+      var observer = lozad('.lozad', {
+        load: function (el) {
+          el.srcset = el.getAttribute('data-src');
+        },
+        loaded: function (el) {
+          el.classList.add('loaded');
+        }
+      });
+      observer.observe();
+    }
+  </script>
+  <script>loadScript("/js/lib/lozad.min.js", addLazyload)</script>
+  
+  
+</body>
+
+</html>

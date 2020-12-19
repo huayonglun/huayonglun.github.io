@@ -1,0 +1,832 @@
+<!DOCTYPE html>
+<html  lang="zh-CN" >
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport"
+    content="width=device-width, initial-scale=1.0, minimum-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <meta name="theme-color" content="#fff" id="theme-color">
+  <meta name="description" content="蜗牛 Java 之家 (java4u.cn) 是 Java 程序员的成长进阶社区，致力于为广大学习 Java 的程序员们提供计算机专业相关的经验教程、学习资料和书籍，包括Java、数据库、Linux、网络等学习干货、IT程序员常用软件工具分享、计算机专业经典电子书PDF，帮助 Java 程序员更快入门和提高。">
+  <link rel="icon" href="/img/logo.jpg">
+  <title>JVM的内存区域划分&nbsp; | &nbsp;Java for You</title>
+  
+  
+  <meta property="og:title" content="JVM的内存区域划分">
+  
+  
+  <meta property="og:url" content="https://java4u.cn/Java/JVM%E7%9A%84%E5%86%85%E5%AD%98%E5%8C%BA%E5%9F%9F%E5%88%92%E5%88%86/index.html">
+  
+  
+  <meta property="og:img" content="/img/logo.jpg">
+  
+  
+  <meta property="og:img" content="蜗牛 Java 之家 (java4u.cn) 是 Java 程序员的成长进阶社区，致力于为广大学习 Java 的程序员们提供计算机专业相关的经验教程、学习资料和书籍，包括Java、数据库、Linux、网络等学习干货、IT程序员常用软件工具分享、计算机专业经典电子书PDF，帮助 Java 程序员更快入门和提高。">
+  
+  
+  <meta property="og:type" content="article">
+  <meta property="og:article:published_time" content="2016-03-18">
+  <meta property="og:article:modified_time" content="2020-12-19">
+  <meta property="og:article:author" content="蜗牛 Java 之家">
+  
+  
+  <meta property="og:article:tag" content="Java">
+  
+  <meta property="og:article:tag" content="JVM">
+  
+  <meta property="og:article:tag" content="内存区域">
+  
+  
+  
+  
+  <script>
+    // control reverse button
+    var reverseDarkList = {
+      dark: 'light',
+      light: 'dark'
+    };
+    var themeColor = {
+      dark: '#1c1c1e',
+      light: '#fff'
+    }
+    // get the data of css prefers-color-scheme
+    var getCssMediaQuery = function() {
+      return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+    };
+    // reverse current darkmode setting function
+    var reverseDarkModeSetting = function() {
+      var setting = localStorage.getItem('user-color-scheme');
+      if(reverseDarkList[setting]) {
+        setting = reverseDarkList[setting];
+      } else if(setting === null) {
+        setting = reverseDarkList[getCssMediaQuery()];
+      } else {
+        return;
+      }
+      localStorage.setItem('user-color-scheme', setting);
+      return setting;
+    };
+    // apply current darkmode setting
+    var setDarkmode = function(mode) {
+      var setting = mode || localStorage.getItem('user-color-scheme');
+      if(setting === getCssMediaQuery()) {
+        document.documentElement.removeAttribute('data-user-color-scheme');
+        localStorage.removeItem('user-color-scheme');
+        document.getElementById('theme-color').content = themeColor[setting];
+      } else if(reverseDarkList[setting]) {
+        document.documentElement.setAttribute('data-user-color-scheme', setting);
+        document.getElementById('theme-color').content = themeColor[setting];
+      } else {
+        document.documentElement.removeAttribute('data-user-color-scheme');
+        localStorage.removeItem('user-color-scheme');
+        document.getElementById('theme-color').content = themeColor[getCssMediaQuery()];
+      }
+    };
+    setDarkmode();
+  </script>
+  <script>
+    function loadScript(url, cb) {
+      var script = document.createElement('script');
+      script.src = url;
+      if (cb) script.onload = cb;
+      script.async = true;
+      document.body.appendChild(script);
+    }
+  </script>
+  
+  <link rel="preload" href="//at.alicdn.com/t/font_1946621_i1kgafibvw.css" as="style" >
+  <link rel="preload" href="//at.alicdn.com/t/font_1952792_89b4ac4k4up.css" as="style" >
+  
+  <link rel="preload" href="/js/lib/lightbox/baguetteBox.min.js" as="script">
+  <link rel="preload" href="/js/lib/lightbox/baguetteBox.min.css" as="style" >
+  
+  
+  <link rel="preload" href="/js/lib/lozad.min.js" as="script">
+  
+  
+  
+  
+  
+  <link rel="prefetch" href="//cdn.jsdelivr.net/npm/mathjax@3.0.5/es5/tex-svg.js" as="script">
+  
+  
+  
+  <link rel="prefetch" href="https://cdn.jsdelivr.net/npm/valine@1.4.14/dist/Valine.min.js" as="script">
+  
+  
+  
+  
+<link rel="stylesheet" href="/css/main.css">
+
+  
+  
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1946621_i1kgafibvw.css">
+
+  
+  
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1952792_89b4ac4k4up.css">
+
+  
+  
+<link rel="stylesheet" href="/js/lib/lightbox/baguetteBox.min.css">
+
+  
+  
+  
+  
+
+
+  <!-- 百度站长工具验证 -->
+  <meta name="baidu-site-verification" content="code-9cIsKsXy75" />
+
+  <!-- 必应站长工具验证-->
+  <meta name="msvalidate.01" content="81AA8F485E800B7335F07A558BE9A636" />
+
+  <!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-C22LNC79YC"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-C22LNC79YC');
+</script>
+<meta name="generator" content="Hexo 5.2.0"></head>
+
+
+<body>
+  <div class="wrapper">
+    
+    <nav class="navbar">
+  <div class="navbar-logo">
+    <span class="navbar-logo-main">
+      
+      <img class="navbar-logo-img" src="/img/logo.jpg" alt="logo">
+      
+      <span class="navbar-logo-dsc">蜗牛 Java 之家</span>
+    </span>
+  </div>
+  <div class="navbar-menu">
+    
+    <a href="/" class="navbar-menu-item">
+    
+    首页
+    
+    </a>
+    
+    <a href="/resources" class="navbar-menu-item">
+    
+    免费资源
+    
+    </a>
+    
+    <a href="/tools" class="navbar-menu-item">
+    
+    免费工具
+    
+    </a>
+    
+    <a href="/categories" class="navbar-menu-item">
+    
+    分类
+    
+    </a>
+    
+    <a href="/links" class="navbar-menu-item">
+    
+    友链
+    
+    </a>
+    
+    <a class="navbar-menu-item darknavbar" id="dark"><i class="iconfont icon-weather"></i></a>
+    <a class="navbar-menu-item searchnavbar" id="search"><i class="iconfont icon-search" style="font-size: 1.2rem; font-weight: 400;"></i></a>
+  </div>
+</nav>
+    
+    <div id="local-search" style="display: none;">
+      <input class="navbar-menu-item" id="search-input" placeholder="请输入搜索内容...">
+      <div id="search-content"></div>
+    </div>
+    
+    <div class="section-wrap">
+      <div class="container">
+        <div class="columns">
+          <main class="main-column">
+<article class="card card-content">
+  <header>
+    <h1 class="post-title">
+      JVM的内存区域划分
+    </h1>
+  </header>
+  <div class="post-meta post-show-meta">
+    <time datetime="2016-03-18T12:43:46.000Z">
+      <i class="iconfont icon-calendar" style="margin-right: 2px;"></i>
+      <span>2016-03-18</span>
+    </time>
+    
+    <span class="dot"></span>
+    
+    <a href="/categories/Java/" class="post-meta-link">Java</a>
+    
+    
+    
+    <span class="dot"></span>
+    <span>2.2k 字</span>
+    
+
+    <span class="dot"></span>
+    <!-- 增加阅读量统计样式代码 -->
+    
+    <!-- id 将作为查询条件 -->
+    <i class="iconfont icon-wodebaobiao" style="margin-right: 2px; font-size: 1.15rem;"></i>
+    <span id="/Java/JVM%E7%9A%84%E5%86%85%E5%AD%98%E5%8C%BA%E5%9F%9F%E5%88%92%E5%88%86/" class="leancloud_visitors" data-flag-title="JVM的内存区域划分">
+      <em class="post-meta-item-text">阅读量 </em>
+      <i class="leancloud-visitors-count"></i>
+    </span>
+
+  </div>
+  
+  <div class="post-meta post-show-meta" style="margin-top: -10px;">
+    <div style="display: flex; align-items: center;">
+      <i class="iconfont icon-biaoqian" style="margin-right: 2px; font-size: 1.15rem;"></i>
+      
+      
+        <a href="/tags/Java/" class="post-meta-link">Java</a>
+      
+      
+      <span class="dot"></span>
+      
+        <a href="/tags/JVM/" class="post-meta-link">JVM</a>
+      
+      
+      <span class="dot"></span>
+      
+        <a href="/tags/内存区域/" class="post-meta-link">内存区域</a>
+      
+    </div>
+  </div>
+  
+  </header>
+  <div id="section" class="post-content">
+    <h2><span id="java程序具体执行的过程">Java程序具体执行的过程</span></h2><center>![Java程序具体执行的过程](http://i.imgur.com/BFRwHuk.png)<center>
+--
+- 首先Java源代码文件(.java后缀)会被Java编译器编译为字节码文件(.class后缀)
+- 由JVM中的类加载器加载各个类的字节码文件
+- 加载完毕之后，交由JVM执行引擎执行
+- 在整个程序执行过程中，JVM会用一段空间来存储程序执行期间需要用到的数据和相关信息，这段空间一般被称作为Runtime Data Area（运行时数据区），也就是我们常说的JVM内存。
+- 在Java中我们常常说到的内存管理就是针对这段空间进行管理（如何分配和回收内存空间）
+
+<h2><span id="运行时数据区包括哪几部分">运行时数据区包括哪几部分？</span></h2><ul>
+<li>根据《Java虚拟机规范》的规定，运行时数据区通常包括这几个部分：</li>
+</ul>
+<ul>
+<li>程序计数器(Program Counter Register)</li>
+<li>Java栈(VM Stack)</li>
+<li>本地方法栈(Native Method Stack)</li>
+<li>方法区(Method Area)</li>
+<li>堆(Heap)<center>![运行时数据区](http://i.imgur.com/5wHAar7.png)
+
+</center></li>
+</ul>
+<h2><span id="运行时数据区的每部分到底存储了哪些数据">运行时数据区的每部分到底存储了哪些数据？</span></h2><ul>
+<li>程序计数器</li>
+</ul>
+<ul>
+<li> Program Counter Register，也有称作为PC寄存器。</li>
+<li> 在汇编语言中，程序计数器是指CPU中的寄存器，它保存的是程序当前执行的指令的地址（也可以说保存下一条指令的所在存储单元的地址），当CPU需要执行指令时，需要从程序计数器中得到当前需要执行的指令所在存储单元的地址，然后根据得到的地址获取到指令，在得到指令之后，程序计数器便自动加1或者根据转移指针得到下一条指令的地址，如此循环，直至执行完所有的指令。</li>
+<li> 虽然JVM中的程序计数器并不像汇编语言中的程序计数器一样是物理概念上的CPU寄存器，但是JVM中的程序计数器的功能跟汇编语言中的程序计数器的功能在逻辑上是等同的，也就是说是用来指示执行哪条指令的。</li>
+<li> 由于在JVM中，多线程是通过线程轮流切换来获得CPU执行时间的，因此，在任一具体时刻，一个CPU的内核只会执行一条线程中的指令，因此，为了能够使得每个线程都在线程切换后能够恢复在切换之前的程序执行位置，每个线程都需要有自己独立的程序计数器，并且不能互相被干扰，否则就会影响到程序的正常执行次序。因此，可以这么说，程序计数器是每个线程所私有的。</li>
+<li> 在JVM规范中规定，如果线程执行的是非native方法，则程序计数器中保存的是当前需要执行的指令的地址；如果线程执行的是native方法，则程序计数器中的值是undefined。</li>
+<li> 由于程序计数器中存储的数据所占空间的大小不会随程序的执行而发生改变，因此，对于程序计数器是不会发生内存溢出现象(OutOfMemory)的。</li>
+<li> 线程私有</li>
+</ul>
+<ul>
+<li>Java栈</li>
+</ul>
+<ul>
+<li>虚拟机栈（Java Vitual Machine Stack），也就是我们常常所说的栈。</li>
+<li>Java栈是Java方法执行的内存模型。</li>
+<li>Java栈中存放的是一个个的栈帧，每个栈帧对应一个被调用的方法，在栈帧中包括：<ul>
+<li>局部变量表(Local Variables)</li>
+<li>操作数栈(Operand Stack)</li>
+<li>指向当前方法所属的类的运行时常量池的引用(Reference to runtime constant pool)</li>
+<li>方法返回地址(Return Address)</li>
+<li>一些额外的附加信息</li>
+</ul>
+</li>
+<li>当执行一个方法时，就会随之创建一个对应的栈帧，并将建立的栈帧压栈。当线程方法执行完毕之后，便会将栈帧出栈。</li>
+<li>因此可知，线程当前执行的方法所对应的栈帧必定位于Java栈的顶部。</li>
+<li>所以在使用递归方法的时候容易导致栈内存溢出的现象以及栈区的空间不用程序员去管理。</li>
+<li>对于所有的程序设计语言来说，栈这部分空间对程序员来说是不透明的。</li>
+<li>以下是一个Java栈的模型：<center>![stack](http://i.imgur.com/8FZi2vE.png)</center></li>
+</ul>
+<p>–</p>
+<ul>
+<li>局部变量表，就是用来存储方法中的局部变量（包括在方法中声明的非静态变量以及函数形参）。对于基本数据类型的变量，则直接存储它的值，对于引用类型的变量，则存的是指向对象的引用。局部变量表的大小在编译器就可以确定其大小了，因此在程序执行期间局部变量表的大小是不会改变的。</li>
+<li>操作数栈，栈最典型的一个应用就是用来对表达式求值。想想一个线程执行方法的过程中，实际上就是不断执行语句的过程，而归根到底就是进行计算的过程。因此可以这么说，程序中的所有计算过程都是在借助于操作数栈来完成的。</li>
+<li>指向运行时常量池的引用，因为在方法执行的过程中有可能需要用到类中的常量，所以必须要有一个引用指向运行时常量。</li>
+<li>方法返回地址，当一个方法执行完毕之后，要返回之前调用它的地方，因此在栈帧中必须保存一个方法返回地址。</li>
+</ul>
+<ul>
+<li>由于每个线程正在执行的方法可能不同，因此每个线程都会有一个自己的Java栈，互不干扰。</li>
+<li>线程私有</li>
+</ul>
+<ul>
+<li>本地方法栈</li>
+</ul>
+<ul>
+<li>本地方法栈与Java栈的作用和原理非常相似。</li>
+<li>区别只不过是Java栈是为执行Java方法服务的，而本地方法栈则是为执行本地方法（Native Method）服务的。</li>
+<li>在JVM规范中，并没有对本地方发展的具体实现方法以及数据结构作强制规定，虚拟机可以自由实现它。在HotSopt虚拟机中直接就把本地方法栈和Java栈合二为一。</li>
+</ul>
+<ul>
+<li>堆</li>
+</ul>
+<ul>
+<li>在C语言中，堆这部分空间是唯一一个程序员可以管理的内存区域。程序员可以通过malloc函数和free函数在堆上申请和释放空间。</li>
+<li>Java中的堆是用来存储对象本身的以及数组（当然，数组引用是存放在Java栈中的）。只不过和C语言中的不同，在Java中，程序员基本不用去关心空间释放的问题，Java的垃圾回收机制会自动进行处理。因此这部分空间也是Java垃圾收集器管理的主要区域。</li>
+<li>在JVM中只有一个堆</li>
+<li>线程共享</li>
+</ul>
+<ul>
+<li>方法区</li>
+</ul>
+<ul>
+<li>存储每个类的信息（包括类的名称、方法信息、字段信息）、静态变量、常量以及编译器编译后的代码</li>
+<li>在Class文件中除了类的字段、方法、接口等描述信息外，还有一项信息是常量池，用来存储编译期间生成的字面量和符号引用。</li>
+<li>重要的部分就是运行时常量池，它是每一个类或接口的常量池的运行时表示形式，在类和接口被加载到JVM后，对应的运行时常量池就被创建出来。当然并非Class文件常量池中的内容才能进入运行时常量池，在运行期间也可将新的常量放入运行时常量池中，比如String的intern方法。重要的部分就是运行时常量池，它是每一个类或接口的常量池的运行时表示形式，在类和接口被加载到JVM后，对应的运行时常量池就被创建出来。当然并非Class文件常量池中的内容才能进入运行时常量池，在运行期间也可将新的常量放入运行时常量池中，比如String的intern方法。</li>
+<li>在JVM规范中，没有强制要求方法区必须实现垃圾回收。很多人习惯将方法区称为“永久代”，是因为HotSpot虚拟机以永久代来实现方法区，从而JVM的垃圾收集器可以像管理堆区一样管理这部分区域，从而不需要专门为这部分设计垃圾回收机制。不过自从JDK7之后，Hotspot虚拟机便将运行时常量池从永久代移除了。</li>
+<li>线程共享</li>
+</ul>
+ <p></p>
+---
+
+</center></center>
+  </div>
+  <div>
+  
+  <div class="post-note note-warning copyright" style="margin-top: 42px">
+    <p><span style="font-weight: bold;">作者：</span><a target="_blank" rel="nofollow noopener noreferrer" href="https://java4u.cn/about">白色蜗牛</a></p>
+    <p><span style="font-weight: bold;">文章链接：</span><a target="_blank" rel="nofollow noopener noreferrer" href="https://java4u.cn/Java/JVM%E7%9A%84%E5%86%85%E5%AD%98%E5%8C%BA%E5%9F%9F%E5%88%92%E5%88%86/">https://java4u.cn/Java/JVM%E7%9A%84%E5%86%85%E5%AD%98%E5%8C%BA%E5%9F%9F%E5%88%92%E5%88%86/</a></p>
+    <p><span style="font-weight: bold;">版权声明：</span>本博客所有文章除特别声明外，均采用<a target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh">CC BY-NC-SA 4.0 协议</a>。转载请注明出处！</p>
+  </div>
+  
+  </div>
+</article>
+<div class="nav">
+  
+  <div class="nav-item-prev">
+    <a href="/Java/JVM如何GC/" class="nav-link">
+      <i class="iconfont icon-left nav-prev-icon"></i>
+      <div>
+        <div class="nav-label">上一篇</div>
+        
+        <div class="nav-title">JVM如何GC </div>
+        
+      </div>
+    </a>
+  </div>
+  
+  
+  <div class="nav-item-next">
+    <a href="/Java/JVM类加载过程/" class="nav-link">
+      <div>
+        <div class="nav-label">下一篇</div>
+        
+        <div class="nav-title">JVM类加载过程 </div>
+        
+      </div>
+      <i class="iconfont icon-right nav-next-icon"></i>
+    </a>
+  </div>
+  
+</div>
+
+<div class="card card-content comment-card" style="margin-top: 16px;">
+  <div class="comment-card-title">评论</div>
+  
+  <div id="vcomments"></div>
+  
+  <script>
+    loadScript("https://cdn.jsdelivr.net/npm/valine@1.4.14/dist/Valine.min.js");
+    var oldLoadVa = window.onload;
+    window.onload = function () {
+      oldLoadVa && oldLoadVa();
+      new Valine({
+        el: '#vcomments',
+        appId: 'Ro9jzghVgwRgtnGQQ99MFbAK-9Nh9j0Va',
+        appKey: 'rbA6uGwupFqEcTUAugUoXn2B',
+        placeholder: '留下你的足迹吧~也可以加我微信 919201148，互换友链~~~',
+        path: window.location.pathname,
+        avatar: 'robohash',
+        meta: ["nick","mail","link"],
+        pageSize: '10',
+        lang: '',
+        visitor: 'true',
+        highlight: true,
+        recordIP: false,
+        
+        
+        
+        enableQQ: 'false',
+        requiredFields: [],
+      });
+    };
+  </script>
+
+</div>
+
+<div class="card card-content toc-card" id="mobiletoc">
+  <div class="toc-header"><i class="iconfont icon-menu" style="padding-right: 2px;"></i>目录</div>
+<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link"><span class="toc-text">Java程序具体执行的过程</span></a></li><li class="toc-item toc-level-2"><a class="toc-link"><span class="toc-text">运行时数据区包括哪几部分？</span></a></li><li class="toc-item toc-level-2"><a class="toc-link"><span class="toc-text">运行时数据区的每部分到底存储了哪些数据？</span></a></li></ol>
+</div>
+
+<!-- 百度自动推送链接-->
+<script>
+  (function(){
+      var bp = document.createElement('script');
+      var curProtocol = window.location.protocol.split(':')[0];
+      if (curProtocol === 'https') {
+          bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';        
+      }
+      else {
+          bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+      }
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(bp, s);
+  })();
+  </script>
+  </main>
+          <aside class="left-column">
+            
+            <div class="card card-author">
+              
+<img src="/img/logo.jpg" class="author-img">
+
+<p class="author-name">蜗牛 Java 之家</p>
+<p class="author-description">Java 程序员的成长进阶社区</br>(Java for You)。</p>
+<div class="author-message">
+  <a class="author-posts-count" href="/archives">
+    <span>107</span>
+    <span>文章</span>
+  </a>
+  <a class="author-categories-count" href="/categories">
+    <span>11</span>
+    <span>分类</span>
+  </a>
+  <a class="author-tags-count" href="/tags">
+    <span>118</span>
+    <span>标签</span>
+  </a>
+</div>
+
+<div class="author-card-society">
+  
+    <div class="author-card-society-icon">
+      <a target="_blank" rel="noopener" href="https://gitee.com/java4u/resources/raw/master/global/gh_woniu.png">
+        <i class="iconfont icon-wechat society-icon"></i>
+      </a>
+    </div>
+  
+    <div class="author-card-society-icon">
+      <a target="_blank" rel="noopener" href="https://github.com/huayonglun/">
+        <i class="iconfont icon-github society-icon"></i>
+      </a>
+    </div>
+  
+    <div class="author-card-society-icon">
+      <a target="_blank" rel="noopener" href="http://weibo.com/huayonglun">
+        <i class="iconfont icon-sina society-icon"></i>
+      </a>
+    </div>
+  
+</div>
+
+            </div>
+            
+            <div class="sticky-tablet">
+  
+  
+  <article class="display-when-two-columns spacer">
+    <div class="card card-content toc-card">
+      <div class="toc-header"><i class="iconfont icon-menu" style="padding-right: 2px;"></i>目录</div>
+<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link"><span class="toc-text">Java程序具体执行的过程</span></a></li><li class="toc-item toc-level-2"><a class="toc-link"><span class="toc-text">运行时数据区包括哪几部分？</span></a></li><li class="toc-item toc-level-2"><a class="toc-link"><span class="toc-text">运行时数据区的每部分到底存储了哪些数据？</span></a></li></ol>
+    </div>
+  </article>
+  
+  
+  <article class="card card-content categories-widget">
+    <div class="categories-card">
+  <div class="categories-header"><i class="iconfont icon-fenlei" style="padding-right: 2px;"></i>分类</div>
+  <div class="categories-list">
+    
+      <a href="/categories/Java">
+        <div class="categories-list-item">
+          Java
+          <span class="categories-list-item-badge">14</span>
+        </div>
+      </a>
+    
+      <a href="/categories/Java并发编程">
+        <div class="categories-list-item">
+          Java并发编程
+          <span class="categories-list-item-badge">18</span>
+        </div>
+      </a>
+    
+      <a href="/categories/Linux">
+        <div class="categories-list-item">
+          Linux
+          <span class="categories-list-item-badge">1</span>
+        </div>
+      </a>
+    
+      <a href="/categories/spring">
+        <div class="categories-list-item">
+          spring
+          <span class="categories-list-item-badge">21</span>
+        </div>
+      </a>
+    
+      <a href="/categories/struts2">
+        <div class="categories-list-item">
+          struts2
+          <span class="categories-list-item-badge">16</span>
+        </div>
+      </a>
+    
+      <a href="/categories/夯实基础系列">
+        <div class="categories-list-item">
+          夯实基础系列
+          <span class="categories-list-item-badge">4</span>
+        </div>
+      </a>
+    
+      <a href="/categories/工具教程">
+        <div class="categories-list-item">
+          工具教程
+          <span class="categories-list-item-badge">3</span>
+        </div>
+      </a>
+    
+      <a href="/categories/思维">
+        <div class="categories-list-item">
+          思维
+          <span class="categories-list-item-badge">2</span>
+        </div>
+      </a>
+    
+      <a href="/categories/数据库">
+        <div class="categories-list-item">
+          数据库
+          <span class="categories-list-item-badge">2</span>
+        </div>
+      </a>
+    
+      <a href="/categories/算法">
+        <div class="categories-list-item">
+          算法
+          <span class="categories-list-item-badge">25</span>
+        </div>
+      </a>
+    
+      <a href="/categories/网络">
+        <div class="categories-list-item">
+          网络
+          <span class="categories-list-item-badge">1</span>
+        </div>
+      </a>
+    
+  </div>
+</div>
+  </article>
+  
+  <article class="card card-content tags-widget">
+    <div class="tags-card">
+  <div class="tags-header"><i class="iconfont icon-biaoqian" style="padding-right: 2px;"></i>热门标签</div>
+  <div class="tags-list">
+    
+    <a href="\tags\Java" title="Java"><div class="tags-list-item">Java</div></a>
+    
+    <a href="\tags\ssh" title="ssh"><div class="tags-list-item">ssh</div></a>
+    
+    <a href="\tags\spring" title="spring"><div class="tags-list-item">spring</div></a>
+    
+    <a href="\tags\Java并发" title="Java并发"><div class="tags-list-item">Java并发</div></a>
+    
+    <a href="\tags\struts2" title="struts2"><div class="tags-list-item">struts2</div></a>
+    
+    <a href="\tags\bean" title="bean"><div class="tags-list-item">bean</div></a>
+    
+    <a href="\tags\树" title="树"><div class="tags-list-item">树</div></a>
+    
+    <a href="\tags\AOP" title="AOP"><div class="tags-list-item">AOP</div></a>
+    
+    <a href="\tags\分布式" title="分布式"><div class="tags-list-item">分布式</div></a>
+    
+    <a href="\tags\链表" title="链表"><div class="tags-list-item">链表</div></a>
+    
+    <a href="\tags\装配属性" title="装配属性"><div class="tags-list-item">装配属性</div></a>
+    
+    <a href="\tags\集合" title="集合"><div class="tags-list-item">集合</div></a>
+    
+    <a href="\tags\二叉树" title="二叉树"><div class="tags-list-item">二叉树</div></a>
+    
+    <a href="\tags\查找" title="查找"><div class="tags-list-item">查找</div></a>
+    
+    <a href="\tags\排序" title="排序"><div class="tags-list-item">排序</div></a>
+    
+    <a href="\tags\同步" title="同步"><div class="tags-list-item">同步</div></a>
+    
+  </div>
+</div>
+  </article>
+  
+  
+</div>
+          </aside>
+          <aside class="right-column">
+            <div class="sticky-widescreen">
+
+  <!-- 我的公众号 -->
+  
+  <article class="card card-content toc-card">
+    <div style="float: left; ">
+      <img class="adv" style="width: 100%; height: 100%; border: solid 1px #ddd;" src="https://gitee.com/java4u/resources/raw/master/2020-12-17/1608142536200-image.png">
+    </div>
+    <div style="float: left; margin-left: 17px; margin-top: 12px;">
+        <div style="font-size: 18px; margin-bottom: 12px;color:#159957;"><b>微信搜一搜: 蜗牛互联网</b></div>
+        <small style="font-size: 0.9em;">
+          👉「<a target="_blank" rel="noopener" href="https://mp.weixin.qq.com/s/OyboCy8Drh8AWNqE_DUROg">技术干货</a>」每周推送<br>
+          👉「<a href="https://java4u.cn/resources/">免费资料</a>」随时领取<br>
+          👉「<a target="_blank" rel="noopener" href="https://gitee.com/java4u/resources/raw/master/2020-12-17/1608143152021-image.png">优质社群</a>」随时加入<br>
+        </small>
+    </div>
+    <div style="clear: both;"></div>
+    <div style="font-size: 0.8em; margin: 15px 0 15px 0;">
+      <a href="" target="_blank" style="color:#159957;font-size: 14px;" rel="noopener noreferrer">扫描上方二维码，关注我的公众号</a>
+      <br>
+    </div>
+  </article>
+
+
+  
+  
+  <article class="card card-content toc-card">
+    <div class="toc-header"><i class="iconfont icon-menu" style="padding-right: 2px;"></i>目录</div>
+<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link"><span class="toc-text">Java程序具体执行的过程</span></a></li><li class="toc-item toc-level-2"><a class="toc-link"><span class="toc-text">运行时数据区包括哪几部分？</span></a></li><li class="toc-item toc-level-2"><a class="toc-link"><span class="toc-text">运行时数据区的每部分到底存储了哪些数据？</span></a></li></ol>
+  </article>
+  
+
+  
+  <article class="card card-content">
+    <div class="recent-posts-card">
+  <div class="recent-posts-header"><i class="iconfont icon-wenzhang_huaban" style="padding-right: 2px;"></i>最近文章</div>
+  <div class="recent-posts-list">
+    
+      <div class="recent-posts-item">
+        <div class="recent-posts-item-title">2020-12-15</div>
+        <a href="/tools-course/cai_yun_xiao_yi/"><div class="recent-posts-item-content">彩云小译：最佳的网页翻译插件</div></a>
+      </div>
+    
+      <div class="recent-posts-item">
+        <div class="recent-posts-item-title">2020-12-14</div>
+        <a href="/tools-course/markmap/"><div class="recent-posts-item-content">最佳的思维导图生成工具： markmap 使用教程</div></a>
+      </div>
+    
+      <div class="recent-posts-item">
+        <div class="recent-posts-item-title">2020-12-13</div>
+        <a href="/tools-course/hexo_site_course/"><div class="recent-posts-item-content">建站神器：Hexo+Kaze+Gitee Pages 搭建静态博客网站</div></a>
+      </div>
+    
+      <div class="recent-posts-item">
+        <div class="recent-posts-item-title">2019-01-24</div>
+        <a href="/思维/知识的诅咒：为什么你觉得显而易见，而对方却无法理解/"><div class="recent-posts-item-content">知识的诅咒：为什么你觉得显而易见，而对方却无法理解</div></a>
+      </div>
+    
+  </div>
+</div>
+  </article>
+  
+  
+</div>
+          </aside>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <footer class="footer">
+  <div class="footer-container">
+    <div>
+      
+      <!-- copyringt-->
+      <div class="footer-dsc">
+        <span>Copyright ©
+          
+          2020 -
+          
+          2020
+        </span>
+        &nbsp;
+        <a href="/" class="footer-link">蜗牛 Java 之家 </a>
+      </div>
+
+       <!-- copyringt-->
+       <div class="footer-dsc">
+        <center><span>
+        <a href="https://java4u.cn/resources/" target="_blank">Java 程序员最全资源下载</a> - <a href="https://java4u.cn/links/" target="_blank">友情链接</a>
+        </span></center>
+      </div>
+     
+    </div>
+
+    
+    
+    
+    
+      <div class="footer-dsc">
+        
+        本站总访问量<span id="busuanzi_value_site_pv"></span>次
+        
+        
+        <span>&nbsp;|&nbsp;</span>
+        
+        
+        本站总访客数<span id="busuanzi_value_site_uv"></span>次
+        
+      </div>
+      
+    
+</footer>
+  <a role="button" id="scrollbutton" class="basebutton"  aria-label="回到顶部">
+  <i class="iconfont icon-arrowleft button-icon"></i>
+</a>
+<a role="button" id="menubutton" class="basebutton">
+  <i class="iconfont icon-menu button-icon"></i>
+</a>
+<a role="button" id="popbutton" class="basebutton" aria-label="控制中心">
+  <i class="iconfont icon-expand button-icon"></i>
+</a>
+<a role="button" id="darkbutton" class="basebutton darkwidget" aria-label="夜色模式">
+  <i class="iconfont icon-weather button-icon"></i>
+</a>
+<a role="button" id="searchbutton" class="basebutton searchwidget" aria-label="搜索">
+  <i class="iconfont icon-search button-icon"></i>
+</a>
+
+  
+  
+  
+
+  
+  
+  <script>
+  var addImgLayout = function () {
+    var img = document.querySelectorAll('.post-content img');
+    var i;
+    for (i = 0; i < img.length; i++) {
+      var wrapper = document.createElement('a');
+      wrapper.setAttribute('href', img[i].getAttribute('data-src'));
+      wrapper.setAttribute('aria-label', 'illustration');
+      wrapper.style.cssText = 'width: 100%; display: flex; justify-content: center;';
+      if (img[i].alt) wrapper.dataset.caption = img[i].alt;
+      wrapper.dataset.nolink = true;
+      img[i].before(wrapper);
+      wrapper.append(img[i]);
+      var divWrap = document.createElement('div');
+      divWrap.classList.add('gallery');
+      wrapper.before(divWrap);
+      divWrap.append(wrapper);
+    }
+    baguetteBox.run('.gallery');
+  }
+</script>
+<script>loadScript("/js/lib/lightbox/baguetteBox.min.js", addImgLayout)</script>
+  
+  
+  
+<script src="/js/main.js"></script>
+
+  
+  <script>loadScript("/js/lib/busuanzi.min.js")</script>
+  
+  
+  <script>
+    var addLazyload = function () {
+      var observer = lozad('.lozad', {
+        load: function (el) {
+          el.srcset = el.getAttribute('data-src');
+        },
+        loaded: function (el) {
+          el.classList.add('loaded');
+        }
+      });
+      observer.observe();
+    }
+  </script>
+  <script>loadScript("/js/lib/lozad.min.js", addLazyload)</script>
+  
+  
+</body>
+
+</html>

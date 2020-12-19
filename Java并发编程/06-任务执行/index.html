@@ -1,0 +1,1445 @@
+<!DOCTYPE html>
+<html  lang="zh-CN" >
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport"
+    content="width=device-width, initial-scale=1.0, minimum-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <meta name="theme-color" content="#fff" id="theme-color">
+  <meta name="description" content="蜗牛 Java 之家 (java4u.cn) 是 Java 程序员的成长进阶社区，致力于为广大学习 Java 的程序员们提供计算机专业相关的经验教程、学习资料和书籍，包括Java、数据库、Linux、网络等学习干货、IT程序员常用软件工具分享、计算机专业经典电子书PDF，帮助 Java 程序员更快入门和提高。">
+  <link rel="icon" href="/img/logo.jpg">
+  <title>06.任务执行&nbsp; | &nbsp;Java for You</title>
+  
+  
+  <meta property="og:title" content="06.任务执行">
+  
+  
+  <meta property="og:url" content="https://java4u.cn/Java%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B/06-%E4%BB%BB%E5%8A%A1%E6%89%A7%E8%A1%8C/index.html">
+  
+  
+  <meta property="og:img" content="/img/logo.jpg">
+  
+  
+  <meta property="og:img" content="蜗牛 Java 之家 (java4u.cn) 是 Java 程序员的成长进阶社区，致力于为广大学习 Java 的程序员们提供计算机专业相关的经验教程、学习资料和书籍，包括Java、数据库、Linux、网络等学习干货、IT程序员常用软件工具分享、计算机专业经典电子书PDF，帮助 Java 程序员更快入门和提高。">
+  
+  
+  <meta property="og:type" content="article">
+  <meta property="og:article:published_time" content="2016-04-29">
+  <meta property="og:article:modified_time" content="2020-12-19">
+  <meta property="og:article:author" content="蜗牛 Java 之家">
+  
+  
+  <meta property="og:article:tag" content="Java">
+  
+  <meta property="og:article:tag" content="Java并发">
+  
+  <meta property="og:article:tag" content="任务执行">
+  
+  
+  
+  
+  <script>
+    // control reverse button
+    var reverseDarkList = {
+      dark: 'light',
+      light: 'dark'
+    };
+    var themeColor = {
+      dark: '#1c1c1e',
+      light: '#fff'
+    }
+    // get the data of css prefers-color-scheme
+    var getCssMediaQuery = function() {
+      return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+    };
+    // reverse current darkmode setting function
+    var reverseDarkModeSetting = function() {
+      var setting = localStorage.getItem('user-color-scheme');
+      if(reverseDarkList[setting]) {
+        setting = reverseDarkList[setting];
+      } else if(setting === null) {
+        setting = reverseDarkList[getCssMediaQuery()];
+      } else {
+        return;
+      }
+      localStorage.setItem('user-color-scheme', setting);
+      return setting;
+    };
+    // apply current darkmode setting
+    var setDarkmode = function(mode) {
+      var setting = mode || localStorage.getItem('user-color-scheme');
+      if(setting === getCssMediaQuery()) {
+        document.documentElement.removeAttribute('data-user-color-scheme');
+        localStorage.removeItem('user-color-scheme');
+        document.getElementById('theme-color').content = themeColor[setting];
+      } else if(reverseDarkList[setting]) {
+        document.documentElement.setAttribute('data-user-color-scheme', setting);
+        document.getElementById('theme-color').content = themeColor[setting];
+      } else {
+        document.documentElement.removeAttribute('data-user-color-scheme');
+        localStorage.removeItem('user-color-scheme');
+        document.getElementById('theme-color').content = themeColor[getCssMediaQuery()];
+      }
+    };
+    setDarkmode();
+  </script>
+  <script>
+    function loadScript(url, cb) {
+      var script = document.createElement('script');
+      script.src = url;
+      if (cb) script.onload = cb;
+      script.async = true;
+      document.body.appendChild(script);
+    }
+  </script>
+  
+  <link rel="preload" href="//at.alicdn.com/t/font_1946621_i1kgafibvw.css" as="style" >
+  <link rel="preload" href="//at.alicdn.com/t/font_1952792_89b4ac4k4up.css" as="style" >
+  
+  <link rel="preload" href="/js/lib/lightbox/baguetteBox.min.js" as="script">
+  <link rel="preload" href="/js/lib/lightbox/baguetteBox.min.css" as="style" >
+  
+  
+  <link rel="preload" href="/js/lib/lozad.min.js" as="script">
+  
+  
+  
+  
+  
+  <link rel="prefetch" href="//cdn.jsdelivr.net/npm/mathjax@3.0.5/es5/tex-svg.js" as="script">
+  
+  
+  
+  <link rel="prefetch" href="https://cdn.jsdelivr.net/npm/valine@1.4.14/dist/Valine.min.js" as="script">
+  
+  
+  
+  
+<link rel="stylesheet" href="/css/main.css">
+
+  
+  
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1946621_i1kgafibvw.css">
+
+  
+  
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1952792_89b4ac4k4up.css">
+
+  
+  
+<link rel="stylesheet" href="/js/lib/lightbox/baguetteBox.min.css">
+
+  
+  
+  
+  
+
+
+  <!-- 百度站长工具验证 -->
+  <meta name="baidu-site-verification" content="code-9cIsKsXy75" />
+
+  <!-- 必应站长工具验证-->
+  <meta name="msvalidate.01" content="81AA8F485E800B7335F07A558BE9A636" />
+
+  <!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-C22LNC79YC"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-C22LNC79YC');
+</script>
+<meta name="generator" content="Hexo 5.2.0"></head>
+
+
+<body>
+  <div class="wrapper">
+    
+    <nav class="navbar">
+  <div class="navbar-logo">
+    <span class="navbar-logo-main">
+      
+      <img class="navbar-logo-img" src="/img/logo.jpg" alt="logo">
+      
+      <span class="navbar-logo-dsc">蜗牛 Java 之家</span>
+    </span>
+  </div>
+  <div class="navbar-menu">
+    
+    <a href="/" class="navbar-menu-item">
+    
+    首页
+    
+    </a>
+    
+    <a href="/resources" class="navbar-menu-item">
+    
+    免费资源
+    
+    </a>
+    
+    <a href="/tools" class="navbar-menu-item">
+    
+    免费工具
+    
+    </a>
+    
+    <a href="/categories" class="navbar-menu-item">
+    
+    分类
+    
+    </a>
+    
+    <a href="/links" class="navbar-menu-item">
+    
+    友链
+    
+    </a>
+    
+    <a class="navbar-menu-item darknavbar" id="dark"><i class="iconfont icon-weather"></i></a>
+    <a class="navbar-menu-item searchnavbar" id="search"><i class="iconfont icon-search" style="font-size: 1.2rem; font-weight: 400;"></i></a>
+  </div>
+</nav>
+    
+    <div id="local-search" style="display: none;">
+      <input class="navbar-menu-item" id="search-input" placeholder="请输入搜索内容...">
+      <div id="search-content"></div>
+    </div>
+    
+    <div class="section-wrap">
+      <div class="container">
+        <div class="columns">
+          <main class="main-column">
+<article class="card card-content">
+  <header>
+    <h1 class="post-title">
+      06.任务执行
+    </h1>
+  </header>
+  <div class="post-meta post-show-meta">
+    <time datetime="2016-04-29T10:39:53.000Z">
+      <i class="iconfont icon-calendar" style="margin-right: 2px;"></i>
+      <span>2016-04-29</span>
+    </time>
+    
+    <span class="dot"></span>
+    
+    <a href="/categories/Java并发编程/" class="post-meta-link">Java并发编程</a>
+    
+    
+    
+    <span class="dot"></span>
+    <span>8.5k 字</span>
+    
+
+    <span class="dot"></span>
+    <!-- 增加阅读量统计样式代码 -->
+    
+    <!-- id 将作为查询条件 -->
+    <i class="iconfont icon-wodebaobiao" style="margin-right: 2px; font-size: 1.15rem;"></i>
+    <span id="/Java%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B/06-%E4%BB%BB%E5%8A%A1%E6%89%A7%E8%A1%8C/" class="leancloud_visitors" data-flag-title="06.任务执行">
+      <em class="post-meta-item-text">阅读量 </em>
+      <i class="leancloud-visitors-count"></i>
+    </span>
+
+  </div>
+  
+  <div class="post-meta post-show-meta" style="margin-top: -10px;">
+    <div style="display: flex; align-items: center;">
+      <i class="iconfont icon-biaoqian" style="margin-right: 2px; font-size: 1.15rem;"></i>
+      
+      
+        <a href="/tags/Java/" class="post-meta-link">Java</a>
+      
+      
+      <span class="dot"></span>
+      
+        <a href="/tags/Java并发/" class="post-meta-link">Java并发</a>
+      
+      
+      <span class="dot"></span>
+      
+        <a href="/tags/任务执行/" class="post-meta-link">任务执行</a>
+      
+    </div>
+  </div>
+  
+  </header>
+  <div id="section" class="post-content">
+    <ul>
+<li>大多数并发应用程序是围绕执行**任务(task)**进行管理的。所谓任务就是抽象、离散的工作单元(unit of work)。把一个应用程序的工作分离到任务中，可以简化程序的管理；</li>
+<li>这种分离还在不同事务间划分了自然的分界线，可以方便程序在出现错误时进行恢复；</li>
+<li>同时这种分离还可以为并行工作提供一个自然的结构，有利于提高程序的并发性。</li>
+</ul>
+<h2><span id="61-在线程中执行任务">6.1 在线程中执行任务</span></h2><ul>
+<li>围绕执行任务来管理应用程序时<ul>
+<li>第一步要指明一个清晰的<strong>任务边界(task boundaries)</strong></li>
+<li>理想情况下，任务是<strong>独立</strong>的活动：它的工作并不依赖于其他任务的状态。结果或者边界效应(side effect)。</li>
+<li>独立有利于并发性，如果能得到相应的处理器资源，独立的任务还可以并行执行。</li>
+<li>为了使调度与负载均衡并具有更好的灵活性，每项任务只占用处理器的一小部分资源。</li>
+</ul>
+</li>
+<li>在正常的负载下，服务器应用程序应该兼具<strong>良好的吞吐量</strong>和<strong>快速的响应性</strong>。</li>
+<li>应用程序应该在负荷过载时<strong>平缓地劣化</strong>，而不应该负载一高就简单地以失败告终。为了达到这些目的，你要选择一个清晰的任务边界，并配合一个明确的<strong>任务执行策略</strong></li>
+<li>大多数服务器应用程序都选择了下面这个自然的任务边界：<ul>
+<li>单独的客户请求</li>
+</ul>
+</li>
+<li>Web服务器，邮件服务器，文件服务器，EJB容器和数据库服务器，这些服务器都接受远程客户通过网络连接发送的请求。将独立的请求作为任务边界，可以让任务兼顾独立性和适当的大小。<ul>
+<li>例如，向邮件服务器提交一个消息后产生的结果，并不会被其他正在同时处理的消息所影响；而且，通常服务器只需用其总能力额很小一部分就能处理单一的消息。</li>
+</ul>
+</li>
+</ul>
+<h3><span id="611-顺序地执行任务">6.1.1 顺序地执行任务</span></h3><ul>
+<li><p>最简单的调度策略：在单一的线程中顺序地执行任务</p>
+<pre><code>  //顺序化的WebServer
+  public class SingleThreadWebServer &#123;
+      public static void main(String[] args) throws IOException &#123;
+          ServerSocket socket = new ServerSocket(80);
+          while (true) &#123;
+              Socket connection = socket.accept();
+              handleRequest(connection);
+          &#125;
+      &#125;
+
+      private static void handleRequest(Socket connection) &#123;
+          // request-handling logic here
+      &#125;
+  &#125;</code></pre>
+</li>
+<li><p>SingleThreadWebServer简单正确，但一次只能处理一个请求，因此在生产环境中的执行效率很糟糕。</p>
+</li>
+<li><p>一个Web请求的处理包括执行计算与进行I/O操作。福区前必须处理Socket I/O，以读取请求和写回响应，网络拥堵或连通性问题会导致这个操作阻塞。服务器还要处理文件 I/O、发送数据库请求，这些同样会引起操作的阻塞</p>
+<ul>
+<li>阻塞延迟了当前请求的完成</li>
+<li>阻止了需要被处理的等待请求</li>
+<li>线程等待I/O操作时，CPU处于闲置状态，导致资源利用率非常低。</li>
+</ul>
+</li>
+<li><p>顺序化的处理：</p>
+<ul>
+<li>吞吐量差</li>
+<li>响应性差</li>
+<li>简单性或安全性上具有优势，比如GUI框架</li>
+</ul>
+</li>
+</ul>
+<h3><span id="612-显式地为任务创建线程">6.1.2 显式地为任务创建线程</span></h3><ul>
+<li><p>为了提供更好的响应性，可以为每个服务请求创建一个新的线程。</p>
+<pre><code>  public class ThreadPerTaskWebServer &#123;
+      public static void main(String[] args) throws IOException &#123;
+          ServerSocket socket = new ServerSocket(80);
+          while (true) &#123;
+              final Socket connection = socket.accept();
+              Runnable task = new Runnable() &#123;
+                  public void run() &#123;
+                      handleRequest(connection);
+                  &#125;
+              &#125;;
+              new Thread(task).start();
+          &#125;
+      &#125;
+
+      private static void handleRequest(Socket connection) &#123;
+          // request-handling logic here
+      &#125;
+  &#125;</code></pre>
+</li>
+<li><p>结构类似单线程版本——主线程仍然不断地交替运行“接受外部连接”与“转发请求”。不同在于，主循环为每个连接都创建一个新线程以处理请求。由此得出结论如下：</p>
+<ul>
+<li>执行任务的负载已经脱离了主线程，这让主循环能够更迅速地重新开始等待下一个连接。</li>
+<li>并行处理任务，这使得多个请求可以同时得到服务</li>
+<li>任务处理代码必须是线程安全的，因为有多个任务会并发地调用它。</li>
+</ul>
+</li>
+<li><p>在中等强度的负载水平下，“每任务每线程(thread-per-task)”方法是顺序化执行的良好改进。只要请求的到达速度尚未超出服务器的请求处理能力，那么这种方法可以同时带来更快的响应性和更大的吞吐量。</p>
+</li>
+</ul>
+<h3><span id="613-无限制创建线程的缺点">6.1.3 无限制创建线程的缺点</span></h3><ul>
+<li>生产环境中，“每任务每线程”方法存在缺陷，尤其在需要大量的线程时会更加突出：<ul>
+<li><strong>线程生命周期的开销</strong>。线程的创建与关闭不是“免费”的。会消耗时间，消耗资源。</li>
+<li><strong>资源消耗量</strong>。活动线程会消耗系统资源，尤其是内存。<ul>
+<li>可运行的线程数多于可用处理器数，线程会空闲。大量空闲线程占用内存，给垃圾回收器带来压力。</li>
+<li>大量线程在竞争CPU资源时，还会产生其它的性能开销。</li>
+</ul>
+</li>
+<li><strong>稳定性。应该限制</strong>可创建线程的数目。限制的数目：<ul>
+<li>依不同平台而定</li>
+<li>收到JVM的启动参数</li>
+<li>Thread的构造函数中请求的栈大小的影响</li>
+<li>底层操作系统线程的限制</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><strong>在一定范围内，增加线程可以提高系统的吞吐量，一旦超过了这个范围，再创建更多的线程只会拖垮你的程序。</strong>故因设置一个范围来限制应用程序可以创建的线程数。</li>
+<li>“每任务每线程”方法的问题在于他没有对已创建线程的数量进行任何限制。像其他并发危险一样，无限制创建线程的行为可能在原型和开发阶段还能表现得运行良好，而当应用程序部署后，并运行于高负载下，它的问题才会暴露出来。</li>
+<li>对于一个服务器，我们希望它具有高可用性，而且在高负载下可以平缓地劣化。</li>
+</ul>
+<h2><span id="62-executor框架">6.2 Executor框架</span></h2><ul>
+<li><p>任务是逻辑上的工作单元线程是使任务异步执行的机制。</p>
+</li>
+<li><p>使用<strong>有界队列</strong>可以防止应用程序过载而耗尽内存。**线程池(Thread pool)**为线程管理带来了同样的好处。作为Executor框架的一部分，java.util.concurrent提供了一个灵活的线程池实现。在Java类库中，任务执行的首要抽象不是Thread，而是Executor。</p>
+<pre><code>  //Executor接口
+  public interface Executor &#123;
+      void execute(Runnable command);
+  &#125;</code></pre>
+</li>
+<li><p>Executor只是个简单的接口，但它却为一个灵活而且强大的框架创造了基础</p>
+<ul>
+<li>这个框架可以用于异步任务执行</li>
+<li>而且支持很多不同类型的任务执行策略</li>
+<li>还为<strong>任务提交</strong>和<strong>任务执行</strong>之间的解耦提供了标准的方法</li>
+<li>为使用Runnable描述任务提供了通用的方式</li>
+</ul>
+</li>
+<li><p>Executor的实现</p>
+<ul>
+<li>提供了对生命周期的支持以及钩子函数</li>
+<li>可以添加诸如统计收集、应用程序管理机制和监视器等扩展</li>
+</ul>
+</li>
+<li><p>Executor基于生产者-消费者模式。</p>
+<ul>
+<li>提交任务的执行是生产者(产生待完成的工作单元)</li>
+<li>执行任务的线程是消费者(消耗掉这些工作单元)</li>
+</ul>
+</li>
+<li><p><strong>如果要在你的程序中实现一个生产者-消费者的设计，使用Executor通常是最简单的方式</strong></p>
+</li>
+</ul>
+<h3><span id="621-示例使用executor实现的-web-server">6.2.1 示例：使用Executor实现的 Web Server</span></h3><ul>
+<li><p>以下示例用到了Executor标准实现之一，一个定长的线程池，可以容纳100个线程</p>
+<pre><code>  //使用线程池的Web Server
+  public class TaskExecutionWebServer &#123;
+      private static final int NTHREADS = 100;
+      private static final Executor exec
+              = Executors.newFixedThreadPool(NTHREADS);
+
+      public static void main(String[] args) throws IOException &#123;
+          ServerSocket socket = new ServerSocket(80);
+          while (true) &#123;
+              final Socket connection = socket.accept();
+              Runnable task = new Runnable() &#123;
+                  public void run() &#123;
+                      handleRequest(connection);
+                  &#125;
+              &#125;;
+              exec.execute(task);
+          &#125;
+      &#125;
+
+      private static void handleRequest(Socket connection) &#123;
+          // request-handling logic here
+      &#125;
+  &#125;</code></pre>
+</li>
+<li><p>TaskExecutionWebServer中，通过使用Executor，将处理任务的提交与它的执行体进行了解耦</p>
+</li>
+</ul>
+<h3><span id="622-执行策略">6.2.2 执行策略</span></h3><ul>
+<li><p>将任务的提交与任务的执行体进行解耦，它的价值在于让你可以简单地为一个类给定的任务制定<strong>执行策略</strong>，并且保证后续的修改不至于太困难。一个执行策略指明了任务执行的“what，where，when，how”，具体包括：</p>
+<ul>
+<li>任务在什么线程中执行？</li>
+<li>任务以什么顺序执行(FIFO，LIFO，优先级)</li>
+<li>可以有多少个任务并发执行</li>
+<li>可以有多少个任务进入等待执行队列</li>
+<li>如果系统过载，需要放弃一个任务，应该挑选哪一个任务？另外，如何通知应用程序知道这一切呢？</li>
+<li>在一个任务的执行前与结束后，应该做什么处理？</li>
+</ul>
+</li>
+<li><p>执行策略是资源管理工具。最佳策略取决于可用的计算资源和你对服务质量的需求。通过限制并发任务的数量，你能够确保应用程序不会由于资源耗尽而失败，大量任务也不会在争夺稀缺资源时出现性能问题。</p>
+</li>
+<li><p>将任务的提交与任务的执行策略规则分离，有助于在部署阶段选择一个与当前硬件最匹配的执行策略。</p>
+<pre><code>  无论何时当你看到这种形式的代码：
+  new Thread(runnable).start()
+  并且你可能最终希望获得一个更加灵活的执行策略时，请认真考虑使用Executor代替Thread</code></pre>
+</li>
+</ul>
+<h3><span id="623-线程池">6.2.3 线程池</span></h3><ul>
+<li>线程池管理一个工作者线程的同构池(homogeneous pool)。</li>
+<li>线程池是与工作队列(work queue)紧密绑定的。<ul>
+<li>所谓工作队列，其作用是持有所有等待执行的任务。</li>
+<li>工作者线程的生活从此轻松起来：它从工作队列中获取下一个任务，执行它，然后回来继续等待另一个线程。</li>
+</ul>
+</li>
+</ul>
+<p><br><br></p>
+<ul>
+<li><p>在线程池中创建任务线程，这种方法有很多“每任务每线程”无法比拟的优势。</p>
+<ul>
+<li>重用存在的线程，而不是创建新的线程，这可以在处理多请求时抵消线程创建、消亡产生的开销</li>
+<li>在请求到达时，工作者线程通常已经存在，用于创建线程的等待时间并不会延迟任务的执行，因此提高了响应性。</li>
+<li>通常适当地调整线程池的大小，你可以得到足够多的线程以保持处理器忙碌，同时可以防止过多的线程相互竞争资源，导致应用程序耗尽内存或者失败。</li>
+</ul>
+</li>
+<li><p>类库提供了一个灵活的线程池实现和一些有用的预设配置。你可以通过调用Executors中的某个静态方法来创建一个线程池：</p>
+<ul>
+<li><strong>newFixedThreadPool</strong>创建一个定长的线程池，每当提交一个任务就创建一个线程，直到达到池的最大长度，这时线程池会保持长度不再变化(如果一个线程由于非预期的Exception而结束，线程池会补充一个新的线程)。</li>
+<li><strong>newCacheThreadPool</strong>创建一个可缓存的线程池，如果当前线程池的长度超过了处理的需求时，它可以灵活地回收空闲的线程，当需求增加时，它可以灵活地添加新的线程，而不会对池的长度做任何限制。</li>
+<li>newScheduleThreadPool创建一个定长的线程池，而且支持定时的以及周期性的任务执行，类似与Timer。</li>
+</ul>
+</li>
+<li><p>newFixedTreadPool和newCachedThreadPool两个工厂方法返回通用目的的ThreadPoolExecutor实例。直接使用ThreadPoolExecutor，也能创建更满足某些专有领域的executor。</p>
+</li>
+</ul>
+<h3><span id="624-executor的生命周期">6.2.4 Executor的生命周期</span></h3><ul>
+<li><p>Executor实现通常只是为执行任务而创建线程。但是JVM会在所有(非后台的，nondaemon)线程全部终止后才退出。因此，如果无法正确关闭Executor，将会阻止JVM的结束。</p>
+</li>
+<li><p>关闭应用程序时，程序会出现很多种情况：</p>
+<ul>
+<li>最平缓的关闭(已经启动的任务全部完成而且没有再接到任何新的工作)</li>
+<li>最唐突的关闭(拔掉机房的电源)</li>
+<li>介于这两种极端情况之间的各种可能。</li>
+</ul>
+</li>
+<li><p>为了解决这个执行服务的生命周期问题，ExecutorService接口扩展了Executor，并且添加了一些用于生命周期管理的方法(同时还有一些用于任务提交的便利方法)。</p>
+<pre><code>      //ExecutorService中的生命周期方法以及用于任务提交的便利方法
+      public interface ExecutorService extends Executor &#123;
+
+          void shutdown();
+
+          List&lt;Runnable&gt; shutdownNow();
+
+          boolean isShutdown();
+
+          boolean isTerminated();
+
+          boolean awaitTermination(long timeout, TimeUnit unit)
+              throws InterruptedException;
+
+          &lt;T&gt; Future&lt;T&gt; submit(Callable&lt;T&gt; task);
+
+          &lt;T&gt; Future&lt;T&gt; submit(Runnable task, T result);
+
+          Future&lt;?&gt; submit(Runnable task);
+
+          &lt;T&gt; List&lt;Future&lt;T&gt;&gt; invokeAll(Collection&lt;? extends Callable&lt;T&gt;&gt; tasks)
+              throws InterruptedException;
+
+          &lt;T&gt; List&lt;Future&lt;T&gt;&gt; invokeAll(Collection&lt;? extends Callable&lt;T&gt;&gt; tasks,long timeout, TimeUnit unit)
+              throws InterruptedException;
+
+          &lt;T&gt; T invokeAny(Collection&lt;? extends Callable&lt;T&gt;&gt; tasks)
+              throws InterruptedException, ExecutionException;
+
+          &lt;T&gt; T invokeAny(Collection&lt;? extends Callable&lt;T&gt;&gt; tasks,
+                          long timeout, TimeUnit unit)
+              throws InterruptedException, ExecutionException, TimeoutException;
+      &#125;</code></pre>
+</li>
+<li><p>ExecutorService暗示了生命周期有3种状态：<strong>运行(running)**，</strong>关闭(shutting down)<strong>和</strong>终止(terminated)<strong>。ExecutorService最初创建后的初始状态是</strong>运行**状态。shutdown方法会启动一个平缓的关闭过程：停止接受新的任务，同时等待已经提交的任务完成——包括尚未开始执行的任务。shutdowNow方法会启动一个强制的关闭过程：尝试取消所有运行中的任务和排在队列中尚未开始的任务。</p>
+</li>
+<li><p>在关闭后提交到ExecutorService中的任务，会被**拒绝执行处理器(rejected execution handler)**处理。拒绝执行处理器(ExecutorService的一种实现，ThreadPoolExecutor提供的，ExecutorService接口中的方法并不提供它)可能只是简单地放弃任务，也可能引起execute抛出一个未检查的RejectedExecutionException。一旦所有的任务全部完成后，ExecutorService会转入终止状态。你可以调用awaitTermination等待ExecutorService到达终止状态，也可以轮询检查isTerminated判断ExecutorService是否已经终止。通常shutdown会紧随awaitTerminated之后，这样可以同步地关闭ExecutorService的效果。</p>
+</li>
+<li><p>以下代码是支持关闭操作的Web Server，它提供了生命周期支持的WebServer。关闭这个WebServer有两种方法：</p>
+<ul>
+<li><p>通过程序中调用stop</p>
+</li>
+<li><p>经由客户端请求向WebServer发送一个特定格式的HTTP请求</p>
+<pre><code>  public class LifecycleWebServer &#123;
+      private final ExecutorService exec = Executors.newCachedThreadPool();
+
+      public void start() throws IOException &#123;
+          ServerSocket socket = new ServerSocket(80);
+          while (!exec.isShutdown()) &#123;
+              try &#123;
+                  final Socket conn = socket.accept();
+                  exec.execute(new Runnable() &#123;
+                      public void run() &#123;
+                          handleRequest(conn);
+                      &#125;
+                  &#125;);
+              &#125; catch (RejectedExecutionException e) &#123;
+                  if (!exec.isShutdown())
+                      log(&quot;task submission rejected&quot;, e);
+              &#125;
+          &#125;
+      &#125;
+
+      public void stop() &#123;
+          exec.shutdown();
+      &#125;
+
+      private void log(String msg, Exception e) &#123;
+          Logger.getAnonymousLogger().log(Level.WARNING, msg, e);
+      &#125;
+
+      void handleRequest(Socket connection) &#123;
+          Request req = readRequest(connection);
+          if (isShutdownRequest(req))
+              stop();
+          else
+              dispatchRequest(req);
+      &#125;
+
+      interface Request &#123;
+      &#125;
+
+      private Request readRequest(Socket s) &#123;
+          return null;
+      &#125;
+
+      private void dispatchRequest(Request r) &#123;
+      &#125;
+
+      private boolean isShutdownRequest(Request r) &#123;
+          return false;
+      &#125;
+  &#125;</code></pre>
+</li>
+</ul>
+</li>
+</ul>
+<h3><span id="625-延迟的-并具周期性的任务">6.2.5 延迟的、并具周期性的任务</span></h3><ul>
+<li><p>Timer工具管理任务的延迟执行(“100ms后执行任务”)以及周期执行(“每10ms执行一次该任务”)。但是，Timer存在缺陷，应该使用ScheduledThreadPoolExecutor作为代替品。可以通过构造函数或者通过newScheduledThreadPool工厂方法，创建一个ScheduledThreadPoolExecutor。</p>
+</li>
+<li><p>Timer只创建唯一的线程来执行所有timer任务。如果一个timer任务的执行很耗时，会导致其他TimerTask的时效准确性出问题。</p>
+</li>
+<li><p>如果TimerTask抛出未检查的异常，Timer将会产生无法预料的行为。会出现线程泄露的问题。</p>
+<pre><code>  //Timer的混乱行为
+  public class OutOfTime &#123;
+      public static void main(String[] args) throws Exception &#123;
+          Timer timer = new Timer();
+          timer.schedule(new ThrowTask(), 1);
+          SECONDS.sleep(1);
+          timer.schedule(new ThrowTask(), 1);
+          SECONDS.sleep(5);
+      &#125;
+
+      static class ThrowTask extends TimerTask &#123;
+          public void run() &#123;
+              throw new RuntimeException();
+          &#125;
+      &#125;
+  &#125;</code></pre>
+</li>
+</ul>
+<h2><span id="63-寻找可强化的并行性">6.3 寻找可强化的并行性</span></h2><ul>
+<li>Executor框架让制定一个执行策略变得简单。不过想要使用Executor，你还必须能将你的任务描述为Runnable。</li>
+<li>在大多数服务器应用程序中，都存在一个明显的任务边界：单一的客户请求。但是，正如很多桌面应用程序一样，合理的任务边界有时并非如此显而易见。</li>
+<li>本节会为一个组件开发不同的版本，每个版本允许不同程度的并发性。</li>
+</ul>
+<h3><span id="631-示例顺序执行的页面渲染器">6.3.1 示例：顺序执行的页面渲染器</span></h3><ul>
+<li><p>处理HTML文档最简单的方法是顺序处理。当遇到一个文本标签，就将它渲染到图像缓存里；当遇到一个图像的引用时，先通过网络获取它，然后也将它渲染到图像缓存里。不好的一点是，用户需要等待很长时间，直到呈现出所有的文本。</p>
+</li>
+<li><p>另一种同样是顺序执行的方法会稍微好一点，它先渲染文本元素，并为图像预留出矩形的占位符；在完成了一趟处理文本后，程序返回到开始，并下载图像，将它们绘制到相应的占位符上。以下给出代码。</p>
+</li>
+<li><p>下载图像总免不了等待I/O操作的完成，在这段时间里，CPU几乎不做任何工作。因为这种顺序执行的方法可能没有充分利用CPU，并且用户如果必须看到完整的文档的话，要等待更长的时间。通过将问题分散到独立的可以并发执行的任务中，我们能获得更好的CPU利用率和响应性。</p>
+<pre><code>  //顺序地渲染页面元素
+  public abstract class SingleThreadRenderer &#123;
+      void renderPage(CharSequence source) &#123;
+          renderText(source);
+          List&lt;ImageData&gt; imageData = new ArrayList&lt;ImageData&gt;();
+          for (ImageInfo imageInfo : scanForImageInfo(source))
+              imageData.add(imageInfo.downloadImage());
+          for (ImageData data : imageData)
+              renderImage(data);
+      &#125;
+
+      interface ImageData &#123;
+      &#125;
+
+      interface ImageInfo &#123;
+          ImageData downloadImage();
+      &#125;
+
+      abstract void renderText(CharSequence s);
+      abstract List&lt;ImageInfo&gt; scanForImageInfo(CharSequence s);
+      abstract void renderImage(ImageData i);
+  &#125;</code></pre>
+</li>
+</ul>
+<h3><span id="632-可携带结果的任务callable和future">6.3.2 可携带结果的任务：Callable和Future</span></h3><ul>
+<li><p>Executor框架使用Runnable作为其任务的基本表达形式。但Runnable是个相当有限的抽象，run不能返回一个值或者抛出受检查的异常。</p>
+</li>
+<li><p>很多任务都会引起严重的计算延迟——执行数据库查询，从网络上获取资源，进行复杂的计算。对于这些任务，Callable是更佳的抽象：它在主进入点(main entry point)——call——等待返回值，并为可能抛出的异常预先做好了准备。Executors包含了一些工具方法，可以把其他类型的任务封装成一个Callable，比如Runnable和java.security.PrivilegedAction</p>
+</li>
+<li><p>Runnable和Callable描述的是抽象的计算型任务。通常这些任务有明确的开始点，最终会结束。一个Executor执行的任务的生命周期有4个阶段：</p>
+<ul>
+<li>创建</li>
+<li>提交</li>
+<li>开始</li>
+<li>完成</li>
+</ul>
+</li>
+<li><p>由于任务的执行可能会花费很长时间，我们也希望可以取消一个任务。在Executor框架中，总可以取消已经提交但尚未开始的任务，但是对于已经开始的任务，只有它们响应中断，才可以取消。取消一个已经完成的任务没有影响。</p>
+</li>
+<li><p>Future描述了任务的生命周期，并提供了相关的方法来获得任务的结果、取消任务以及检验任务是否已经完成还是被取消。Future的规约中暗示了任务的生命周期是单向的，不能后退——就像ExecutorService的生命周期一样。一旦任务完成，它就永远停留在完成状态上。</p>
+</li>
+<li><p>任务的状态(尚未开始，运行中，完成)决定了get方法的行为。get会阻塞直到它完成。如果任务抛出了一个Exception，get会将该异常封装为ExecutionException，然后重新抛出，如果任务被取消，get会抛出CancellationException。当抛出了ExecutionException时，可以用getCause重新获得被封装的原始异常。</p>
+</li>
+</ul>
+<pre><code>    public interface Callable&lt;V&gt; &#123;
+
+        V call() throws Exception;
+    &#125;
+
+
+    public interface Future&lt;V&gt; &#123;
+
+        boolean cancel(boolean mayInterruptIfRunning);
+
+        boolean isCancelled();
+
+        boolean isDone();
+
+        V get() throws InterruptedException, ExecutionException,CancellationException;
+
+        V get(long timeout, TimeUnit unit)
+            throws InterruptedException, ExecutionException,CancellationException, TimeoutException;
+    &#125;</code></pre>
+<ul>
+<li><p>有很多中方法可以创建一个描述任务的Future。ExecutorService中的所有submit方法都返回一个Future，因此你可以将一个Runnable或一个Callable提交给executor，然后得到一个Future，用它来重新获得任务的执行结果，或是取消任务。</p>
+</li>
+<li><p>你也可以显示地为给定的Runnable或Callable实例化一个FutureTask。(FutureTask实现了Runnable，所以既可以将它提交给Executor来执行，又可以直接调用run方法运行。)</p>
+</li>
+<li><p>在Java 6 中，ExecutorService的所有实现都可以覆写AbstractExecutorService中的newTaskFor方法，以此控制Future的实例化，以及对应的已提交的Runnable或Callable。默认的实现仅仅创建一个新的FutureTask，正如下边代码所示：</p>
+<p>  //ThreadPoolExecutor中newTaskFor的默认实现<br>  protected <t> RunnableFuture<t> newTaskFor(Callable<t> callable) {</t></t></t></p>
+<pre><code>  return new FutureTask&lt;T&gt;(callable);</code></pre>
+<p>  }</p>
+</li>
+<li><p>将Runnable或Callable提交到Executor的行为，可以建立一个安全发布，以保证Runnable或Callable从提交线程暴露到最终执行任务的线程的过程是线程安全的。类似的，设置Future结果值的行为，也可以建立一个安全发布，以保证这个结果从计算它的线程暴露到通过get重获它的任何线程的过程是线程安全的。</p>
+</li>
+</ul>
+<h3><span id="633-示例使用future实现页面渲染器">6.3.3 示例：使用Future实现页面渲染器</span></h3><ul>
+<li><p>为了使我们的页面渲染器具有更高的并发性</p>
+<ul>
+<li>第一步是将渲染过程分为两个任务，一个是渲染所有的文本，一个是下载所有的图像。</li>
+</ul>
+</li>
+<li><p>Callable和Future可以帮助我们表述所有协同工作的任务之间的互交。</p>
+<pre><code>  public abstract class FutureRenderer &#123;
+      private final ExecutorService executor = Executors.newCachedThreadPool();
+
+      void renderPage(CharSequence source) &#123;
+          final List&lt;ImageInfo&gt; imageInfos = scanForImageInfo(source);
+          Callable&lt;List&lt;ImageData&gt;&gt; task =
+                  new Callable&lt;List&lt;ImageData&gt;&gt;() &#123;
+                      public List&lt;ImageData&gt; call() &#123;
+                          List&lt;ImageData&gt; result = new ArrayList&lt;ImageData&gt;();
+                          for (ImageInfo imageInfo : imageInfos)
+                              result.add(imageInfo.downloadImage());
+                          return result;
+                      &#125;
+                  &#125;;
+
+          Future&lt;List&lt;ImageData&gt;&gt; future = executor.submit(task);
+          renderText(source);
+
+          try &#123;
+              List&lt;ImageData&gt; imageData = future.get();
+              for (ImageData data : imageData)
+                  renderImage(data);
+          &#125; catch (InterruptedException e) &#123;
+              // Re-assert the thread&#39;s interrupted status
+              Thread.currentThread().interrupt();
+              // We don&#39;t need the result, so cancel the task too
+              future.cancel(true);
+          &#125; catch (ExecutionException e) &#123;
+              throw launderThrowable(e.getCause());
+          &#125;
+      &#125;
+  &#125;</code></pre>
+</li>
+<li><p>在上边的FutureRenderer中，我们创建了一个Callable来下载所有的图像，并将这个Callable提交到ExecutorService。之后返回一个描述任务执行的Future；当到达需要所有图像的时间点时，主任务会等待Future.get调用的结果。如果幸运的话，我们请求的当时所有图像已经下载完成；即使没有，至少图像的下载已经预先开始了。</p>
+</li>
+<li><p>“状态依赖性”是get的内在特性，它意味着调用者不必知晓任务的状态。任务提交和重获的结果的安全发布特性，确保了这个方法是线程安全的。包围Future.get的异常处理代码解决了两个可能出现的问题：</p>
+<ul>
+<li>任务遇到一个Exception</li>
+<li>调用get的线程在获得结果前被提前中断</li>
+</ul>
+</li>
+<li><p>FutureRenderer允许渲染文本与下载图像数据并发地执行。当下载完所有的图像后，它们会被呈现到页面上。在让用户快速看到结果的这一方面，该方法是一种提高，同时该方法增强了并行性。然而，我们还可以做得更好。用户不必等到所有的图像都下载完成；它们或许更希望只要下载完一幅图像，就把它绘制到页面上，让人们看到。</p>
+</li>
+</ul>
+<h3><span id="634-并行运行异类任务的局限性">6.3.4 并行运行异类任务的局限性</span></h3><ul>
+<li><p>在上一个任务中，我们试图并行执行两个不同类型的任务——下载图像与渲染页面。但是，对于这种试图并行执行连续的异类任务(heterogeneous task)，以获得性能重大提升的方法，还需要谨慎对待。</p>
+</li>
+<li><p>FutureTenderer中如果渲染文本的速度远远大于下载图像的，那么最终的性能与顺序执行版本的性能不会有很大的不同，反倒是代码复杂度大大提高了。我们使用两个线程可以得到最理想的结果是速度提高一倍。</p>
+<pre><code>  大量相互独立且同类的任务进行并发处理，会将程序的任务量分配到不同的任务中，这样才能真正获得性能的提升。</code></pre>
+</li>
+</ul>
+<h3><span id="635-completionservice当executor遇见blockingqueue">6.3.5 CompletionService：当Executor遇见BlockingQueue</span></h3><ul>
+<li>如果你向Executor提交了一个批处理服务，并且希望在它们完成后返回结果，为此你可以保存与每个任务相关联的Future，然后不断调用timeout为0的get，来检验Future是否完成。这样做固然可以，但却相当乏味。幸运的是，还有一种更好的方法：完成服务(completion service)。</li>
+<li>CompletionService整合了Executor和BlockingQueue的功能。你可以将Callable的任务提交给它去执行，然后使用类似于队列中的take和poll方法，在结果完整可用时获得这个结果，像一个打包的Future。ExecutorCompletionService是实现CompletionService接口的一个类，并将计算任务委托给一个Executor。</li>
+<li>ExecutorCompletionService的实现是相当直观的。它在构造器里创建一个BlockingQueue，用它去保存完成的结果。计算完成时调用FutureTask中done方法。当提交了一个任务后，首先把这个任务包装为一个QueueingFuture，它是FutureTask的一个子类，然后覆写done方法，将结果置入BlockingQueue中，代码如下，take和poll委托给了BlockingQueue，它会在结果不可用时阻塞。<pre><code>  //ExecutorCompletionService使用的QueueingFuture类
+  private class QueueingFuture extends FutureTask&lt;Void&gt; &#123;
+      QueueingFuture(RunnableFuture&lt;V&gt; task) &#123;
+          super(task, null);
+          this.task = task;
+      &#125;
+      protected void done() &#123; completionQueue.add(task); &#125;
+      private final Future&lt;V&gt; task;
+  &#125;</code></pre>
+</li>
+</ul>
+<h3><span id="636-示例使用completionservice的页面渲染器">6.3.6 示例：使用CompletionService的页面渲染器</span></h3><ul>
+<li><p>使用CompletionService，可以从两方面提高页面渲染器的性能</p>
+<ul>
+<li>缩短总的运行时间</li>
+<li>提高响应性</li>
+</ul>
+</li>
+<li><p>我们可以每需要下载一个图像，就创建一个独立的任务，并在线程池中执行它们，将顺序的下载过程转换为并行的：这能减少下载所有图像的总时间。而且从CompletionService中获取结果，只要任何一个图像下载完成，就立刻呈现，由此我们可以给用户提供一个更加动态和有更高响应性的用户界面。以下代码的Renderer演示了这个实现。</p>
+<pre><code>  //使用CompletionService渲染可用的页面元素
+  public abstract class Renderer &#123;
+      private final ExecutorService executor;
+
+      Renderer(ExecutorService executor) &#123;
+          this.executor = executor;
+      &#125;
+
+      void renderPage(CharSequence source) &#123;
+          final List&lt;ImageInfo&gt; info = scanForImageInfo(source);
+          CompletionService&lt;ImageData&gt; completionService =
+                  new ExecutorCompletionService&lt;ImageData&gt;(executor);
+          for (final ImageInfo imageInfo : info)
+              completionService.submit(new Callable&lt;ImageData&gt;() &#123;
+                  public ImageData call() &#123;
+                      return imageInfo.downloadImage();
+                  &#125;
+              &#125;);
+
+          renderText(source);
+
+          try &#123;
+              for (int t = 0, n = info.size(); t &lt; n; t++) &#123;
+                  Future&lt;ImageData&gt; f = completionService.take();
+                  ImageData imageData = f.get();
+                  renderImage(imageData);
+              &#125;
+          &#125; catch (InterruptedException e) &#123;
+              Thread.currentThread().interrupt();
+          &#125; catch (ExecutionException e) &#123;
+              throw launderThrowable(e.getCause());
+          &#125;
+      &#125;
+
+      interface ImageData &#123;
+      &#125;
+
+      interface ImageInfo &#123;
+          ImageData downloadImage();
+      &#125;
+
+      abstract void renderText(CharSequence s);
+
+      abstract List&lt;ImageInfo&gt; scanForImageInfo(CharSequence s);
+
+      abstract void renderImage(ImageData i);
+
+  &#125;</code></pre>
+</li>
+<li><p>多个ExecutorCompletionService可以共享单一的Executor，因此一个明智的做法是创建一个ExecutorCompletionService，他对于特定的计算服务是私有的，然后共享一个公共的Executor。按照这种做法，CompletionService所扮演的批处理计算的句柄，在很大程度上是一样的。记录下提交给CompletionService的任务的个数，然后计算出获得了多少个已完成的结果，这样即使你使用的是共享的Executor，你也能知晓什么时候批处理任务的所有结果已经全部获得。</p>
+</li>
+</ul>
+<h3><span id="637-为任务设置时限">6.3.7 为任务设置时限</span></h3><ul>
+<li><p>有时候如果一个活动无法在某个确定的时间内完成，那么它的结果就失效了，此时程序可以放弃该活动。举2个例子：</p>
+<ul>
+<li>一个Web Application会从外部的广告服务器上获取广告信息，但是如果应用程序在两秒内得不到响应，就会显示一个默认的信息，这样即使得不到广告信息也不会破坏站点的响应式需求。</li>
+<li>一个门户网站可以从多个数据源并行的获取数据，但是可能会在限定的时间内等待数据，到了时间就会只呈现现有的数据了。</li>
+</ul>
+</li>
+<li><p>在预定时间内执行任务的主要挑战是，你要确保在得到答案，或者发现无法从任务中获得结果的这一过程所花费的时间，不会比预定的时间更长。Future.get的限时版本符合这个条件：它在结果准备好后立即返回，如果在时限内没有准备好，就会抛出TimeoutException。</p>
+</li>
+<li><p>使用限时任务的第二个问题是，当它们超时后应该能够停止它们，这样才不会为继续计算一个无用的结果而浪费计算资源。为了达到这个目的，可以让任务自己严格管理它的预定时间，超时后就中止执行；或者也可以在超出时限后取消任务。Future再次派上了用场；如果一个限时的get抛出TimeoutException，你可以通过Future取消任务。如果你编写的任务是可取消的，就可以更灵敏地中止它，以避免消耗过多的资源。以下代码用到了这项技术。</p>
+<pre><code>  //在预定时间内获取广告信息
+  public class RenderWithTimeBudget &#123;
+      private static final Ad DEFAULT_AD = new Ad();
+      private static final long TIME_BUDGET = 1000;
+      private static final ExecutorService exec = Executors.newCachedThreadPool();
+
+      Page renderPageWithAd() throws InterruptedException &#123;
+          long endNanos = System.nanoTime() + TIME_BUDGET;
+          Future&lt;Ad&gt; f = exec.submit(new FetchAdTask());
+          // Render the page while waiting for the ad
+          Page page = renderPageBody();
+          Ad ad;
+          try &#123;
+              // Only wait for the remaining time budget
+              long timeLeft = endNanos - System.nanoTime();
+              ad = f.get(timeLeft, NANOSECONDS);
+          &#125; catch (ExecutionException e) &#123;
+              ad = DEFAULT_AD;
+          &#125; catch (TimeoutException e) &#123;
+              ad = DEFAULT_AD;
+              f.cancel(true);
+          &#125;
+          page.setAd(ad);
+          return page;
+      &#125;
+
+      Page renderPageBody() &#123; return new Page(); &#125;
+
+      static class Ad &#123;
+      &#125;
+
+      static class Page &#123;
+          public void setAd(Ad ad) &#123; &#125;
+      &#125;
+
+      static class FetchAdTask implements Callable&lt;Ad&gt; &#123;
+          public Ad call() &#123;
+              return new Ad();
+          &#125;
+      &#125;
+
+  &#125;</code></pre>
+</li>
+<li><p>以上代码演示了限时的Future.get的一种典型应用。它生成一个混合了不同内容的页面，包括响应用户请求的内容和从广告服务器获得的广告内容。它将获取广告的任务提交给executor，然后计算剩余的文本页面内容，最后等待广告消息，直到预定时间耗尽。如果get超时，它会取消广告获取的任务，并使用默认的信息取代它。</p>
+</li>
+</ul>
+<h3><span id="638-示例旅游预定门户网站">6.3.8 示例：旅游预定门户网站</span></h3><ul>
+<li><p>上一节中谈到的“预定时间”方法可以简单地推广到任意数量的任务上。</p>
+</li>
+<li><p>考虑这样一个旅游预定门户网站：用户输入旅游的日期和其他条件，门户网站获取并显示多条航线、旅店或者汽车租赁公司的报价。</p>
+<ul>
+<li><p>根据不同的公司，获取报价的过程可能涉及到调用一个Web Service、访问数据库、执行一个EDI事务或者其他的机制。</p>
+</li>
+<li><p>与其让页面的响应时间受限于最慢的一个响应，不如让页面只显示给定预定时间内获得的信息，这样更好些。</p>
+</li>
+<li><p>对于没有及时响应的服务提供者，页面要么完全忽略它们，要么显示一个占位符</p>
+<pre><code>  //在预定的时间内请求旅游报价
+  public class TimeBudget &#123;
+      private static ExecutorService exec = Executors.newCachedThreadPool();
+
+      public List&lt;TravelQuote&gt; getRankedTravelQuotes(TravelInfo travelInfo, Set&lt;TravelCompany&gt; companies,
+                                                     Comparator&lt;TravelQuote&gt; ranking, long time, TimeUnit unit)
+              throws InterruptedException &#123;
+          List&lt;QuoteTask&gt; tasks = new ArrayList&lt;QuoteTask&gt;();
+          for (TravelCompany company : companies)
+              tasks.add(new QuoteTask(company, travelInfo));
+
+          List&lt;Future&lt;TravelQuote&gt;&gt; futures = exec.invokeAll(tasks, time, unit);
+
+          List&lt;TravelQuote&gt; quotes =
+                  new ArrayList&lt;TravelQuote&gt;(tasks.size());
+          Iterator&lt;QuoteTask&gt; taskIter = tasks.iterator();
+          for (Future&lt;TravelQuote&gt; f : futures) &#123;
+              QuoteTask task = taskIter.next();
+              try &#123;
+                  quotes.add(f.get());
+              &#125; catch (ExecutionException e) &#123;
+                  quotes.add(task.getFailureQuote(e.getCause()));
+              &#125; catch (CancellationException e) &#123;
+                  quotes.add(task.getTimeoutQuote(e));
+              &#125;
+          &#125;
+
+          Collections.sort(quotes, ranking);
+          return quotes;
+      &#125;
+
+  &#125;
+
+  class QuoteTask implements Callable&lt;TravelQuote&gt; &#123;
+      private final TravelCompany company;
+      private final TravelInfo travelInfo;
+
+      public QuoteTask(TravelCompany company, TravelInfo travelInfo) &#123;
+          this.company = company;
+          this.travelInfo = travelInfo;
+      &#125;
+
+      TravelQuote getFailureQuote(Throwable t) &#123;
+          return null;
+      &#125;
+
+      TravelQuote getTimeoutQuote(CancellationException e) &#123;
+          return null;
+      &#125;
+
+      public TravelQuote call() throws Exception &#123;
+          return company.solicitQuote(travelInfo);
+      &#125;
+  &#125;
+
+  interface TravelCompany &#123;
+      TravelQuote solicitQuote(TravelInfo travelInfo) throws Exception;
+  &#125;
+
+  interface TravelQuote &#123;
+  &#125;
+
+  interface TravelInfo &#123;
+  &#125;</code></pre>
+</li>
+</ul>
+</li>
+<li><p>以上代码使用限时版本的invokeAll，将多个任务提交到ExecutorService，并且获得其结果。invokeAll方法处理一个任务的容器，并返回一个Future的容器。两个容器具有相同的结构；invokeAll将Future添加到返回的容器中，这样可以使用任务容器的迭代器，从而调用者可以将它表现的Callable与Future关联起来。当所有任务都完成时、调用线程被中断时或者超过时限时，限时版本的invokeAll都会返回结果。超过时限后，任何尚未完成的任务都会被取消。作为invokeAll的返回值，每个任务要么正常地完成，要么被取消；客户端代码可以调用get或者isCancelled来查明是属于哪一种情况。</p>
+</li>
+</ul>
+<p></p>
+
+
+  </div>
+  <div>
+  
+  <div class="post-note note-warning copyright" style="margin-top: 42px">
+    <p><span style="font-weight: bold;">作者：</span><a target="_blank" rel="nofollow noopener noreferrer" href="https://java4u.cn/about">白色蜗牛</a></p>
+    <p><span style="font-weight: bold;">文章链接：</span><a target="_blank" rel="nofollow noopener noreferrer" href="https://java4u.cn/Java%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B/06-%E4%BB%BB%E5%8A%A1%E6%89%A7%E8%A1%8C/">https://java4u.cn/Java%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B/06-%E4%BB%BB%E5%8A%A1%E6%89%A7%E8%A1%8C/</a></p>
+    <p><span style="font-weight: bold;">版权声明：</span>本博客所有文章除特别声明外，均采用<a target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh">CC BY-NC-SA 4.0 协议</a>。转载请注明出处！</p>
+  </div>
+  
+  </div>
+</article>
+<div class="nav">
+  
+  <div class="nav-item-prev">
+    <a href="/Java并发编程/07-取消和关闭/" class="nav-link">
+      <i class="iconfont icon-left nav-prev-icon"></i>
+      <div>
+        <div class="nav-label">上一篇</div>
+        
+        <div class="nav-title">07.取消和关闭 </div>
+        
+      </div>
+    </a>
+  </div>
+  
+  
+  <div class="nav-item-next">
+    <a href="/Java并发编程/part-1/" class="nav-link">
+      <div>
+        <div class="nav-label">下一篇</div>
+        
+        <div class="nav-title">part_1 </div>
+        
+      </div>
+      <i class="iconfont icon-right nav-next-icon"></i>
+    </a>
+  </div>
+  
+</div>
+
+<div class="card card-content comment-card" style="margin-top: 16px;">
+  <div class="comment-card-title">评论</div>
+  
+  <div id="vcomments"></div>
+  
+  <script>
+    loadScript("https://cdn.jsdelivr.net/npm/valine@1.4.14/dist/Valine.min.js");
+    var oldLoadVa = window.onload;
+    window.onload = function () {
+      oldLoadVa && oldLoadVa();
+      new Valine({
+        el: '#vcomments',
+        appId: 'Ro9jzghVgwRgtnGQQ99MFbAK-9Nh9j0Va',
+        appKey: 'rbA6uGwupFqEcTUAugUoXn2B',
+        placeholder: '留下你的足迹吧~也可以加我微信 919201148，互换友链~~~',
+        path: window.location.pathname,
+        avatar: 'robohash',
+        meta: ["nick","mail","link"],
+        pageSize: '10',
+        lang: '',
+        visitor: 'true',
+        highlight: true,
+        recordIP: false,
+        
+        
+        
+        enableQQ: 'false',
+        requiredFields: [],
+      });
+    };
+  </script>
+
+</div>
+
+<div class="card card-content toc-card" id="mobiletoc">
+  <div class="toc-header"><i class="iconfont icon-menu" style="padding-right: 2px;"></i>目录</div>
+<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link"><span class="toc-text">6.1 在线程中执行任务</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link"><span class="toc-text">6.1.1 顺序地执行任务</span></a></li><li class="toc-item toc-level-3"><a class="toc-link"><span class="toc-text">6.1.2 显式地为任务创建线程</span></a></li><li class="toc-item toc-level-3"><a class="toc-link"><span class="toc-text">6.1.3 无限制创建线程的缺点</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link"><span class="toc-text">6.2 Executor框架</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link"><span class="toc-text">6.2.1 示例：使用Executor实现的 Web Server</span></a></li><li class="toc-item toc-level-3"><a class="toc-link"><span class="toc-text">6.2.2 执行策略</span></a></li><li class="toc-item toc-level-3"><a class="toc-link"><span class="toc-text">6.2.3 线程池</span></a></li><li class="toc-item toc-level-3"><a class="toc-link"><span class="toc-text">6.2.4 Executor的生命周期</span></a></li><li class="toc-item toc-level-3"><a class="toc-link"><span class="toc-text">6.2.5 延迟的、并具周期性的任务</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link"><span class="toc-text">6.3 寻找可强化的并行性</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link"><span class="toc-text">6.3.1 示例：顺序执行的页面渲染器</span></a></li><li class="toc-item toc-level-3"><a class="toc-link"><span class="toc-text">6.3.2 可携带结果的任务：Callable和Future</span></a></li><li class="toc-item toc-level-3"><a class="toc-link"><span class="toc-text">6.3.3 示例：使用Future实现页面渲染器</span></a></li><li class="toc-item toc-level-3"><a class="toc-link"><span class="toc-text">6.3.4 并行运行异类任务的局限性</span></a></li><li class="toc-item toc-level-3"><a class="toc-link"><span class="toc-text">6.3.5 CompletionService：当Executor遇见BlockingQueue</span></a></li><li class="toc-item toc-level-3"><a class="toc-link"><span class="toc-text">6.3.6 示例：使用CompletionService的页面渲染器</span></a></li><li class="toc-item toc-level-3"><a class="toc-link"><span class="toc-text">6.3.7 为任务设置时限</span></a></li><li class="toc-item toc-level-3"><a class="toc-link"><span class="toc-text">6.3.8 示例：旅游预定门户网站</span></a></li></ol></li></ol>
+</div>
+
+<!-- 百度自动推送链接-->
+<script>
+  (function(){
+      var bp = document.createElement('script');
+      var curProtocol = window.location.protocol.split(':')[0];
+      if (curProtocol === 'https') {
+          bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';        
+      }
+      else {
+          bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+      }
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(bp, s);
+  })();
+  </script>
+  </main>
+          <aside class="left-column">
+            
+            <div class="card card-author">
+              
+<img src="/img/logo.jpg" class="author-img">
+
+<p class="author-name">蜗牛 Java 之家</p>
+<p class="author-description">Java 程序员的成长进阶社区</br>(Java for You)。</p>
+<div class="author-message">
+  <a class="author-posts-count" href="/archives">
+    <span>107</span>
+    <span>文章</span>
+  </a>
+  <a class="author-categories-count" href="/categories">
+    <span>11</span>
+    <span>分类</span>
+  </a>
+  <a class="author-tags-count" href="/tags">
+    <span>118</span>
+    <span>标签</span>
+  </a>
+</div>
+
+<div class="author-card-society">
+  
+    <div class="author-card-society-icon">
+      <a target="_blank" rel="noopener" href="https://gitee.com/java4u/resources/raw/master/global/gh_woniu.png">
+        <i class="iconfont icon-wechat society-icon"></i>
+      </a>
+    </div>
+  
+    <div class="author-card-society-icon">
+      <a target="_blank" rel="noopener" href="https://github.com/huayonglun/">
+        <i class="iconfont icon-github society-icon"></i>
+      </a>
+    </div>
+  
+    <div class="author-card-society-icon">
+      <a target="_blank" rel="noopener" href="http://weibo.com/huayonglun">
+        <i class="iconfont icon-sina society-icon"></i>
+      </a>
+    </div>
+  
+</div>
+
+            </div>
+            
+            <div class="sticky-tablet">
+  
+  
+  <article class="display-when-two-columns spacer">
+    <div class="card card-content toc-card">
+      <div class="toc-header"><i class="iconfont icon-menu" style="padding-right: 2px;"></i>目录</div>
+<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link"><span class="toc-text">6.1 在线程中执行任务</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link"><span class="toc-text">6.1.1 顺序地执行任务</span></a></li><li class="toc-item toc-level-3"><a class="toc-link"><span class="toc-text">6.1.2 显式地为任务创建线程</span></a></li><li class="toc-item toc-level-3"><a class="toc-link"><span class="toc-text">6.1.3 无限制创建线程的缺点</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link"><span class="toc-text">6.2 Executor框架</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link"><span class="toc-text">6.2.1 示例：使用Executor实现的 Web Server</span></a></li><li class="toc-item toc-level-3"><a class="toc-link"><span class="toc-text">6.2.2 执行策略</span></a></li><li class="toc-item toc-level-3"><a class="toc-link"><span class="toc-text">6.2.3 线程池</span></a></li><li class="toc-item toc-level-3"><a class="toc-link"><span class="toc-text">6.2.4 Executor的生命周期</span></a></li><li class="toc-item toc-level-3"><a class="toc-link"><span class="toc-text">6.2.5 延迟的、并具周期性的任务</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link"><span class="toc-text">6.3 寻找可强化的并行性</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link"><span class="toc-text">6.3.1 示例：顺序执行的页面渲染器</span></a></li><li class="toc-item toc-level-3"><a class="toc-link"><span class="toc-text">6.3.2 可携带结果的任务：Callable和Future</span></a></li><li class="toc-item toc-level-3"><a class="toc-link"><span class="toc-text">6.3.3 示例：使用Future实现页面渲染器</span></a></li><li class="toc-item toc-level-3"><a class="toc-link"><span class="toc-text">6.3.4 并行运行异类任务的局限性</span></a></li><li class="toc-item toc-level-3"><a class="toc-link"><span class="toc-text">6.3.5 CompletionService：当Executor遇见BlockingQueue</span></a></li><li class="toc-item toc-level-3"><a class="toc-link"><span class="toc-text">6.3.6 示例：使用CompletionService的页面渲染器</span></a></li><li class="toc-item toc-level-3"><a class="toc-link"><span class="toc-text">6.3.7 为任务设置时限</span></a></li><li class="toc-item toc-level-3"><a class="toc-link"><span class="toc-text">6.3.8 示例：旅游预定门户网站</span></a></li></ol></li></ol>
+    </div>
+  </article>
+  
+  
+  <article class="card card-content categories-widget">
+    <div class="categories-card">
+  <div class="categories-header"><i class="iconfont icon-fenlei" style="padding-right: 2px;"></i>分类</div>
+  <div class="categories-list">
+    
+      <a href="/categories/Java">
+        <div class="categories-list-item">
+          Java
+          <span class="categories-list-item-badge">14</span>
+        </div>
+      </a>
+    
+      <a href="/categories/Java并发编程">
+        <div class="categories-list-item">
+          Java并发编程
+          <span class="categories-list-item-badge">18</span>
+        </div>
+      </a>
+    
+      <a href="/categories/Linux">
+        <div class="categories-list-item">
+          Linux
+          <span class="categories-list-item-badge">1</span>
+        </div>
+      </a>
+    
+      <a href="/categories/spring">
+        <div class="categories-list-item">
+          spring
+          <span class="categories-list-item-badge">21</span>
+        </div>
+      </a>
+    
+      <a href="/categories/struts2">
+        <div class="categories-list-item">
+          struts2
+          <span class="categories-list-item-badge">16</span>
+        </div>
+      </a>
+    
+      <a href="/categories/夯实基础系列">
+        <div class="categories-list-item">
+          夯实基础系列
+          <span class="categories-list-item-badge">4</span>
+        </div>
+      </a>
+    
+      <a href="/categories/工具教程">
+        <div class="categories-list-item">
+          工具教程
+          <span class="categories-list-item-badge">3</span>
+        </div>
+      </a>
+    
+      <a href="/categories/思维">
+        <div class="categories-list-item">
+          思维
+          <span class="categories-list-item-badge">2</span>
+        </div>
+      </a>
+    
+      <a href="/categories/数据库">
+        <div class="categories-list-item">
+          数据库
+          <span class="categories-list-item-badge">2</span>
+        </div>
+      </a>
+    
+      <a href="/categories/算法">
+        <div class="categories-list-item">
+          算法
+          <span class="categories-list-item-badge">25</span>
+        </div>
+      </a>
+    
+      <a href="/categories/网络">
+        <div class="categories-list-item">
+          网络
+          <span class="categories-list-item-badge">1</span>
+        </div>
+      </a>
+    
+  </div>
+</div>
+  </article>
+  
+  <article class="card card-content tags-widget">
+    <div class="tags-card">
+  <div class="tags-header"><i class="iconfont icon-biaoqian" style="padding-right: 2px;"></i>热门标签</div>
+  <div class="tags-list">
+    
+    <a href="\tags\Java" title="Java"><div class="tags-list-item">Java</div></a>
+    
+    <a href="\tags\ssh" title="ssh"><div class="tags-list-item">ssh</div></a>
+    
+    <a href="\tags\spring" title="spring"><div class="tags-list-item">spring</div></a>
+    
+    <a href="\tags\Java并发" title="Java并发"><div class="tags-list-item">Java并发</div></a>
+    
+    <a href="\tags\struts2" title="struts2"><div class="tags-list-item">struts2</div></a>
+    
+    <a href="\tags\bean" title="bean"><div class="tags-list-item">bean</div></a>
+    
+    <a href="\tags\树" title="树"><div class="tags-list-item">树</div></a>
+    
+    <a href="\tags\AOP" title="AOP"><div class="tags-list-item">AOP</div></a>
+    
+    <a href="\tags\分布式" title="分布式"><div class="tags-list-item">分布式</div></a>
+    
+    <a href="\tags\链表" title="链表"><div class="tags-list-item">链表</div></a>
+    
+    <a href="\tags\装配属性" title="装配属性"><div class="tags-list-item">装配属性</div></a>
+    
+    <a href="\tags\集合" title="集合"><div class="tags-list-item">集合</div></a>
+    
+    <a href="\tags\二叉树" title="二叉树"><div class="tags-list-item">二叉树</div></a>
+    
+    <a href="\tags\查找" title="查找"><div class="tags-list-item">查找</div></a>
+    
+    <a href="\tags\排序" title="排序"><div class="tags-list-item">排序</div></a>
+    
+    <a href="\tags\同步" title="同步"><div class="tags-list-item">同步</div></a>
+    
+  </div>
+</div>
+  </article>
+  
+  
+</div>
+          </aside>
+          <aside class="right-column">
+            <div class="sticky-widescreen">
+
+  <!-- 我的公众号 -->
+  
+  <article class="card card-content toc-card">
+    <div style="float: left; ">
+      <img class="adv" style="width: 100%; height: 100%; border: solid 1px #ddd;" src="https://gitee.com/java4u/resources/raw/master/2020-12-17/1608142536200-image.png">
+    </div>
+    <div style="float: left; margin-left: 17px; margin-top: 12px;">
+        <div style="font-size: 18px; margin-bottom: 12px;color:#159957;"><b>微信搜一搜: 蜗牛互联网</b></div>
+        <small style="font-size: 0.9em;">
+          👉「<a target="_blank" rel="noopener" href="https://mp.weixin.qq.com/s/OyboCy8Drh8AWNqE_DUROg">技术干货</a>」每周推送<br>
+          👉「<a href="https://java4u.cn/resources/">免费资料</a>」随时领取<br>
+          👉「<a target="_blank" rel="noopener" href="https://gitee.com/java4u/resources/raw/master/2020-12-17/1608143152021-image.png">优质社群</a>」随时加入<br>
+        </small>
+    </div>
+    <div style="clear: both;"></div>
+    <div style="font-size: 0.8em; margin: 15px 0 15px 0;">
+      <a href="" target="_blank" style="color:#159957;font-size: 14px;" rel="noopener noreferrer">扫描上方二维码，关注我的公众号</a>
+      <br>
+    </div>
+  </article>
+
+
+  
+  
+  <article class="card card-content toc-card">
+    <div class="toc-header"><i class="iconfont icon-menu" style="padding-right: 2px;"></i>目录</div>
+<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link"><span class="toc-text">6.1 在线程中执行任务</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link"><span class="toc-text">6.1.1 顺序地执行任务</span></a></li><li class="toc-item toc-level-3"><a class="toc-link"><span class="toc-text">6.1.2 显式地为任务创建线程</span></a></li><li class="toc-item toc-level-3"><a class="toc-link"><span class="toc-text">6.1.3 无限制创建线程的缺点</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link"><span class="toc-text">6.2 Executor框架</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link"><span class="toc-text">6.2.1 示例：使用Executor实现的 Web Server</span></a></li><li class="toc-item toc-level-3"><a class="toc-link"><span class="toc-text">6.2.2 执行策略</span></a></li><li class="toc-item toc-level-3"><a class="toc-link"><span class="toc-text">6.2.3 线程池</span></a></li><li class="toc-item toc-level-3"><a class="toc-link"><span class="toc-text">6.2.4 Executor的生命周期</span></a></li><li class="toc-item toc-level-3"><a class="toc-link"><span class="toc-text">6.2.5 延迟的、并具周期性的任务</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link"><span class="toc-text">6.3 寻找可强化的并行性</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link"><span class="toc-text">6.3.1 示例：顺序执行的页面渲染器</span></a></li><li class="toc-item toc-level-3"><a class="toc-link"><span class="toc-text">6.3.2 可携带结果的任务：Callable和Future</span></a></li><li class="toc-item toc-level-3"><a class="toc-link"><span class="toc-text">6.3.3 示例：使用Future实现页面渲染器</span></a></li><li class="toc-item toc-level-3"><a class="toc-link"><span class="toc-text">6.3.4 并行运行异类任务的局限性</span></a></li><li class="toc-item toc-level-3"><a class="toc-link"><span class="toc-text">6.3.5 CompletionService：当Executor遇见BlockingQueue</span></a></li><li class="toc-item toc-level-3"><a class="toc-link"><span class="toc-text">6.3.6 示例：使用CompletionService的页面渲染器</span></a></li><li class="toc-item toc-level-3"><a class="toc-link"><span class="toc-text">6.3.7 为任务设置时限</span></a></li><li class="toc-item toc-level-3"><a class="toc-link"><span class="toc-text">6.3.8 示例：旅游预定门户网站</span></a></li></ol></li></ol>
+  </article>
+  
+
+  
+  <article class="card card-content">
+    <div class="recent-posts-card">
+  <div class="recent-posts-header"><i class="iconfont icon-wenzhang_huaban" style="padding-right: 2px;"></i>最近文章</div>
+  <div class="recent-posts-list">
+    
+      <div class="recent-posts-item">
+        <div class="recent-posts-item-title">2020-12-15</div>
+        <a href="/tools-course/cai_yun_xiao_yi/"><div class="recent-posts-item-content">彩云小译：最佳的网页翻译插件</div></a>
+      </div>
+    
+      <div class="recent-posts-item">
+        <div class="recent-posts-item-title">2020-12-14</div>
+        <a href="/tools-course/markmap/"><div class="recent-posts-item-content">最佳的思维导图生成工具： markmap 使用教程</div></a>
+      </div>
+    
+      <div class="recent-posts-item">
+        <div class="recent-posts-item-title">2020-12-13</div>
+        <a href="/tools-course/hexo_site_course/"><div class="recent-posts-item-content">建站神器：Hexo+Kaze+Gitee Pages 搭建静态博客网站</div></a>
+      </div>
+    
+      <div class="recent-posts-item">
+        <div class="recent-posts-item-title">2019-01-24</div>
+        <a href="/思维/知识的诅咒：为什么你觉得显而易见，而对方却无法理解/"><div class="recent-posts-item-content">知识的诅咒：为什么你觉得显而易见，而对方却无法理解</div></a>
+      </div>
+    
+  </div>
+</div>
+  </article>
+  
+  
+</div>
+          </aside>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <footer class="footer">
+  <div class="footer-container">
+    <div>
+      
+      <!-- copyringt-->
+      <div class="footer-dsc">
+        <span>Copyright ©
+          
+          2020 -
+          
+          2020
+        </span>
+        &nbsp;
+        <a href="/" class="footer-link">蜗牛 Java 之家 </a>
+      </div>
+
+       <!-- copyringt-->
+       <div class="footer-dsc">
+        <center><span>
+        <a href="https://java4u.cn/resources/" target="_blank">Java 程序员最全资源下载</a> - <a href="https://java4u.cn/links/" target="_blank">友情链接</a>
+        </span></center>
+      </div>
+     
+    </div>
+
+    
+    
+    
+    
+      <div class="footer-dsc">
+        
+        本站总访问量<span id="busuanzi_value_site_pv"></span>次
+        
+        
+        <span>&nbsp;|&nbsp;</span>
+        
+        
+        本站总访客数<span id="busuanzi_value_site_uv"></span>次
+        
+      </div>
+      
+    
+</footer>
+  <a role="button" id="scrollbutton" class="basebutton"  aria-label="回到顶部">
+  <i class="iconfont icon-arrowleft button-icon"></i>
+</a>
+<a role="button" id="menubutton" class="basebutton">
+  <i class="iconfont icon-menu button-icon"></i>
+</a>
+<a role="button" id="popbutton" class="basebutton" aria-label="控制中心">
+  <i class="iconfont icon-expand button-icon"></i>
+</a>
+<a role="button" id="darkbutton" class="basebutton darkwidget" aria-label="夜色模式">
+  <i class="iconfont icon-weather button-icon"></i>
+</a>
+<a role="button" id="searchbutton" class="basebutton searchwidget" aria-label="搜索">
+  <i class="iconfont icon-search button-icon"></i>
+</a>
+
+  
+  
+  
+
+  
+  
+  <script>
+  var addImgLayout = function () {
+    var img = document.querySelectorAll('.post-content img');
+    var i;
+    for (i = 0; i < img.length; i++) {
+      var wrapper = document.createElement('a');
+      wrapper.setAttribute('href', img[i].getAttribute('data-src'));
+      wrapper.setAttribute('aria-label', 'illustration');
+      wrapper.style.cssText = 'width: 100%; display: flex; justify-content: center;';
+      if (img[i].alt) wrapper.dataset.caption = img[i].alt;
+      wrapper.dataset.nolink = true;
+      img[i].before(wrapper);
+      wrapper.append(img[i]);
+      var divWrap = document.createElement('div');
+      divWrap.classList.add('gallery');
+      wrapper.before(divWrap);
+      divWrap.append(wrapper);
+    }
+    baguetteBox.run('.gallery');
+  }
+</script>
+<script>loadScript("/js/lib/lightbox/baguetteBox.min.js", addImgLayout)</script>
+  
+  
+  
+<script src="/js/main.js"></script>
+
+  
+  <script>loadScript("/js/lib/busuanzi.min.js")</script>
+  
+  
+  <script>
+    var addLazyload = function () {
+      var observer = lozad('.lozad', {
+        load: function (el) {
+          el.srcset = el.getAttribute('data-src');
+        },
+        loaded: function (el) {
+          el.classList.add('loaded');
+        }
+      });
+      observer.observe();
+    }
+  </script>
+  <script>loadScript("/js/lib/lozad.min.js", addLazyload)</script>
+  
+  
+</body>
+
+</html>
