@@ -1,0 +1,1091 @@
+<!DOCTYPE html>
+<html  lang="zh-CN" >
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport"
+    content="width=device-width, initial-scale=1.0, minimum-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <meta name="theme-color" content="#fff" id="theme-color">
+  <meta name="description" content="蜗牛 Java 之家 (java4u.cn) 是 Java 程序员的成长进阶社区，致力于为广大学习 Java 的程序员们提供计算机专业相关的经验教程、学习资料和书籍，包括Java、数据库、Linux、网络等学习干货、IT程序员常用软件工具分享、计算机专业经典电子书PDF，帮助 Java 程序员更快入门和提高。">
+  <link rel="icon" href="/img/logo.jpg">
+  <title>09.GUI应用程序&nbsp; | &nbsp;Java for You</title>
+  
+  
+  <meta property="og:title" content="09.GUI应用程序">
+  
+  
+  <meta property="og:url" content="https://java4u.cn/Java%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B/Java%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B/09-GUI%E5%BA%94%E7%94%A8%E7%A8%8B%E5%BA%8F/index.html">
+  
+  
+  <meta property="og:img" content="/img/logo.jpg">
+  
+  
+  <meta property="og:img" content="蜗牛 Java 之家 (java4u.cn) 是 Java 程序员的成长进阶社区，致力于为广大学习 Java 的程序员们提供计算机专业相关的经验教程、学习资料和书籍，包括Java、数据库、Linux、网络等学习干货、IT程序员常用软件工具分享、计算机专业经典电子书PDF，帮助 Java 程序员更快入门和提高。">
+  
+  
+  <meta property="og:type" content="article">
+  <meta property="og:article:published_time" content="2016-05-03">
+  <meta property="og:article:modified_time" content="2020-12-19">
+  <meta property="og:article:author" content="蜗牛 Java 之家">
+  
+  
+  <meta property="og:article:tag" content="Java">
+  
+  <meta property="og:article:tag" content="Java并发">
+  
+  <meta property="og:article:tag" content="GUI应用程序">
+  
+  
+  
+  
+  <script>
+    // control reverse button
+    var reverseDarkList = {
+      dark: 'light',
+      light: 'dark'
+    };
+    var themeColor = {
+      dark: '#1c1c1e',
+      light: '#fff'
+    }
+    // get the data of css prefers-color-scheme
+    var getCssMediaQuery = function() {
+      return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+    };
+    // reverse current darkmode setting function
+    var reverseDarkModeSetting = function() {
+      var setting = localStorage.getItem('user-color-scheme');
+      if(reverseDarkList[setting]) {
+        setting = reverseDarkList[setting];
+      } else if(setting === null) {
+        setting = reverseDarkList[getCssMediaQuery()];
+      } else {
+        return;
+      }
+      localStorage.setItem('user-color-scheme', setting);
+      return setting;
+    };
+    // apply current darkmode setting
+    var setDarkmode = function(mode) {
+      var setting = mode || localStorage.getItem('user-color-scheme');
+      if(setting === getCssMediaQuery()) {
+        document.documentElement.removeAttribute('data-user-color-scheme');
+        localStorage.removeItem('user-color-scheme');
+        document.getElementById('theme-color').content = themeColor[setting];
+      } else if(reverseDarkList[setting]) {
+        document.documentElement.setAttribute('data-user-color-scheme', setting);
+        document.getElementById('theme-color').content = themeColor[setting];
+      } else {
+        document.documentElement.removeAttribute('data-user-color-scheme');
+        localStorage.removeItem('user-color-scheme');
+        document.getElementById('theme-color').content = themeColor[getCssMediaQuery()];
+      }
+    };
+    setDarkmode();
+  </script>
+  <script>
+    function loadScript(url, cb) {
+      var script = document.createElement('script');
+      script.src = url;
+      if (cb) script.onload = cb;
+      script.async = true;
+      document.body.appendChild(script);
+    }
+  </script>
+  
+  <link rel="preload" href="//at.alicdn.com/t/font_1946621_i1kgafibvw.css" as="style" >
+  <link rel="preload" href="//at.alicdn.com/t/font_1952792_89b4ac4k4up.css" as="style" >
+  
+  <link rel="preload" href="/js/lib/lightbox/baguetteBox.min.js" as="script">
+  <link rel="preload" href="/js/lib/lightbox/baguetteBox.min.css" as="style" >
+  
+  
+  <link rel="preload" href="/js/lib/lozad.min.js" as="script">
+  
+  
+  
+  
+  
+  <link rel="prefetch" href="//cdn.jsdelivr.net/npm/mathjax@3.0.5/es5/tex-svg.js" as="script">
+  
+  
+  
+  <link rel="prefetch" href="https://cdn.jsdelivr.net/npm/valine@1.4.14/dist/Valine.min.js" as="script">
+  
+  
+  
+  
+<link rel="stylesheet" href="/css/main.css">
+
+  
+  
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1946621_i1kgafibvw.css">
+
+  
+  
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1952792_89b4ac4k4up.css">
+
+  
+  
+<link rel="stylesheet" href="/js/lib/lightbox/baguetteBox.min.css">
+
+  
+  
+  
+  
+
+
+  <!-- 百度站长工具验证 -->
+  <meta name="baidu-site-verification" content="code-9cIsKsXy75" />
+
+  <!-- 必应站长工具验证-->
+  <meta name="msvalidate.01" content="81AA8F485E800B7335F07A558BE9A636" />
+
+  <!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-C22LNC79YC"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-C22LNC79YC');
+</script>
+<meta name="generator" content="Hexo 5.2.0"></head>
+
+
+<body>
+  <div class="wrapper">
+    
+    <nav class="navbar">
+  <div class="navbar-logo">
+    <span class="navbar-logo-main">
+      
+      <img class="navbar-logo-img" src="/img/logo.jpg" alt="logo">
+      
+      <span class="navbar-logo-dsc">蜗牛 Java 之家</span>
+    </span>
+  </div>
+  <div class="navbar-menu">
+    
+    <a href="/" class="navbar-menu-item">
+    
+    首页
+    
+    </a>
+    
+    <a href="/resources" class="navbar-menu-item">
+    
+    免费资源
+    
+    </a>
+    
+    <a href="/tools" class="navbar-menu-item">
+    
+    免费工具
+    
+    </a>
+    
+    <a href="/categories" class="navbar-menu-item">
+    
+    分类
+    
+    </a>
+    
+    <a href="/links" class="navbar-menu-item">
+    
+    友链
+    
+    </a>
+    
+    <a class="navbar-menu-item darknavbar" id="dark"><i class="iconfont icon-weather"></i></a>
+    <a class="navbar-menu-item searchnavbar" id="search"><i class="iconfont icon-search" style="font-size: 1.2rem; font-weight: 400;"></i></a>
+  </div>
+</nav>
+    
+    <div id="local-search" style="display: none;">
+      <input class="navbar-menu-item" id="search-input" placeholder="请输入搜索内容...">
+      <div id="search-content"></div>
+    </div>
+    
+    <div class="section-wrap">
+      <div class="container">
+        <div class="columns">
+          <main class="main-column">
+<article class="card card-content">
+  <header>
+    <h1 class="post-title">
+      09.GUI应用程序
+    </h1>
+  </header>
+  <div class="post-meta post-show-meta">
+    <time datetime="2016-05-03T02:40:37.000Z">
+      <i class="iconfont icon-calendar" style="margin-right: 2px;"></i>
+      <span>2016-05-03</span>
+    </time>
+    
+    <span class="dot"></span>
+    
+    <a href="/categories/Java并发编程/" class="post-meta-link">Java并发编程</a>
+    
+    
+    
+    <span class="dot"></span>
+    <span>2.3k 字</span>
+    
+
+    <span class="dot"></span>
+    <!-- 增加阅读量统计样式代码 -->
+    
+    <!-- id 将作为查询条件 -->
+    <i class="iconfont icon-wodebaobiao" style="margin-right: 2px; font-size: 1.15rem;"></i>
+    <span id="/Java%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B/Java%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B/09-GUI%E5%BA%94%E7%94%A8%E7%A8%8B%E5%BA%8F/" class="leancloud_visitors" data-flag-title="09.GUI应用程序">
+      <em class="post-meta-item-text">阅读量 </em>
+      <i class="leancloud-visitors-count"></i>
+    </span>
+
+  </div>
+  
+  <div class="post-meta post-show-meta" style="margin-top: -10px;">
+    <div style="display: flex; align-items: center;">
+      <i class="iconfont icon-biaoqian" style="margin-right: 2px; font-size: 1.15rem;"></i>
+      
+      
+        <a href="/tags/Java/" class="post-meta-link">Java</a>
+      
+      
+      <span class="dot"></span>
+      
+        <a href="/tags/Java并发/" class="post-meta-link">Java并发</a>
+      
+      
+      <span class="dot"></span>
+      
+        <a href="/tags/GUI应用程序/" class="post-meta-link">GUI应用程序</a>
+      
+    </div>
+  </div>
+  
+  </header>
+  <div id="section" class="post-content">
+    <ul>
+<li>几乎所有的GUI工具集都实现为**单线程化子系统(single-threaded)**，意味着所有GUI的活动都被限制在一个单独的线程中，这其中就包括了Swing和SWT。</li>
+</ul>
+<h2><span id="91-为什么gui是单线程化的">9.1 为什么GUI是单线程化的</span></h2><ul>
+<li>早期的GUI应用程序就是单线程化的，GUI在“主事件循环”进行处理。现代的GUI框架使用了一个略微不同的模型：模型创建了一个专门的线程，**事件派发线程(event dispatch thread，EDT)**来处理GUI事件。</li>
+</ul>
+<h3><span id="911-顺序事件处理">9.1.1 顺序事件处理</span></h3><ul>
+<li>任务依次处理，不会交迭</li>
+<li>不利的一面：如果一个任务处理时间长，其他任务必须等。</li>
+</ul>
+<h3><span id="912-swing中的线程限制">9.1.2 Swing中的线程限制</span></h3><ul>
+<li>所有的Swing组件(比如JButton和JTable)和数据模型(TableModel和TreeModel)都被限制于事件线程中，所以任何访问它们的代码必须在事件线程中运行。GUI对象不用同步，仅仅依靠线程限制来保持一致性。</li>
+</ul>
+<blockquote>
+<p>Swing的单线程规则：Swing的组件和模型只能在事件分派线程中被创建、修改和请求。</p>
+</blockquote>
+<pre><code>    //使用Executor实现的SwingUtillities
+    public class SwingUtilities &#123;
+        private static final ExecutorService exec =
+                Executors.newSingleThreadExecutor(new SwingThreadFactory());
+        private static volatile Thread swingThread;
+
+        private static class SwingThreadFactory implements ThreadFactory &#123;
+            public Thread newThread(Runnable r) &#123;
+                swingThread = new Thread(r);
+                return swingThread;
+            &#125;
+        &#125;
+
+        public static boolean isEventDispatchThread() &#123;
+            return Thread.currentThread() == swingThread;
+        &#125;
+
+        public static void invokeLater(Runnable task) &#123;
+            exec.execute(task);
+        &#125;
+
+        public static void invokeAndWait(Runnable task)
+                throws InterruptedException, InvocationTargetException &#123;
+            Future f = exec.submit(task);
+            try &#123;
+                f.get();
+            &#125; catch (ExecutionException e) &#123;
+                throw new InvocationTargetException(e);
+            &#125;
+        &#125;
+    &#125;</code></pre>
+<ul>
+<li><p>GuiExecutor是一个Executor，它把任务的执行委托给SwingUtilities完成。</p>
+<pre><code>  //构建于SwingUtilities之上的Executor
+  public class GuiExecutor extends AbstractExecutorService &#123;
+      // Singletons have a private constructor and a public factory
+      private static final GuiExecutor instance = new GuiExecutor();
+
+      private GuiExecutor() &#123;
+      &#125;
+
+      public static GuiExecutor instance() &#123;
+          return instance;
+      &#125;
+
+      public void execute(Runnable r) &#123;
+          if (SwingUtilities.isEventDispatchThread())
+              r.run();
+          else
+              SwingUtilities.invokeLater(r);
+      &#125;
+
+      public void shutdown() &#123;
+          throw new UnsupportedOperationException();
+      &#125;
+
+      public List&lt;Runnable&gt; shutdownNow() &#123;
+          throw new UnsupportedOperationException();
+      &#125;
+
+      public boolean awaitTermination(long timeout, TimeUnit unit)
+              throws InterruptedException &#123;
+          throw new UnsupportedOperationException();
+      &#125;
+
+      public boolean isShutdown() &#123;
+          return false;
+      &#125;
+
+      public boolean isTerminated() &#123;
+          return false;
+      &#125;
+  &#125;</code></pre>
+</li>
+</ul>
+<h2><span id="92-短期的gui任务">9.2 短期的GUI任务</span></h2><ul>
+<li>短期的任务可以把全部动作留在事件线程中完成；而对于耗时的任务，则应该将一些工作负荷分压到另一个线程中</li>
+</ul>
+<h2><span id="93-耗时gui任务">9.3 耗时GUI任务</span></h2><ul>
+<li>成熟的GUI应用程序可能会运行一些耗时的任务，以致于超过了用户预期的时间，比如拼写检查、后台编辑或者获取远程资源。这些任务必须在另外的线程中运行，而使GUI在它们运行中可以作出响应。</li>
+<li>对于耗时任务，可缓存线程池是个不错的选择。</li>
+</ul>
+<h3><span id="931-取消">9.3.1 取消</span></h3><ul>
+<li>最简单的方法是使用Future，他就是设计用来管理可取消任务的。</li>
+<li>如果你调用Future的cancel。并设置mayInterruptIfRunning参数为true，Future的实现可以中断一个执行运行中的任务的线程。如果你编写的任务能处理中断，那么被取消后可以提前返回。</li>
+</ul>
+<pre><code>    public class ListenerExamples &#123;
+        private static ExecutorService exec = Executors.newCachedThreadPool();
+
+        private final JButton colorButton = new JButton(&quot;Change color&quot;);
+        private final Random random = new Random();
+
+        private void backgroundRandom() &#123;
+            colorButton.addActionListener(new ActionListener() &#123;
+                public void actionPerformed(ActionEvent e) &#123;
+                    colorButton.setBackground(new Color(random.nextInt()));
+                &#125;
+            &#125;);
+        &#125;
+
+
+        //将耗时任务绑定到可视化组件中
+        private final JButton computeButton = new JButton(&quot;Big computation&quot;);
+
+        private void longRunningTask() &#123;
+            computeButton.addActionListener(new ActionListener() &#123;
+                public void actionPerformed(ActionEvent e) &#123;
+                    exec.execute(new Runnable() &#123;
+                        public void run() &#123;
+                            /* Do big computation */
+                        &#125;
+                    &#125;);
+                &#125;
+            &#125;);
+        &#125;
+
+
+        private final JButton button = new JButton(&quot;Do&quot;);
+        private final JLabel label = new JLabel(&quot;idle&quot;);
+
+        //提供用户反馈的耗时任务
+        private void longRunningTaskWithFeedback() &#123;
+            button.addActionListener(new ActionListener() &#123;
+                public void actionPerformed(ActionEvent e) &#123;
+                    button.setEnabled(false);
+                    label.setText(&quot;busy&quot;);
+                    exec.execute(new Runnable() &#123;
+                        public void run() &#123;
+                            try &#123;
+                                /* Do big computation */
+                            &#125; finally &#123;
+                                GuiExecutor.instance().execute(new Runnable() &#123;
+                                    public void run() &#123;
+                                        button.setEnabled(true);
+                                        label.setText(&quot;idle&quot;);
+                                    &#125;
+                                &#125;);
+                            &#125;
+                        &#125;
+                    &#125;);
+                &#125;
+            &#125;);
+        &#125;
+
+        private final JButton startButton = new JButton(&quot;Start&quot;);
+        private final JButton cancelButton = new JButton(&quot;Cancel&quot;);
+        private Future&lt;?&gt; runningTask = null; // thread-confined
+
+        //取消耗时任务，轮询线程的中断状态，并且在中断时提前返回
+        private void taskWithCancellation() &#123;
+            startButton.addActionListener(new ActionListener() &#123;
+                public void actionPerformed(ActionEvent e) &#123;
+                    if (runningTask != null) &#123;
+                        runningTask = exec.submit(new Runnable() &#123;
+                            public void run() &#123;
+                                while (moreWork()) &#123;
+                                    if (Thread.currentThread().isInterrupted()) &#123;
+                                        cleanUpPartialWork();
+                                        break;
+                                    &#125;
+                                    doSomeWork();
+                                &#125;
+                            &#125;
+
+                            private boolean moreWork() &#123;
+                                return false;
+                            &#125;
+
+                            private void cleanUpPartialWork() &#123;
+                            &#125;
+
+                            private void doSomeWork() &#123;
+                            &#125;
+
+                        &#125;);
+                    &#125;
+                    ;
+                &#125;
+            &#125;);
+
+            cancelButton.addActionListener(new ActionListener() &#123;
+                public void actionPerformed(ActionEvent event) &#123;
+                    if (runningTask != null)
+                        runningTask.cancel(true);
+                &#125;
+            &#125;);
+        &#125;
+
+
+        private void runInBackground(final Runnable task) &#123;
+            startButton.addActionListener(new ActionListener() &#123;
+                public void actionPerformed(ActionEvent e) &#123;
+                    class CancelListener implements ActionListener &#123;
+                        BackgroundTask&lt;?&gt; task;
+                        public void actionPerformed(ActionEvent event) &#123;
+                            if (task != null)
+                                task.cancel(true);
+                        &#125;
+                    &#125;
+                    final CancelListener listener = new CancelListener();
+                    listener.task = new BackgroundTask&lt;Void&gt;() &#123;
+                        public Void compute() &#123;
+                            while (moreWork() &amp;&amp; !isCancelled())
+                                doSomeWork();
+                            return null;
+                        &#125;
+
+                        private boolean moreWork() &#123;
+                            return false;
+                        &#125;
+
+                        private void doSomeWork() &#123;
+                        &#125;
+
+                        public void onCompletion(boolean cancelled, String s, Throwable exception) &#123;
+                            cancelButton.removeActionListener(listener);
+                            label.setText(&quot;done&quot;);
+                        &#125;
+                    &#125;;
+                    cancelButton.addActionListener(listener);
+                    exec.execute(task);
+                &#125;
+            &#125;);
+        &#125;
+    &#125;</code></pre>
+<h3><span id="932-进度和完成标识">9.3.2 进度和完成标识</span></h3><ul>
+<li><p>使用Future表现一个耗时任务，可以极大的简化取消的实现。类似的，FutureTask中也有一个done钩子函数，可以方便任务完成后的通知。后台Callable完成后，会调用done。通过由done触发一个事件线程中已经完成的任务，我们能够构建BackgroundTask类，它提供一个可在事件线程中调用的onCompletion钩子函数。</p>
+<pre><code>  //支持取消、完成和进度通知的后台任务类
+  public abstract class BackgroundTask &lt;V&gt; implements Runnable, Future&lt;V&gt; &#123;
+      private final FutureTask&lt;V&gt; computation = new Computation();
+
+      private class Computation extends FutureTask&lt;V&gt; &#123;
+          public Computation() &#123;
+              super(new Callable&lt;V&gt;() &#123;
+                  public V call() throws Exception &#123;
+                      return BackgroundTask.this.compute();
+                  &#125;
+              &#125;);
+          &#125;
+
+          protected final void done() &#123;
+              GuiExecutor.instance().execute(new Runnable() &#123;
+                  public void run() &#123;
+                      V value = null;
+                      Throwable thrown = null;
+                      boolean cancelled = false;
+                      try &#123;
+                          value = get();
+                      &#125; catch (ExecutionException e) &#123;
+                          thrown = e.getCause();
+                      &#125; catch (CancellationException e) &#123;
+                          cancelled = true;
+                      &#125; catch (InterruptedException consumed) &#123;
+                      &#125; finally &#123;
+                          onCompletion(value, thrown, cancelled);
+                      &#125;
+                  &#125;;
+              &#125;);
+          &#125;
+      &#125;
+
+      protected void setProgress(final int current, final int max) &#123;
+          GuiExecutor.instance().execute(new Runnable() &#123;
+              public void run() &#123;
+                  onProgress(current, max);
+              &#125;
+          &#125;);
+      &#125;
+
+      // Called in the background thread
+      protected abstract V compute() throws Exception;
+
+      // Called in the event thread
+      protected void onCompletion(V result, Throwable exception,
+                                  boolean cancelled) &#123;
+      &#125;
+
+      protected void onProgress(int current, int max) &#123;
+      &#125;
+
+      // Other Future methods just forwarded to computation
+      public boolean cancel(boolean mayInterruptIfRunning) &#123;
+          return computation.cancel(mayInterruptIfRunning);
+      &#125;
+
+      public V get() throws InterruptedException, ExecutionException &#123;
+          return computation.get();
+      &#125;
+
+      public V get(long timeout, TimeUnit unit)
+              throws InterruptedException,
+              ExecutionException,
+              TimeoutException &#123;
+          return computation.get(timeout, unit);
+      &#125;
+
+      public boolean isCancelled() &#123;
+          return computation.isCancelled();
+      &#125;
+
+      public boolean isDone() &#123;
+          return computation.isDone();
+      &#125;
+
+      public void run() &#123;
+          computation.run();
+      &#125;
+  &#125;</code></pre>
+</li>
+</ul>
+<h3><span id="933-swingworker">9.3.3 SwingWorker</span></h3><ul>
+<li>SwingWorker类提供取消、完成的通知，以及进度指示。</li>
+</ul>
+<h2><span id="94-共享数据模型">9.4 共享数据模型</span></h2><ul>
+<li>Swing的表现对象(包括TableModel、TreeModel这些数据模型)是被限制在事件线程中的。</li>
+<li>举个例子，你可以使用树控件来显示远程文件系统的内容。在你显示控件之前，并不用枚举完整的文件系统——那样做会花费大量的时间和内存。树应该在展开结点时惰性组装起来。即使只枚举远程卷上的单一目录，也会花费很长的时间，所以你可以考虑在后台任务中执行枚举。后台任务完成后，你还必须设法把数据送入树中。可以通过使用线程安全的树模型来实现：让invokeLater安排一个任务，把数据从后台任务中“推入”事件线程；或者也可以让事件线程池轮询查看数据是否可用。</li>
+</ul>
+<h3><span id="941-线程安全的数据模型">9.4.1 线程安全的数据模型</span></h3><ul>
+<li>只要阻塞不过度影响响应性，多线程操作数据的问题就可以通过线程安全的数据模型来解决。如果数据模型支持精细的并发，事件线程和后台线程就能够共享它，而且不存在响应性的问题。</li>
+</ul>
+<h3><span id="942-分拆数据模型">9.4.2 分拆数据模型</span></h3><ul>
+<li>应用程序的数据模型既包含表现域，又包含应用域，我们称这种应用程序是**分拆模型(split-model)的设计<blockquote>
+<p>如果一个数据模型必须被多个线程共享，而且实现一个线程安全模型的尝试却由于阻塞、一致性或者复杂度等原因而失败，这时就可以考虑运用分拆模型设计。</p>
+</blockquote>
+</li>
+</ul>
+<h2><span id="95-其他形式的单线程子系统">9.5 其他形式的单线程子系统</span></h2><ul>
+<li>一些原生库要求所有对库的访问，甚至System.loadLibrary加载库时，必须在同一个线程中运行。借用GUI框架的方法，可以简单的为访问原生库创建一个专门的线程或者一个单线程化的Executor，然后提供一个代理对象拦截所有对线程限制对象的调用，把拦截的调用当做任务提交给前面创建的线程中。Future和newSingleThreadExecutor的组合可以简化这项工作；代理方法调用submit提交任务，然后立即调用Future.get等待结果。</li>
+</ul>
+<h2><span id="summary">summary</span></h2><ul>
+<li>GUI框架几乎都是作为单线程化子系统实现的，所有与表现相关的代码都作为任务在一个事件线程中运行。</li>
+<li>因为只有唯一一个线程，耗时任务会损害响应性，所以它们应该在后台线程中运行。</li>
+<li>像SwingWorker以及本章中构建BackgroundTask这些助手类，提供了取消、进度指示、完成指示的支持、无论是GUI组件还是非GUI组件，都能借助它们简化耗时任务的开发。</li>
+</ul>
+<p></p>
+
+
+  </div>
+  <div>
+  
+  <div class="post-note note-warning copyright" style="margin-top: 42px">
+    <p><span style="font-weight: bold;">作者：</span><a target="_blank" rel="nofollow noopener noreferrer" href="https://java4u.cn/about">白色蜗牛</a></p>
+    <p><span style="font-weight: bold;">文章链接：</span><a target="_blank" rel="nofollow noopener noreferrer" href="https://java4u.cn/Java%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B/Java%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B/09-GUI%E5%BA%94%E7%94%A8%E7%A8%8B%E5%BA%8F/">https://java4u.cn/Java%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B/Java%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B/09-GUI%E5%BA%94%E7%94%A8%E7%A8%8B%E5%BA%8F/</a></p>
+    <p><span style="font-weight: bold;">版权声明：</span>本博客所有文章除特别声明外，均采用<a target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh">CC BY-NC-SA 4.0 协议</a>。转载请注明出处！</p>
+  </div>
+  
+  </div>
+</article>
+<div class="nav">
+  
+  <div class="nav-item-prev">
+    <a href="/Java并发编程/Java并发编程/10-避免活跃度危险/" class="nav-link">
+      <i class="iconfont icon-left nav-prev-icon"></i>
+      <div>
+        <div class="nav-label">上一篇</div>
+        
+        <div class="nav-title">10.避免活跃度危险 </div>
+        
+      </div>
+    </a>
+  </div>
+  
+  
+  <div class="nav-item-next">
+    <a href="/Java并发编程/Java并发编程/08-应用线程池/" class="nav-link">
+      <div>
+        <div class="nav-label">下一篇</div>
+        
+        <div class="nav-title">08.应用线程池 </div>
+        
+      </div>
+      <i class="iconfont icon-right nav-next-icon"></i>
+    </a>
+  </div>
+  
+</div>
+
+<div class="card card-content comment-card" style="margin-top: 16px;">
+  <div class="comment-card-title">评论</div>
+  
+  <div id="vcomments"></div>
+  
+  <script>
+    loadScript("https://cdn.jsdelivr.net/npm/valine@1.4.14/dist/Valine.min.js");
+    var oldLoadVa = window.onload;
+    window.onload = function () {
+      oldLoadVa && oldLoadVa();
+      new Valine({
+        el: '#vcomments',
+        appId: 'Ro9jzghVgwRgtnGQQ99MFbAK-9Nh9j0Va',
+        appKey: 'rbA6uGwupFqEcTUAugUoXn2B',
+        placeholder: '留下你的足迹吧~也可以加我微信 919201148，互换友链~~~',
+        path: window.location.pathname,
+        avatar: 'robohash',
+        meta: ["nick","mail","link"],
+        pageSize: '10',
+        lang: '',
+        visitor: 'true',
+        highlight: true,
+        recordIP: false,
+        
+        
+        
+        enableQQ: 'false',
+        requiredFields: [],
+      });
+    };
+  </script>
+
+</div>
+
+<div class="card card-content toc-card" id="mobiletoc">
+  <div class="toc-header"><i class="iconfont icon-menu" style="padding-right: 2px;"></i>目录</div>
+<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link"><span class="toc-text">9.1 为什么GUI是单线程化的</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link"><span class="toc-text">9.1.1 顺序事件处理</span></a></li><li class="toc-item toc-level-3"><a class="toc-link"><span class="toc-text">9.1.2 Swing中的线程限制</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link"><span class="toc-text">9.2 短期的GUI任务</span></a></li><li class="toc-item toc-level-2"><a class="toc-link"><span class="toc-text">9.3 耗时GUI任务</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link"><span class="toc-text">9.3.1 取消</span></a></li><li class="toc-item toc-level-3"><a class="toc-link"><span class="toc-text">9.3.2 进度和完成标识</span></a></li><li class="toc-item toc-level-3"><a class="toc-link"><span class="toc-text">9.3.3 SwingWorker</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link"><span class="toc-text">9.4 共享数据模型</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link"><span class="toc-text">9.4.1 线程安全的数据模型</span></a></li><li class="toc-item toc-level-3"><a class="toc-link"><span class="toc-text">9.4.2 分拆数据模型</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link"><span class="toc-text">9.5 其他形式的单线程子系统</span></a></li><li class="toc-item toc-level-2"><a class="toc-link"><span class="toc-text">summary</span></a></li></ol>
+</div>
+
+<!-- 百度自动推送链接-->
+<script>
+  (function(){
+      var bp = document.createElement('script');
+      var curProtocol = window.location.protocol.split(':')[0];
+      if (curProtocol === 'https') {
+          bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';        
+      }
+      else {
+          bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+      }
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(bp, s);
+  })();
+  </script>
+  </main>
+          <aside class="left-column">
+            
+            <div class="card card-author">
+              
+<img src="/img/logo.jpg" class="author-img">
+
+<p class="author-name">蜗牛 Java 之家</p>
+<p class="author-description">Java 程序员的成长进阶社区</br>(Java for You)。</p>
+<div class="author-message">
+  <a class="author-posts-count" href="/archives">
+    <span>107</span>
+    <span>文章</span>
+  </a>
+  <a class="author-categories-count" href="/categories">
+    <span>11</span>
+    <span>分类</span>
+  </a>
+  <a class="author-tags-count" href="/tags">
+    <span>118</span>
+    <span>标签</span>
+  </a>
+</div>
+
+<div class="author-card-society">
+  
+    <div class="author-card-society-icon">
+      <a target="_blank" rel="noopener" href="https://gitee.com/java4u/resources/raw/master/global/gh_woniu.png">
+        <i class="iconfont icon-wechat society-icon"></i>
+      </a>
+    </div>
+  
+    <div class="author-card-society-icon">
+      <a target="_blank" rel="noopener" href="https://github.com/huayonglun/">
+        <i class="iconfont icon-github society-icon"></i>
+      </a>
+    </div>
+  
+    <div class="author-card-society-icon">
+      <a target="_blank" rel="noopener" href="http://weibo.com/huayonglun">
+        <i class="iconfont icon-sina society-icon"></i>
+      </a>
+    </div>
+  
+</div>
+
+            </div>
+            
+            <div class="sticky-tablet">
+  
+  
+  <article class="display-when-two-columns spacer">
+    <div class="card card-content toc-card">
+      <div class="toc-header"><i class="iconfont icon-menu" style="padding-right: 2px;"></i>目录</div>
+<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link"><span class="toc-text">9.1 为什么GUI是单线程化的</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link"><span class="toc-text">9.1.1 顺序事件处理</span></a></li><li class="toc-item toc-level-3"><a class="toc-link"><span class="toc-text">9.1.2 Swing中的线程限制</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link"><span class="toc-text">9.2 短期的GUI任务</span></a></li><li class="toc-item toc-level-2"><a class="toc-link"><span class="toc-text">9.3 耗时GUI任务</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link"><span class="toc-text">9.3.1 取消</span></a></li><li class="toc-item toc-level-3"><a class="toc-link"><span class="toc-text">9.3.2 进度和完成标识</span></a></li><li class="toc-item toc-level-3"><a class="toc-link"><span class="toc-text">9.3.3 SwingWorker</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link"><span class="toc-text">9.4 共享数据模型</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link"><span class="toc-text">9.4.1 线程安全的数据模型</span></a></li><li class="toc-item toc-level-3"><a class="toc-link"><span class="toc-text">9.4.2 分拆数据模型</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link"><span class="toc-text">9.5 其他形式的单线程子系统</span></a></li><li class="toc-item toc-level-2"><a class="toc-link"><span class="toc-text">summary</span></a></li></ol>
+    </div>
+  </article>
+  
+  
+  <article class="card card-content categories-widget">
+    <div class="categories-card">
+  <div class="categories-header"><i class="iconfont icon-fenlei" style="padding-right: 2px;"></i>分类</div>
+  <div class="categories-list">
+    
+      <a href="/categories/Java">
+        <div class="categories-list-item">
+          Java
+          <span class="categories-list-item-badge">14</span>
+        </div>
+      </a>
+    
+      <a href="/categories/Java并发编程">
+        <div class="categories-list-item">
+          Java并发编程
+          <span class="categories-list-item-badge">18</span>
+        </div>
+      </a>
+    
+      <a href="/categories/Linux">
+        <div class="categories-list-item">
+          Linux
+          <span class="categories-list-item-badge">1</span>
+        </div>
+      </a>
+    
+      <a href="/categories/spring">
+        <div class="categories-list-item">
+          spring
+          <span class="categories-list-item-badge">21</span>
+        </div>
+      </a>
+    
+      <a href="/categories/struts2">
+        <div class="categories-list-item">
+          struts2
+          <span class="categories-list-item-badge">16</span>
+        </div>
+      </a>
+    
+      <a href="/categories/夯实基础系列">
+        <div class="categories-list-item">
+          夯实基础系列
+          <span class="categories-list-item-badge">4</span>
+        </div>
+      </a>
+    
+      <a href="/categories/工具教程">
+        <div class="categories-list-item">
+          工具教程
+          <span class="categories-list-item-badge">3</span>
+        </div>
+      </a>
+    
+      <a href="/categories/思维">
+        <div class="categories-list-item">
+          思维
+          <span class="categories-list-item-badge">2</span>
+        </div>
+      </a>
+    
+      <a href="/categories/数据库">
+        <div class="categories-list-item">
+          数据库
+          <span class="categories-list-item-badge">2</span>
+        </div>
+      </a>
+    
+      <a href="/categories/算法">
+        <div class="categories-list-item">
+          算法
+          <span class="categories-list-item-badge">25</span>
+        </div>
+      </a>
+    
+      <a href="/categories/网络">
+        <div class="categories-list-item">
+          网络
+          <span class="categories-list-item-badge">1</span>
+        </div>
+      </a>
+    
+  </div>
+</div>
+  </article>
+  
+  <article class="card card-content tags-widget">
+    <div class="tags-card">
+  <div class="tags-header"><i class="iconfont icon-biaoqian" style="padding-right: 2px;"></i>热门标签</div>
+  <div class="tags-list">
+    
+    <a href="\tags\Java" title="Java"><div class="tags-list-item">Java</div></a>
+    
+    <a href="\tags\ssh" title="ssh"><div class="tags-list-item">ssh</div></a>
+    
+    <a href="\tags\spring" title="spring"><div class="tags-list-item">spring</div></a>
+    
+    <a href="\tags\Java并发" title="Java并发"><div class="tags-list-item">Java并发</div></a>
+    
+    <a href="\tags\struts2" title="struts2"><div class="tags-list-item">struts2</div></a>
+    
+    <a href="\tags\bean" title="bean"><div class="tags-list-item">bean</div></a>
+    
+    <a href="\tags\树" title="树"><div class="tags-list-item">树</div></a>
+    
+    <a href="\tags\AOP" title="AOP"><div class="tags-list-item">AOP</div></a>
+    
+    <a href="\tags\分布式" title="分布式"><div class="tags-list-item">分布式</div></a>
+    
+    <a href="\tags\链表" title="链表"><div class="tags-list-item">链表</div></a>
+    
+    <a href="\tags\装配属性" title="装配属性"><div class="tags-list-item">装配属性</div></a>
+    
+    <a href="\tags\集合" title="集合"><div class="tags-list-item">集合</div></a>
+    
+    <a href="\tags\二叉树" title="二叉树"><div class="tags-list-item">二叉树</div></a>
+    
+    <a href="\tags\查找" title="查找"><div class="tags-list-item">查找</div></a>
+    
+    <a href="\tags\排序" title="排序"><div class="tags-list-item">排序</div></a>
+    
+    <a href="\tags\同步" title="同步"><div class="tags-list-item">同步</div></a>
+    
+  </div>
+</div>
+  </article>
+  
+  
+</div>
+          </aside>
+          <aside class="right-column">
+            <div class="sticky-widescreen">
+
+  <!-- 我的公众号 -->
+  
+  <article class="card card-content toc-card">
+    <div style="float: left; ">
+      <img class="adv" style="width: 100%; height: 100%; border: solid 1px #ddd;" src="https://gitee.com/java4u/resources/raw/master/2020-12-17/1608142536200-image.png">
+    </div>
+    <div style="float: left; margin-left: 17px; margin-top: 12px;">
+        <div style="font-size: 18px; margin-bottom: 12px;color:#159957;"><b>微信搜一搜: 蜗牛互联网</b></div>
+        <small style="font-size: 0.9em;">
+          👉「<a target="_blank" rel="noopener" href="https://mp.weixin.qq.com/s/OyboCy8Drh8AWNqE_DUROg">技术干货</a>」每周推送<br>
+          👉「<a href="https://java4u.cn/resources/">免费资料</a>」随时领取<br>
+          👉「<a target="_blank" rel="noopener" href="https://gitee.com/java4u/resources/raw/master/2020-12-17/1608143152021-image.png">优质社群</a>」随时加入<br>
+        </small>
+    </div>
+    <div style="clear: both;"></div>
+    <div style="font-size: 0.8em; margin: 15px 0 15px 0;">
+      <a href="" target="_blank" style="color:#159957;font-size: 14px;" rel="noopener noreferrer">扫描上方二维码，关注我的公众号</a>
+      <br>
+    </div>
+  </article>
+
+
+  
+  
+  <article class="card card-content toc-card">
+    <div class="toc-header"><i class="iconfont icon-menu" style="padding-right: 2px;"></i>目录</div>
+<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link"><span class="toc-text">9.1 为什么GUI是单线程化的</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link"><span class="toc-text">9.1.1 顺序事件处理</span></a></li><li class="toc-item toc-level-3"><a class="toc-link"><span class="toc-text">9.1.2 Swing中的线程限制</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link"><span class="toc-text">9.2 短期的GUI任务</span></a></li><li class="toc-item toc-level-2"><a class="toc-link"><span class="toc-text">9.3 耗时GUI任务</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link"><span class="toc-text">9.3.1 取消</span></a></li><li class="toc-item toc-level-3"><a class="toc-link"><span class="toc-text">9.3.2 进度和完成标识</span></a></li><li class="toc-item toc-level-3"><a class="toc-link"><span class="toc-text">9.3.3 SwingWorker</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link"><span class="toc-text">9.4 共享数据模型</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link"><span class="toc-text">9.4.1 线程安全的数据模型</span></a></li><li class="toc-item toc-level-3"><a class="toc-link"><span class="toc-text">9.4.2 分拆数据模型</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link"><span class="toc-text">9.5 其他形式的单线程子系统</span></a></li><li class="toc-item toc-level-2"><a class="toc-link"><span class="toc-text">summary</span></a></li></ol>
+  </article>
+  
+
+  
+  <article class="card card-content">
+    <div class="recent-posts-card">
+  <div class="recent-posts-header"><i class="iconfont icon-wenzhang_huaban" style="padding-right: 2px;"></i>最近文章</div>
+  <div class="recent-posts-list">
+    
+      <div class="recent-posts-item">
+        <div class="recent-posts-item-title">2020-12-15</div>
+        <a href="/tools-course/工具教程/cai_yun_xiao_yi/"><div class="recent-posts-item-content">彩云小译：最佳的网页翻译插件</div></a>
+      </div>
+    
+      <div class="recent-posts-item">
+        <div class="recent-posts-item-title">2020-12-14</div>
+        <a href="/tools-course/工具教程/markmap/"><div class="recent-posts-item-content">最佳的思维导图生成工具： markmap 使用教程</div></a>
+      </div>
+    
+      <div class="recent-posts-item">
+        <div class="recent-posts-item-title">2020-12-13</div>
+        <a href="/tools-course/工具教程/hexo_site_course/"><div class="recent-posts-item-content">建站神器：Hexo+Kaze+Gitee Pages 搭建静态博客网站</div></a>
+      </div>
+    
+      <div class="recent-posts-item">
+        <div class="recent-posts-item-title">2019-01-24</div>
+        <a href="/思维/思维/知识的诅咒：为什么你觉得显而易见，而对方却无法理解/"><div class="recent-posts-item-content">知识的诅咒：为什么你觉得显而易见，而对方却无法理解</div></a>
+      </div>
+    
+  </div>
+</div>
+  </article>
+  
+  
+</div>
+          </aside>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <footer class="footer">
+  <div class="footer-container">
+    <div>
+      
+      <!-- copyringt-->
+      <div class="footer-dsc">
+        <span>Copyright ©
+          
+          2020 -
+          
+          2020
+        </span>
+        &nbsp;
+        <a href="/" class="footer-link">蜗牛 Java 之家 </a>
+      </div>
+
+       <!-- copyringt-->
+       <div class="footer-dsc">
+        <center><span>
+        <a href="https://java4u.cn/resources/" target="_blank">Java 程序员最全资源下载</a> - <a href="https://java4u.cn/links/" target="_blank">友情链接</a>
+        </span></center>
+      </div>
+     
+    </div>
+
+    
+    
+    
+    
+      <div class="footer-dsc">
+        
+        本站总访问量<span id="busuanzi_value_site_pv"></span>次
+        
+        
+        <span>&nbsp;|&nbsp;</span>
+        
+        
+        本站总访客数<span id="busuanzi_value_site_uv"></span>次
+        
+      </div>
+      
+    
+</footer>
+  <a role="button" id="scrollbutton" class="basebutton"  aria-label="回到顶部">
+  <i class="iconfont icon-arrowleft button-icon"></i>
+</a>
+<a role="button" id="menubutton" class="basebutton">
+  <i class="iconfont icon-menu button-icon"></i>
+</a>
+<a role="button" id="popbutton" class="basebutton" aria-label="控制中心">
+  <i class="iconfont icon-expand button-icon"></i>
+</a>
+<a role="button" id="darkbutton" class="basebutton darkwidget" aria-label="夜色模式">
+  <i class="iconfont icon-weather button-icon"></i>
+</a>
+<a role="button" id="searchbutton" class="basebutton searchwidget" aria-label="搜索">
+  <i class="iconfont icon-search button-icon"></i>
+</a>
+
+  
+  
+  
+
+  
+  
+  <script>
+  var addImgLayout = function () {
+    var img = document.querySelectorAll('.post-content img');
+    var i;
+    for (i = 0; i < img.length; i++) {
+      var wrapper = document.createElement('a');
+      wrapper.setAttribute('href', img[i].getAttribute('data-src'));
+      wrapper.setAttribute('aria-label', 'illustration');
+      wrapper.style.cssText = 'width: 100%; display: flex; justify-content: center;';
+      if (img[i].alt) wrapper.dataset.caption = img[i].alt;
+      wrapper.dataset.nolink = true;
+      img[i].before(wrapper);
+      wrapper.append(img[i]);
+      var divWrap = document.createElement('div');
+      divWrap.classList.add('gallery');
+      wrapper.before(divWrap);
+      divWrap.append(wrapper);
+    }
+    baguetteBox.run('.gallery');
+  }
+</script>
+<script>loadScript("/js/lib/lightbox/baguetteBox.min.js", addImgLayout)</script>
+  
+  
+  
+<script src="/js/main.js"></script>
+
+  
+  <script>loadScript("/js/lib/busuanzi.min.js")</script>
+  
+  
+  <script>
+    var addLazyload = function () {
+      var observer = lozad('.lozad', {
+        load: function (el) {
+          el.srcset = el.getAttribute('data-src');
+        },
+        loaded: function (el) {
+          el.classList.add('loaded');
+        }
+      });
+      observer.observe();
+    }
+  </script>
+  <script>loadScript("/js/lib/lozad.min.js", addLazyload)</script>
+  
+  
+</body>
+
+</html>
