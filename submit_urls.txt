@@ -1,3 +1,4 @@
+https://java4u.cn/course/uml_quick_start/
 https://java4u.cn/course/cai_yun_xiao_yi/
-https://java4u.cn/course/markmap/
 https://java4u.cn/course/hexo_site_course/
+https://java4u.cn/course/markmap/

@@ -2,6 +2,13 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   
   <url>
+    <loc>https://java4u.cn/course/uml_quick_start/</loc>
+    
+    <lastmod>2021-01-10</lastmod>
+    
+  </url>
+  
+  <url>
     <loc>https://java4u.cn/resources/index.html</loc>
     
     <lastmod>2020-12-17</lastmod>
@@ -96,6 +103,13 @@
   
   <url>
     <loc>https://java4u.cn/tags/chrome-plugin/</loc>
+    <lastmod>2021-01-14</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>https://java4u.cn/tags/UML/</loc>
     <lastmod>2021-01-14</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
